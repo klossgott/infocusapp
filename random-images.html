@@ -18,7 +18,12 @@
     </style>
   </head>
   <body>
-    <img id="image" src="https://klossgott.github.io/tap_here.JPEG" alt="" />
+    <img
+      class="fade-in-image"
+      id="image"
+      src="https://klossgott.github.io/tap_here.JPEG"
+      alt=""
+    />
     <script
       src="https://code.jquery.com/jquery-3.6.1.min.js"
       integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
@@ -55,7 +60,13 @@
           return image[image_number];
         }
         function showImage() {
-          document.getElementById("image").src = "" + randomimage() + "";
+          $imgURL = randomimage();
+
+          $("#image")
+            .fadeOut(400, function () {
+              $("#image").attr("src", $imgURL);
+            })
+            .fadeIn(400);
         }
       });
     </script>
