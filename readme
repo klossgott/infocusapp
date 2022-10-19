@@ -2,14 +2,16 @@ This is the repo for a mobile app fpr creative journalling.  Kai Lossgott (2022)
 
 DOCUMENTATION
 
-Timer with Random Image Generator
+Countdown Timer with Random Image Generator
 
-  1.  The Timer
-
-  Music files can be changed in the code.
+  1.  The Countdown Timer
+  
+  Users can click time duration settings and select music.
+  
+  Music files can be uploaded to the "audio" folder and referenced in the code.
 
   2. The Random Image Generator
 
-  Click to change image.
+  Users can click to change the image.
 
-  Images can be changed by upload but must be in the same folder as the html file.
+  Images must be uploaded to the same folder as the html file referencing them.
