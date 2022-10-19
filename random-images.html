@@ -32,21 +32,21 @@
         const imageElement = document.getElementById("image");
 
         imageElement.addEventListener("click", showImage);
-        // LOAD IMAGES FROM FOLDER
-        var folder = "images/";
 
-        $.ajax({
-          url: folder,
-          success: function (data) {
-            $(data)
-              .find("a")
-              .attr("href", function (i, val) {
-                if (val.match(/\.(jpe?g|png|gif|JPEG)$/)) {
-                  image.push(val);
-                }
-              });
-          },
-        });
+        // LOAD IMAGES FROM GITHUB REPO
+        var folder = "images/";
+        (async () => {
+          const response = await fetch(
+            "https://api.github.com/repos/klossgott/infocusapp/contents/"
+          );
+          const data = await response.json();
+
+          for (let file of data) {
+            if (file.name.match(/\.(jpe?g|png|gif|JPEG)$/)) {
+              image.push(file.name);
+            }
+          }
+        })();
 
         var rand = 60 / image.length;
         function randomimage() {
@@ -55,8 +55,7 @@
           return image[image_number];
         }
         function showImage() {
-          document.getElementById("image").src =
-            "" + randomimage() + "";
+          document.getElementById("image").src = "" + randomimage() + "";
         }
       });
     </script>
