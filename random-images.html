@@ -23,6 +23,8 @@
         width: 100%;
         max-width: 800px;
         display: flex;
+        justify-content: center;
+        align-items: center;
         position: relative;
       }
 
@@ -92,7 +94,15 @@
         })();
 
         function randomIndex() {
-          image_number = Math.floor(Math.random() * image.length);
+          // Select an image from first half of the image array
+          image_number = Math.floor(
+            Math.random() * Math.floor(image.length - image.length / 2)
+          );
+          // Move the selected image to end of array
+          let chosenNumber = image.splice(image_number, 1);
+          image.push(chosenNumber);
+
+          console.log(image_number);
           return image_number;
         }
 
