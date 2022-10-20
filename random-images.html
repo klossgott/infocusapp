@@ -110,19 +110,20 @@
             this.remove(); //Remove first image
           }
 
-          const allImages = [...document.querySelectorAll(".image")];
-          const chooser = randomNoRepeats(allImages);
+          const allImages = document.querySelectorAll(".image");
+          const allImagesArray = [...document.querySelectorAll(".image")];
+          const chooser = randomNoRepeats(allImagesArray);
           console.log(chooser());
-
           //Firstly hide all images
           for (let i = 0; i < allImages.length; i++) {
             allImages[i].classList.remove("visible");
             allImages[i].classList.add("hidden");
           }
 
-          for (let i = 0; i < allImages.length; i++) {
-            if (allImages[i].src === chooser()) {
-              // Make visible 1 image randomly
+          for (let i = 0; i < allImagesArray.length; i++) {
+            if (allImagesArray[i] === chooser()) {
+              console.log(allImagesArray[i]);
+              // Make 1 image visible randomly
               allImages[i].classList.remove("hidden");
               allImages[i].classList.add("visible");
             }
