@@ -71,9 +71,9 @@
           );
           const data = await response.json();
 
-          for (let file of data) {
-            if (file.name.match(/\.(jpe?g|png|gif|JPEG)$/)) {
-              image.push(file.name);
+          for (const file of Object.keys(data)) {
+            if (data[file].match(/\.(jpe?g|png|gif|JPEG)$/)) {
+              image.push(data[file]);
             }
           }
 
@@ -110,8 +110,8 @@
             this.remove(); //Remove first image
           }
 
-          const allImages = document.querySelectorAll(".image");
-          const chooser = randomNoRepeats(image);
+          const allImages = [...document.querySelectorAll(".image")];
+          const chooser = randomNoRepeats(allImages);
 
           //Firstly hide all images
           for (let i = 0; i < allImages.length; i++) {
