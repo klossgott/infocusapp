@@ -22,8 +22,10 @@
       .images-container {
         width: 100%;
         max-width: 800px;
+        min-height: 600px;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        justify-content: flex-start;
         align-items: center;
         position: relative;
       }
@@ -114,7 +116,7 @@
           const allImagesArray = [...document.querySelectorAll(".image")];
           const chooser = randomNoRepeats(allImagesArray);
           const randImage = chooser();
-          console.log(randImage);
+
           //Firstly hide all images
           for (let i = 0; i < allImages.length; i++) {
             allImages[i].classList.remove("visible");
@@ -123,7 +125,6 @@
 
           for (let i = 0; i < allImagesArray.length; i++) {
             if (allImagesArray[i] === randImage) {
-              console.log(allImagesArray[i]);
               // Make 1 image visible randomly
               allImages[i].classList.remove("hidden");
               allImages[i].classList.add("visible");
