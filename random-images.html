@@ -120,7 +120,7 @@
           }
 
           for (let i = 0; i < allImages.length; i++) {
-            if (allImages[i] === chooser()) {
+            if (allImages[i].src === chooser()) {
               // Make visible 1 image randomly
               allImages[i].classList.remove("hidden");
               allImages[i].classList.add("visible");
