@@ -72,8 +72,8 @@
           const data = await response.json();
 
           for (const file of Object.keys(data)) {
-            if (data[file].match(/\.(jpe?g|png|gif|JPEG)$/)) {
-              image.push(data[file]);
+            if (data[file].name.match(/\.(jpe?g|png|gif|JPEG)$/)) {
+              image.push(data[file].name);
             }
           }
 
