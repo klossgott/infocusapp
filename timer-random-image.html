@@ -24,52 +24,15 @@
     />
 
     
-    <!! ----- random image style -----!!>
-    
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-      }
-      .images-container {
-        width: 100%;
-        max-width: 800px;
-        min-height: 600px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        position: relative;
-      }
-
-      .image {
-        width: 100%;
-        transition: opacity 1s;
-      }
-      .image.visible {
-        cursor: pointer;
-        z-index: 2;
-        opacity: 1;
-      }
-
-      .image.hidden {
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-      }
-    </style>
+  
 
   </head>
   
   <BODY>
+    
+  
+    
+    <!! ---- timer style ---- !!>
   <style>
     *,
     *::before,
@@ -497,7 +460,49 @@
   
 
 
+      
+      <!! ----- random image style -----!!>
     
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .images-container {
+        width: 100%;
+        max-width: 800px;
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
+      }
+
+      .image {
+        width: 100%;
+        transition: opacity 1s;
+      }
+      .image.visible {
+        cursor: pointer;
+        z-index: 2;
+        opacity: 1;
+      }
+
+      .image.hidden {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+      }
+    </style>
     <!! ----- random image script -----!!>
     
     <div class="images-container">
