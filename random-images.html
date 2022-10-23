@@ -7,10 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="image randomiser" />
   <meta name="keywords" content="random image" />
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
     integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet" />
   <title>random images</title>
   <style>
     * {
@@ -31,6 +31,7 @@
       max-width: 1600px;
       width: 100%;
       margin: 0 auto;
+      padding: 2rem;
 
     }
 
@@ -209,6 +210,16 @@
     #audio-select {
       color: black;
       font-family: inherit;
+    }
+
+    @media screen and (max-width:768px) {
+      .site-wrapper {
+        flex-direction: column;
+      }
+
+      .images-container {
+        min-height: 400px;
+      }
     }
   </style>
 </head>
