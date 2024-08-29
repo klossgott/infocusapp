@@ -1,0 +1,151 @@
+Here's the extracted code for the **random image timer** from the HTML you provided. I've removed all the other parts related to the audio player and timer. This code includes only the styles, HTML, and JavaScript necessary to run the random image generator.
+
+### Extracted HTML for Random Image Timer
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Image Generator</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .images-container {
+        width: 100%;
+        max-width: 800px;
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
+      }
+
+      .image {
+        width: 100%;
+        transition: opacity 1s;
+      }
+      .image.visible {
+        cursor: pointer;
+        z-index: 2;
+        opacity: 1;
+      }
+
+      .image.hidden {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="images-container">
+      <img
+        class="image visible first"
+        src="https://klossgott.github.io/tap_here.JPEG"
+      />
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.1.min.js"
+      integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      window.addEventListener("load", function () {
+        let image = [];
+        const imageElement = document.querySelector(".image.visible");
+        imageElement.addEventListener("click", showImage);
+
+        // LOAD IMAGES FROM GITHUB REPO
+        (async () => {
+          const response = await fetch(
+            "https://api.github.com/repos/klossgott/infocusapp/contents/"
+          );
+          const data = await response.json();
+
+          for (const file of Object.keys(data)) {
+            if (data[file].name.match(/\.(jpe?g|png|gif|JPEG)$/)) {
+              image.push(data[file].name);
+            }
+          }
+
+          let imgTemplate, imgContainer;
+
+          for (let i = 0; i < image.length; i++) {
+            imgTemplate = `<img class="image hidden" src="${image[i]}"/>`;
+            imgContainer = document.querySelector(".images-container");
+            imgContainer.insertAdjacentHTML("beforeend", imgTemplate);
+          }
+
+          // Add click event to added images
+          const images = document.querySelectorAll(".image");
+          for (let i = 0; i < images.length; i++) {
+            images[i].addEventListener("click", showImage);
+          }
+        })();
+
+        function randomNoRepeats(array) {
+          var copy = array.slice(0);
+          return function () {
+            if (copy.length < 1) {
+              copy = array.slice(0);
+            }
+            var index = Math.floor(Math.random() * copy.length);
+            var item = copy[index];
+            copy.splice(index, 1);
+            return item;
+          };
+        }
+
+        function showImage() {
+          if (this.classList.contains("first")) {
+            this.remove(); //Remove first image
+          }
+
+          const allImages = document.querySelectorAll(".image");
+          const allImagesArray = [...document.querySelectorAll(".image")];
+          const chooser = randomNoRepeats(allImagesArray);
+          const randImage = chooser();
+
+          //Firstly hide all images
+          for (let i = 0; i < allImages.length; i++) {
+            allImages[i].classList.remove("visible");
+            allImages[i].classList.add("hidden");
+          }
+
+          for (let i = 0; i < allImagesArray.length; i++) {
+            if (allImagesArray[i] === randImage) {
+              // Make 1 image visible randomly
+              allImages[i].classList.remove("hidden");
+              allImages[i].classList.add("visible");
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
+```
+
+### Explanation:
+
+- **CSS**: The styles for the random image generator are included in the `<style>` tag to ensure the images display correctly and transition smoothly.
+- **HTML**: The `images-container` is the main container for your images. It initially contains one image, which will be replaced by others loaded from the GitHub repository.
+- **JavaScript**: The script loads images from a specified GitHub repository, randomizes their order, and changes the visible image each time the current one is clicked.
+
+This code will generate a random image timer, where each image is displayed one at a time when the visible image is clicked. You can embed this HTML into your webpage or use it as a standalone page.
