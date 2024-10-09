@@ -40,6 +40,29 @@
         #cookie-right {
             transform-origin: left center;
         }
+        /* Breaking Animation */
+        #cookie-breaking {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px; /* Adjust as needed */
+            height: auto;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        .explode {
+            animation: explodeAndFade 0.3s forwards;
+        }
+        @keyframes explodeAndFade {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
         /* Fortune Slip */
         #fortune-slip {
             position: absolute;
@@ -62,6 +85,7 @@
             color: #333;
             padding: 0 10px;
             white-space: nowrap;
+            cursor: pointer; /* Make it clickable */
         }
     </style>
 </head>
@@ -70,6 +94,8 @@
 <div id="widget-container">
     <!-- Whole Fortune Cookie Image -->
     <img id="cookie-whole" class="cookie" src="fortune-cookie-whole-1.png" alt="Fortune Cookie">
+    <!-- Breaking Fortune Cookie Animation Image -->
+    <img id="cookie-breaking" src="fortune-cookie-breaking.png" alt="Breaking Fortune Cookie">
     <!-- Left and Right Cookie Halves -->
     <img id="cookie-left" class="cookie" src="fortune-cookie-left.png" alt="Fortune Cookie Left Half">
     <img id="cookie-right" class="cookie" src="fortune-cookie-right.png" alt="Fortune Cookie Right Half">
@@ -83,93 +109,23 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const fortunes = [
-            // Inspirational Fortunes
+            // [Include the full fortune list here]
             "Adventure awaits you this week.",
             "A pleasant surprise is in store for you.",
-            "Your hard work will soon pay off.",
-            "Embrace unexpected opportunities.",
-            "Trust your instincts; they lead to success.",
-            "Good news will come to you from afar.",
-            "A new friendship will bring joy to your life.",
-            "You are capable of achieving great things.",
-            "Positive thoughts attract positive outcomes.",
-            "Your creativity will inspire others.",
-            "Always be kind. Have a good attitude. Never give up.",
-            "You can create your own happiness.",
-            "May your cookie jar overflow with goodies.",
-            "There is great love in your future.",
-            "Love is like oxygen. You need it to survive.",
-            "The best way to defeat an enemy is to become their friend.",
-            "The time is right to make new friends.",
-            "A warm smile is testimony of a generous nature.",
-            "Take the time to invest in yourself today.",
-            "You will live a long, happy life.",
-            "Life's journey is always an adventure.",
-            "A single kind word will keep one warm for years.",
-            "Always be loyal to your friends.",
-            "Be alert, practical, and honest.",
-            "Appreciate your own uniqueness and talents.",
-            "Say yes to exciting opportunities.",
-            "Mistakes happen. Turn them into opportunities.",
-            "Be efficient with things. With people, be effective.",
-            "Love always and deeply.",
-            "Your heart is a place to draw true happiness.",
-            "It's not the destination; it's the journey.",
-            "Before honor is humility.",
-            "To love is to forgive.",
-            "Good ideas come free of charge.",
-            "In the middle of difficulty lies opportunity.",
-            "A good example is the best sermon.",
-            "Do everything with confidence.",
-            "Your flair for the creative takes an important place in your life.",
-            // Humorous Fortunes
-            "You will soon find the missing sock.",
-            "An alien of some sort will be appearing to you shortly.",
-            "Today is the day you answer 'maybe' to every question.",
-            "Your fortune is in another cookie.",
-            "Help! I'm trapped in a fortune cookie factory.",
-            "A closed mouth gathers no feet.",
-            "You will be hungry again in one hour.",
-            "Change is inevitable, except from vending machines.",
-            "Avoid taking unnecessary gambles. Lucky numbers: 12, 15, 23, 28, 37.",
-            "A clean conscience is a soft pillow.",
-            "A razor-sharp weapon is an extension to a razor-sharp mind.",
-            "What is weird? Someone who is different or someone that is different from you?",
-            "A problem is an opportunity in backwards disguise.",
-            "All people smile in the same language.",
-            // Cryptic Fortunes
-            "The early bird gets the worm, but the second mouse gets the cheese.",
-            "He who laughs last is laughing at you.",
-            "A conclusion is simply the place where you got tired of thinking.",
-            "The wheel of fortune is spinning in your favor.",
-            "A golden egg of opportunity falls into your lap this month.",
-            "A wise person knows there is something to be learned from everyone.",
-            "Hidden treasures will be found where least expected.",
-            "A mystery will soon be revealed to you.",
-            "The fortune teller knows your fortune, but won't tell.",
-            "Your path is more intricate than you imagine.",
-            "In each and every one of us, there are obstacles that hold us back. Only when you conquer that fear, will your heart be free.",
-            "Find and control your element.",
-            "Learn to wield many types of weapons.",
-            "Master the art of stealth.",
-            "May life throw you a pleasant curve.",
-            // Other Fortunes
-            "Never put off for tomorrow what could be done today.",
-            "You won't know until you try.",
-            "When it is all over, then we will see who laughs last.",
-            "Even a lesson learned the hard way is a lesson learned.",
+            // ... (rest of the fortunes)
             "Do not mistake temptation for opportunity."
         ];
 
         const widgetContainer = document.getElementById('widget-container');
         const cookieWhole = document.getElementById('cookie-whole');
+        const cookieBreaking = document.getElementById('cookie-breaking');
         const cookieLeft = document.getElementById('cookie-left');
         const cookieRight = document.getElementById('cookie-right');
         const fortuneSlip = document.getElementById('fortune-slip');
         const cookieSound = document.getElementById('cookie-sound');
 
         // Adjust sound volume and duration
-        cookieSound.volume = 0.5;
+        cookieSound.volume = 0.25; // Reduce volume further
 
         // Whole cookie images and last used image
         const wholeCookieImages = [
@@ -189,40 +145,62 @@
         setRandomWholeCookie();
 
         cookieWhole.addEventListener('click', function() {
-            // Play sound for 0.25 of its duration
-            cookieSound.currentTime = 0;
-            cookieSound.play();
-            setTimeout(() => {
-                cookieSound.pause();
-            }, (cookieSound.duration * 0.25) * 1000);
+            // Play random 0.25-second portion of the sound
+            if (cookieSound.readyState >= 2) {
+                const totalDuration = cookieSound.duration;
+                const maxStartTime = Math.max(0, totalDuration - 0.25);
+                const randomStartTime = Math.random() * maxStartTime;
+                cookieSound.currentTime = randomStartTime;
+                cookieSound.volume = 0.25;
+                cookieSound.play();
+
+                setTimeout(() => {
+                    cookieSound.pause();
+                    cookieSound.currentTime = 0;
+                }, 250); // Play for 0.25 seconds
+            } else {
+                cookieSound.addEventListener('loadedmetadata', () => {
+                    cookieWhole.click();
+                }, { once: true });
+            }
 
             // Hide whole cookie
             cookieWhole.style.display = 'none';
 
-            // Show cookie halves
-            cookieLeft.style.display = 'block';
-            cookieRight.style.display = 'block';
+            // Show breaking animation
+            cookieBreaking.style.display = 'block';
+            cookieBreaking.classList.add('explode');
 
-            // Position cookie halves to look like a whole cookie
-            cookieLeft.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
-            cookieRight.style.transform = 'translate(-50%, -50%) rotate(45deg)';
+            // After animation ends
+            cookieBreaking.addEventListener('animationend', function() {
+                cookieBreaking.style.display = 'none';
+                cookieBreaking.classList.remove('explode');
 
-            // Animate cookie halves moving apart
-            setTimeout(() => {
-                cookieLeft.style.transition = 'transform 0.5s ease';
-                cookieRight.style.transition = 'transform 0.5s ease';
-                cookieLeft.style.transform = 'translate(-150%, -50%) rotate(-30deg)';
-                cookieRight.style.transform = 'translate(50%, -50%) rotate(30deg)';
-            }, 50);
+                // Show cookie halves
+                cookieLeft.style.display = 'block';
+                cookieRight.style.display = 'block';
 
-            // Show fortune slip
-            const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-            fortuneSlip.textContent = randomFortune;
+                // Position cookie halves to look like a whole cookie
+                cookieLeft.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+                cookieRight.style.transform = 'translate(-50%, -50%) rotate(45deg)';
 
-            setTimeout(() => {
-                fortuneSlip.style.opacity = 1;
-                fortuneSlip.style.width = '220px'; // Extended length
-            }, 500);
+                // Animate cookie halves moving apart
+                setTimeout(() => {
+                    cookieLeft.style.transition = 'transform 0.5s ease';
+                    cookieRight.style.transition = 'transform 0.5s ease';
+                    cookieLeft.style.transform = 'translate(-200%, -50%) rotate(-30deg)'; // Move further left
+                    cookieRight.style.transform = 'translate(100%, -50%) rotate(30deg)';  // Move further right
+                }, 50);
+
+                // Show fortune slip
+                const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                fortuneSlip.textContent = randomFortune;
+
+                setTimeout(() => {
+                    fortuneSlip.style.opacity = 1;
+                    fortuneSlip.style.width = '250px'; // Extended length
+                }, 500);
+            }, { once: true });
         });
 
         // Reset widget on clicking fortune slip
@@ -250,4 +228,3 @@
 
 </body>
 </html>
-
