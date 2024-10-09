@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Virtual Fortune Cookie Widget</title>
-    <!-- Use a web-safe font -->
+    <!-- Use Arial Narrow font -->
     <style>
         html, body {
             height: 100%;
@@ -46,9 +46,9 @@
             top: 50%;
             left: 50%;
             width: 0;
-            height: 20px; /* Adjust as needed */
+            height: 25px; /* Adjusted height */
             background-color: #F8F0E3;
-            border: 1px solid #ccc;
+            /* Removed border */
             box-sizing: border-box;
             display: flex;
             align-items: center;
@@ -57,7 +57,7 @@
             opacity: 0;
             transform: translate(-50%, -50%);
             transition: width 0.5s ease, opacity 0.5s ease;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial Narrow', Arial, sans-serif; /* Updated font */
             font-size: 14px;
             color: #333;
             padding: 0 10px;
@@ -171,13 +171,19 @@
         // Adjust sound volume and duration
         cookieSound.volume = 0.5;
 
-        // Randomly select whole cookie image
+        // Whole cookie images and last used image
         const wholeCookieImages = [
             "fortune-cookie-whole-1.png",
             "fortune-cookie-whole-2.png"
         ];
+        let lastWholeCookieImage = "";
+
         function setRandomWholeCookie() {
-            const randomWholeCookie = wholeCookieImages[Math.floor(Math.random() * wholeCookieImages.length)];
+            let randomWholeCookie;
+            do {
+                randomWholeCookie = wholeCookieImages[Math.floor(Math.random() * wholeCookieImages.length)];
+            } while (randomWholeCookie === lastWholeCookieImage);
+            lastWholeCookieImage = randomWholeCookie;
             cookieWhole.src = randomWholeCookie;
         }
         setRandomWholeCookie();
@@ -198,15 +204,15 @@
             cookieRight.style.display = 'block';
 
             // Position cookie halves to look like a whole cookie
-            cookieLeft.style.transform = 'translate(-50%, -50%) rotate(45deg)';
-            cookieRight.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+            cookieLeft.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+            cookieRight.style.transform = 'translate(-50%, -50%) rotate(45deg)';
 
             // Animate cookie halves moving apart
             setTimeout(() => {
                 cookieLeft.style.transition = 'transform 0.5s ease';
                 cookieRight.style.transition = 'transform 0.5s ease';
-                cookieLeft.style.transform = 'translate(-150%, -50%) rotate(30deg)';
-                cookieRight.style.transform = 'translate(50%, -50%) rotate(-30deg)';
+                cookieLeft.style.transform = 'translate(-150%, -50%) rotate(-30deg)';
+                cookieRight.style.transform = 'translate(50%, -50%) rotate(30deg)';
             }, 50);
 
             // Show fortune slip
@@ -215,7 +221,7 @@
 
             setTimeout(() => {
                 fortuneSlip.style.opacity = 1;
-                fortuneSlip.style.width = '180px'; // Adjust as needed
+                fortuneSlip.style.width = '220px'; // Extended length
             }, 500);
         });
 
@@ -230,12 +236,12 @@
             cookieRight.style.display = 'none';
 
             // Reset cookie halves position
-            cookieLeft.style.transform = 'translate(-50%, -50%) rotate(45deg)';
-            cookieRight.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+            cookieLeft.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+            cookieRight.style.transform = 'translate(-50%, -50%) rotate(45deg)';
             cookieLeft.style.transition = 'none';
             cookieRight.style.transition = 'none';
 
-            // Show whole cookie with new random image
+            // Show whole cookie with new random image, ensuring it's not the same as last time
             setRandomWholeCookie();
             cookieWhole.style.display = 'block';
         });
@@ -244,3 +250,4 @@
 
 </body>
 </html>
+
