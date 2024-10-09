@@ -15,36 +15,50 @@
             align-items: center;
             justify-content: center;
             background: transparent;
-            overflow: hidden;
         }
         #widget-container {
             position: relative;
-            width: 320px;
-            height: 260px;
+            width: 320px; /* Fixed width for 16:9 aspect ratio */
+            height: 180px; /* Fixed height for 16:9 aspect ratio */
             background: transparent;
         }
         #widget-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
             width: 100%;
-            height: auto;
+            height: 100%;
+            transform: translate(-50%, -50%);
             cursor: pointer;
-            display: block;
-            transition: transform 0.3s, filter 0.3s;
+            transition: filter 0.3s;
             transform-origin: center center; /* Ensure scaling happens from the center */
         }
         /* Mouseover effect */
         #widget-image:hover {
-            transform: scale(1.05);
             filter: brightness(1.2);
+        }
+        /* Exploding animation */
+        .explode {
+            animation: explodeAndFade 0.5s forwards;
+        }
+        @keyframes explodeAndFade {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
         }
         #icebreaker-card {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 320px;
-            height: 260px;
+            width: 320px; /* Same as container width */
+            height: 180px; /* Same as container height */
             background-color: #F8F0E3; /* Updated off-white background */
             border-radius: 15px;
-            margin: 0;
             padding: 30px; /* Increased padding for more white space */
             box-sizing: border-box;
             display: none;
@@ -55,20 +69,19 @@
             animation-duration: 0.5s;
             animation-fill-mode: forwards;
             overflow: hidden;
-            background-clip: border-box; /* Ensure background covers border radius */
             transform: translate(-50%, -50%); /* Center the card */
         }
         #icebreaker-text {
-            font-family: 'Montserrat', Arial, sans-serif; /* Elegant modern font */
+            font-family: 'Montserrat', Arial, sans-serif;
             font-size: 1em;
             color: #333;
             line-height: 1.5;
-            font-weight: bold; /* Make text bold */
+            font-weight: bold;
             letter-spacing: 0.05em; /* Increase kerning by 5% */
             margin: 0;
             background: transparent;
         }
-        /* Animations */
+        /* Animations for card */
         @keyframes fadeInFlip {
             0% {
                 opacity: 0;
@@ -132,16 +145,26 @@
         // Play random portion of the ice sound
         playRandomIceSound();
 
-        // Reduce size of the broken ice image
+        // Change to broken ice image
         widgetImage.src = clickImageSrc;
-        widgetImage.style.transform = 'scale(0.5)'; // Reduce size to 50%
 
-        setTimeout(() => {
-            widgetImage.style.display = 'none';
-            widgetImage.style.transform = 'scale(1)'; // Reset size
-            showIcebreaker();
-        }, 1500); // Match the delay with the sound duration (1.5 seconds)
+        // Add class to trigger exploding animation
+        widgetImage.classList.add('explode');
+
+        // Listen for animation end
+        widgetImage.addEventListener('animationend', onExplodeAnimationEnd, { once: true });
     });
+
+    function onExplodeAnimationEnd() {
+        // Hide the image
+        widgetImage.style.display = 'none';
+        // Remove the explode class
+        widgetImage.classList.remove('explode');
+        // Reset the transform
+        widgetImage.style.transform = 'translate(-50%, -50%) scale(1)';
+        // Show the icebreaker card
+        showIcebreaker();
+    }
 
     function showIcebreaker() {
         icebreakerText.textContent = getRandomPrompt();
