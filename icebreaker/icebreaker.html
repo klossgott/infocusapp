@@ -18,30 +18,28 @@
         }
         #widget-container {
             position: relative;
-            width: 320px; /* Fixed width for 16:9 aspect ratio */
-            height: 180px; /* Fixed height for 16:9 aspect ratio */
+            width: 320px;
+            height: 180px;
             background: transparent;
-            overflow: hidden; /* Ensure content stays within the container */
-            perspective: 1000px; /* Add perspective for 3D rotations */
+            overflow: hidden;
+            perspective: 1000px;
         }
         #widget-image {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 50%; /* Start with reduced size */
+            width: 50%;
             height: auto;
             transform: translate(-50%, -50%);
             cursor: pointer;
             transition: filter 0.3s;
-            transform-origin: center center; /* Ensure scaling happens from the center */
+            transform-origin: center center;
         }
-        /* Mouseover effect */
         #widget-image:hover {
             filter: brightness(1.2);
         }
-        /* Exploding animation */
         .explode {
-            animation: explodeAndFade 0.3s forwards; /* Shortened duration */
+            animation: explodeAndFade 0.3s forwards;
         }
         @keyframes explodeAndFade {
             0% {
@@ -50,18 +48,18 @@
             }
             100% {
                 opacity: 0;
-                transform: translate(-50%, -50%) scale(1.5); /* Adjusted final scale */
+                transform: translate(-50%, -50%) scale(1.5);
             }
         }
         #icebreaker-card {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 320px; /* Same as container width */
-            height: 180px; /* Same as container height */
-            background-color: #F8F0E3; /* Updated off-white background */
-            border-radius: 15px; /* Rounded corners */
-            padding: 20px; /* Adjusted padding */
+            width: 320px;
+            height: 180px;
+            background-color: #F8F0E3;
+            border-radius: 15px;
+            padding: 20px;
             box-sizing: border-box;
             display: none;
             flex-direction: column;
@@ -71,8 +69,8 @@
             animation-duration: 0.5s;
             animation-fill-mode: forwards;
             overflow: hidden;
-            transform: translate(-50%, -50%); /* Center the card */
-            transform-origin: center center; /* Ensure flip happens around center */
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
             backface-visibility: hidden;
         }
         #icebreaker-text {
@@ -80,32 +78,30 @@
             font-size: 1em;
             color: #333;
             line-height: 1.5;
-            font-weight: normal; /* Regular font weight */
-            letter-spacing: 0.05em; /* Increase kerning by 5% */
+            font-weight: normal;
+            letter-spacing: 0.05em;
             margin: 0;
             background: transparent;
         }
-        /* Cover overlay */
         #cover-overlay {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 320px; /* Same as container width */
-            height: 180px; /* Same as container height */
-            background-color: #3B1C0A; /* Dark coffee brown */
+            width: 320px;
+            height: 180px;
+            background-color: #3B1C0A;
             color: white;
-            display: flex; /* Displayed by default for animation */
+            display: none;
             align-items: center;
             justify-content: center;
             text-align: center;
             cursor: pointer;
-            z-index: 10; /* Ensure it overlays other elements */
+            z-index: 10;
             padding: 10px;
             box-sizing: border-box;
-            border-radius: 15px; /* Same corner radius */
-            transform: translate(-50%, -50%); /* Center the overlay */
+            border-radius: 15px;
+            transform: translate(-50%, -50%);
             transform-origin: center center;
-            animation: coverFadeIn 1s forwards; /* Fade-in animation */
             backface-visibility: hidden;
         }
         #cover-text {
@@ -113,13 +109,12 @@
             font-size: 1.2em;
             font-weight: bold;
             line-height: 1.4;
-            letter-spacing: 0.05em; /* Same kerning as main card text */
+            letter-spacing: 0.05em;
             margin: 0;
         }
         #cover-text span {
-            font-weight: normal; /* "Click here" not bold */
+            font-weight: normal;
         }
-        /* Animations for cover overlay */
         @keyframes coverFadeIn {
             0% {
                 opacity: 0;
@@ -140,7 +135,6 @@
                 transform: translate(-50%, -50%) rotateY(90deg);
             }
         }
-        /* Animations for icebreaker card */
         @keyframes fadeInFlip {
             0% {
                 opacity: 0;
@@ -264,16 +258,14 @@
         // Set initial image source
         widgetImage.src = initialImageSrc;
 
-        // Check if it's the first time the widget is loaded
-        const isFirstTime = !localStorage.getItem('icebreakerWidgetSeen');
+        // Use a JavaScript variable to track if it's the first interaction
+        let isFirstTime = true;
 
+        // Always display the cover overlay on page load
         if (isFirstTime) {
-            // Display the cover overlay
             coverOverlay.style.display = 'flex';
-            // Start the fade-in animation
             coverOverlay.style.animation = 'coverFadeIn 1s forwards';
         } else {
-            // Hide the cover overlay if it's not the first time
             coverOverlay.style.display = 'none';
         }
 
@@ -283,8 +275,8 @@
             coverOverlay.addEventListener('animationend', () => {
                 // Hide the cover overlay after animation
                 coverOverlay.style.display = 'none';
-                // Set the flag in localStorage
-                localStorage.setItem('icebreakerWidgetSeen', 'true');
+                // Set the flag to false
+                isFirstTime = false;
             }, { once: true });
         });
 
@@ -324,10 +316,9 @@
             icebreakerText.textContent = getRandomPrompt();
 
             // Adjust background color randomly within ±10% lightness
-            const baseColor = '#F8F0E3'; // Updated off-white color
+            const baseColor = '#F8F0E3';
             const hsl = hexToHsl(baseColor);
-            // Adjust lightness by ±10%
-            const lightnessAdjustment = (Math.random() * 20) - 10; // Random between -10 and +10
+            const lightnessAdjustment = (Math.random() * 20) - 10;
             const newL = Math.min(100, Math.max(0, hsl.l + lightnessAdjustment));
             const newColor = hslToHex(hsl.h, hsl.s, newL);
 
@@ -343,15 +334,15 @@
                 icebreakerCard.style.display = 'none';
                 widgetImage.src = initialImageSrc;
                 widgetImage.style.display = 'block';
-                widgetImage.style.width = '50%'; // Reset width
+                widgetImage.style.width = '50%';
                 widgetImage.style.transform = 'translate(-50%, -50%)';
             }, { once: true });
         });
 
         function playRandomIceSound() {
-            const duration = 0.5; // Play 0.5 seconds
+            const duration = 0.5;
 
-            if (iceSound.readyState >= 2) { // HAVE_CURRENT_DATA
+            if (iceSound.readyState >= 2) {
                 const totalDuration = iceSound.duration;
                 const maxStartTime = Math.max(0, totalDuration - duration);
                 const randomStartTime = Math.random() * maxStartTime;
@@ -371,7 +362,7 @@
 
         // Helper functions to convert between Hex and HSL
         function hexToHsl(hex) {
-            // Convert hex to RGB first
+            // [Conversion code remains the same]
             let r = 0, g = 0, b = 0;
             if (hex.length === 4) {
                 r = parseInt(hex[1] + hex[1], 16);
