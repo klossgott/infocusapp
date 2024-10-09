@@ -60,7 +60,7 @@
             height: 180px; /* Same as container height */
             background-color: #F8F0E3; /* Updated off-white background */
             border-radius: 15px; /* Restored rounded corners */
-            padding: 30px; /* Increased padding for more white space */
+            padding: 20px; /* Adjusted padding */
             box-sizing: border-box;
             display: none;
             flex-direction: column;
@@ -119,103 +119,240 @@
 <audio id="ice-sound" src="ice-10-104149.mp3" preload="auto"></audio>
 
 <script>
-    const prompts = [
-        "What’s the weirdest movie you’ve ever seen?",
-        "Is there a pizza topping that most people hate but you secretly love?",
-        "Window seat or aisle seat?",
-        "What’s the funniest thing you’ve read online recently?",
-        "In your opinion, what’s the funniest word in the English language?",
-        "Is there a non-dairy item you think would make a great alternative milk?",
-        "If you were a sitcom character, what would be your catchphrase?",
-        "Who would win in an arm wrestle, you or the person next to you?",
-        "If you could be invisible for a day, what would you do?",
-        "What’s your most embarrassing childhood memory?",
-        "What’s the cringiest dad joke you know?",
-        "What’s the most embarrassing outfit you’ve ever worn?",
-        "What’s the cringiest thing you’ve ever shared on social media?",
-        "Do you have an embarrassing nickname? What is it?",
-        "What’s your favorite, kind of obscure meme?",
-        "What’s the funniest dance move you can come up with on the spot?",
-        "What’s the best Wi-Fi name you’ve ever seen?",
-        "What’s the most awkward interaction you’ve ever had with another person?",
-        "What’s the worst thing you’ve ever smelled?",
-        "Do you have a strange nervous habit?",
-        "Do you know a niche joke that probably only you find funny?",
-        "Do you have a funny habit you do at home while no one is watching?",
-        "If you were on AIM in the early 2000s, what was your screen name?",
-        "What’s the funniest song you know all the lyrics to?",
-        "Is cereal a soup? Why or why not?",
-        "Is soup a drink or a meal?",
-        "Is there a conspiracy theory you kind of believe to be true?",
-        "What’s the most random fact you know?",
-        "What’s something that’s not illegal that feels illegal?",
-        "What funny saying would be written on your tombstone to describe the life you lived?",
-        "If you were sent back in time 1,000 years, how would you prove that you’re from the future?",
-        "What’s your funniest high school memory?",
-        "Serious question: How long would you survive a zombie apocalypse?",
-        "What’s the most ridiculous thing you would buy if you were given a million dollars?",
-        "If your pet could talk, what would they say?",
-        "What funny question would you ask me to make me laugh?",
-        "What’s the most gimmicky home gadget you own?",
-        "Which character from 'Friends' are you?",
-        "If you could only listen to one song for the rest of your life, which would it be?",
-        "What day should be a holiday that isn’t?",
-        "Is a hot dog a sandwich?",
-        "Is ravioli a dumpling?",
-        "What’s the weirdest fashion trend you’ve tried?",
-        "What haircut of yours would you never recreate?",
-        "If you had to prank call someone right now, what would you say?",
-        "What’s your favorite pun?",
-        "If you could eliminate one food from existence, which one would you choose?",
-        "If you could make a new ice cream flavor, what would it be?",
-        "What's the wackiest thing you believed as a kid?",
-        "What's the strangest thing you've ever eaten, and would you eat it again?",
-        "If animals could talk, which would be the funniest?",
-        "What useless superpower do you want?",
-        "What city kind of annoys you?",
-        "What TikTok trend do you dislike?",
-        "If you could only eat one condiment for the rest of your life, what would it be?",
-        "What's the weirdest thing you've ever done while alone in your car?",
-        "What’s your most annoying habit?",
-        "What’s your most boring hobby?",
-        "What’s a weird dream you’ve had that you wish were true?",
-        "What slang word or phrase do you hope we retire soon?",
-        "If you could have an animal as a sidekick, which would you choose?"
-    ];
+    document.addEventListener('DOMContentLoaded', function() {
+        const prompts = [
+            "What’s the weirdest movie you’ve ever seen?",
+            "Is there a pizza topping that most people hate but you secretly love?",
+            "Window seat or aisle seat?",
+            "What’s the funniest thing you’ve read online recently?",
+            "In your opinion, what’s the funniest word in the English language?",
+            "Is there a non-dairy item you think would make a great alternative milk?",
+            "If you were a sitcom character, what would be your catchphrase?",
+            "Who would win in an arm wrestle, you or the person next to you?",
+            "If you could be invisible for a day, what would you do?",
+            "What’s your most embarrassing childhood memory?",
+            "What’s the cringiest dad joke you know?",
+            "What’s the most embarrassing outfit you’ve ever worn?",
+            "What’s the cringiest thing you’ve ever shared on social media?",
+            "Do you have an embarrassing nickname? What is it?",
+            "What’s your favorite, kind of obscure meme?",
+            "What’s the funniest dance move you can come up with on the spot?",
+            "What’s the best Wi-Fi name you’ve ever seen?",
+            "What’s the most awkward interaction you’ve ever had with another person?",
+            "What’s the worst thing you’ve ever smelled?",
+            "Do you have a strange nervous habit?",
+            "Do you know a niche joke that probably only you find funny?",
+            "Do you have a funny habit you do at home while no one is watching?",
+            "If you were on AIM in the early 2000s, what was your screen name?",
+            "What’s the funniest song you know all the lyrics to?",
+            "Is cereal a soup? Why or why not?",
+            "Is soup a drink or a meal?",
+            "Is there a conspiracy theory you kind of believe to be true?",
+            "What’s the most random fact you know?",
+            "What’s something that’s not illegal that feels illegal?",
+            "What funny saying would be written on your tombstone to describe the life you lived?",
+            "If you were sent back in time 1,000 years, how would you prove that you’re from the future?",
+            "What’s your funniest high school memory?",
+            "Serious question: How long would you survive a zombie apocalypse?",
+            "What’s the most ridiculous thing you would buy if you were given a million dollars?",
+            "If your pet could talk, what would they say?",
+            "What funny question would you ask me to make me laugh?",
+            "What’s the most gimmicky home gadget you own?",
+            "Which character from 'Friends' are you?",
+            "If you could only listen to one song for the rest of your life, which would it be?",
+            "What day should be a holiday that isn’t?",
+            "Is a hot dog a sandwich?",
+            "Is ravioli a dumpling?",
+            "What’s the weirdest fashion trend you’ve tried?",
+            "What haircut of yours would you never recreate?",
+            "If you had to prank call someone right now, what would you say?",
+            "What’s your favorite pun?",
+            "If you could eliminate one food from existence, which one would you choose?",
+            "If you could make a new ice cream flavor, what would it be?",
+            "What's the wackiest thing you believed as a kid?",
+            "What's the strangest thing you've ever eaten, and would you eat it again?",
+            "If animals could talk, which would be the funniest?",
+            "What useless superpower do you want?",
+            "What city kind of annoys you?",
+            "What TikTok trend do you dislike?",
+            "If you could only eat one condiment for the rest of your life, what would it be?",
+            "What's the weirdest thing you've ever done while alone in your car?",
+            "What’s your most annoying habit?",
+            "What’s your most boring hobby?",
+            "What’s a weird dream you’ve had that you wish were true?",
+            "What slang word or phrase do you hope we retire soon?",
+            "If you could have an animal as a sidekick, which would you choose?"
+        ];
 
-    // Image source
-    const initialImageSrc = "ice-cubes.png";
-    const clickImageSrc = "broken-ice.png";
+        // Image source
+        const initialImageSrc = "ice-cubes.png";
+        const clickImageSrc = "broken-ice.png";
 
-    const widgetImage = document.getElementById('widget-image');
-    const icebreakerCard = document.getElementById('icebreaker-card');
-    const icebreakerText = document.getElementById('icebreaker-text');
-    const iceSound = document.getElementById('ice-sound');
+        const widgetImage = document.getElementById('widget-image');
+        const icebreakerCard = document.getElementById('icebreaker-card');
+        const icebreakerText = document.getElementById('icebreaker-text');
+        const iceSound = document.getElementById('ice-sound');
 
-    // Set initial image source
-    widgetImage.src = initialImageSrc;
+        // Set initial image source
+        widgetImage.src = initialImageSrc;
 
-    function getRandomPrompt() {
-        const randomIndex = Math.floor(Math.random() * prompts.length);
-        return prompts[randomIndex];
-    }
+        function getRandomPrompt() {
+            const randomIndex = Math.floor(Math.random() * prompts.length);
+            return prompts[randomIndex];
+        }
 
-    widgetImage.addEventListener('click', () => {
-        // Play random portion of the ice sound
-        playRandomIceSound();
+        widgetImage.addEventListener('click', () => {
+            // Play random portion of the ice sound
+            playRandomIceSound();
 
-        // Change to broken ice image
-        widgetImage.src = clickImageSrc;
+            // Change to broken ice image
+            widgetImage.src = clickImageSrc;
 
-        // Add class to trigger exploding animation
-        widgetImage.classList.add('explode');
+            // Add class to trigger exploding animation
+            widgetImage.classList.add('explode');
 
-        // Listen for animation end
-        widgetImage.addEventListener('animationend', onExplodeAnimationEnd, { once: true });
+            // Listen for animation end
+            widgetImage.addEventListener('animationend', onExplodeAnimationEnd, { once: true });
+        });
+
+        function onExplodeAnimationEnd() {
+            // Hide the image
+            widgetImage.style.display = 'none';
+            // Remove the explode class
+            widgetImage.classList.remove('explode');
+            // Reset the transform
+            widgetImage.style.transform = 'translate(-50%, -50%)';
+            // Reset the size
+            widgetImage.style.width = '50%';
+            // Show the icebreaker card
+            showIcebreaker();
+        }
+
+        function showIcebreaker() {
+            icebreakerText.textContent = getRandomPrompt();
+
+            // Adjust background color randomly within ±10% lightness
+            const baseColor = '#F8F0E3'; // Updated off-white color
+            const hsl = hexToHsl(baseColor);
+            // Adjust lightness by ±10%
+            const lightnessAdjustment = (Math.random() * 20) - 10; // Random between -10 and +10
+            const newL = Math.min(100, Math.max(0, hsl.l + lightnessAdjustment));
+            const newColor = hslToHex(hsl.h, hsl.s, newL);
+
+            icebreakerCard.style.backgroundColor = newColor;
+
+            icebreakerCard.style.display = 'flex';
+            icebreakerCard.style.animationName = 'fadeInFlip';
+        }
+
+        icebreakerCard.addEventListener('click', () => {
+            icebreakerCard.style.animationName = 'fadeOutFlip';
+            icebreakerCard.addEventListener('animationend', () => {
+                icebreakerCard.style.display = 'none';
+                widgetImage.src = initialImageSrc;
+                widgetImage.style.display = 'block';
+                widgetImage.style.width = '50%'; // Reset width
+                widgetImage.style.transform = 'translate(-50%, -50%)';
+            }, { once: true });
+        });
+
+        function playRandomIceSound() {
+            const duration = 0.5; // Play 0.5 seconds
+
+            if (iceSound.readyState >= 2) { // HAVE_CURRENT_DATA
+                const totalDuration = iceSound.duration;
+                const maxStartTime = Math.max(0, totalDuration - duration);
+                const randomStartTime = Math.random() * maxStartTime;
+                iceSound.currentTime = randomStartTime;
+                iceSound.play();
+
+                setTimeout(() => {
+                    iceSound.pause();
+                    iceSound.currentTime = 0;
+                }, duration * 1000);
+            } else {
+                iceSound.addEventListener('loadedmetadata', () => {
+                    playRandomIceSound();
+                }, { once: true });
+            }
+        }
+
+        // Helper functions to convert between Hex and HSL
+        function hexToHsl(hex) {
+            // Convert hex to RGB first
+            let r = 0, g = 0, b = 0;
+            if (hex.length === 4) {
+                r = parseInt(hex[1] + hex[1], 16);
+                g = parseInt(hex[2] + hex[2], 16);
+                b = parseInt(hex[3] + hex[3], 16);
+            } else if (hex.length === 7) {
+                r = parseInt(hex[1] + hex[2], 16);
+                g = parseInt(hex[3] + hex[4], 16);
+                b = parseInt(hex[5] + hex[6], 16);
+            }
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const cmin = Math.min(r, g, b);
+            const cmax = Math.max(r, g, b);
+            const delta = cmax - cmin;
+            let h = 0, s = 0, l = 0;
+
+            if (delta === 0)
+                h = 0;
+            else if (cmax === r)
+                h = ((g - b) / delta) % 6;
+            else if (cmax === g)
+                h = (b - r) / delta + 2;
+            else
+                h = (r - g) / delta + 4;
+
+            h = Math.round(h * 60);
+            if (h < 0)
+                h += 360;
+
+            l = (cmax + cmin) / 2;
+            s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+            s = +(s * 100).toFixed(1);
+            l = +(l * 100).toFixed(1);
+
+            return { h, s, l };
+        }
+
+        function hslToHex(h, s, l) {
+            s /= 100;
+            l /= 100;
+            const c = (1 - Math.abs(2 * l - 1)) * s;
+            const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            const m = l - c / 2;
+            let r = 0, g = 0, b = 0;
+
+            if (0 <= h && h < 60) {
+                r = c; g = x; b = 0;
+            } else if (60 <= h && h < 120) {
+                r = x; g = c; b = 0;
+            } else if (120 <= h && h < 180) {
+                r = 0; g = c; b = x;
+            } else if (180 <= h && h < 240) {
+                r = 0; g = x; b = c;
+            } else if (240 <= h && h < 300) {
+                r = x; g = 0; b = c;
+            } else if (300 <= h && h < 360) {
+                r = c; g = 0; b = x;
+            }
+
+            r = Math.round((r + m) * 255);
+            g = Math.round((g + m) * 255);
+            b = Math.round((b + m) * 255);
+
+            const rHex = ("0" + r.toString(16)).slice(-2);
+            const gHex = ("0" + g.toString(16)).slice(-2);
+            const bHex = ("0" + b.toString(16)).slice(-2);
+
+            return "#" + rHex + gHex + bHex;
+        }
     });
+</script>
 
-    function onExplodeAnimationEnd() {
-        // Hide the image
-        widgetImage.style.display = 'none';
-        // Remove the explode class
-        widgetImage.classList.remove('explode');
+</body>
+</html>
