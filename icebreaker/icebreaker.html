@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Icebreaker Widget</title>
+    <!-- Include Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap">
     <style>
         body {
             margin: 0;
@@ -12,17 +14,23 @@
         }
         #widget-container {
             position: relative;
-            width: 320px; /* Adjusted width for 16:9 aspect ratio */
-            height: 180px; /* Adjusted height for 16:9 aspect ratio */
+            width: 100%;
+            max-width: 320px; /* Maintain aspect ratio */
+            height: auto;
             margin: 0 auto;
             background: transparent;
         }
         #widget-image {
             width: 100%;
-            height: 100%;
-            object-fit: contain;
+            height: auto;
             cursor: pointer;
             display: block;
+            transition: transform 0.3s, filter 0.3s;
+        }
+        /* Mouseover effect */
+        #widget-image:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
         }
         #icebreaker-card {
             position: absolute;
@@ -30,19 +38,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #f8f8f0; /* Off-white background */
+            background: #FFFFF0; /* Ivory background */
             border-radius: 15px;
             display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 30px; /* Increased padding for more white space */
             box-sizing: border-box;
             animation-duration: 0.5s;
             animation-fill-mode: forwards;
         }
         #icebreaker-text {
-            font-family: 'Open Sans', Arial, sans-serif; /* Elegant modern font */
+            font-family: 'Montserrat', Arial, sans-serif; /* Elegant modern font */
             font-size: 1em;
             color: #333;
             line-height: 1.5;
@@ -68,9 +77,13 @@
                 transform: rotateY(90deg);
             }
         }
+        /* Responsive styling */
+        @media (max-width: 320px) {
+            #widget-container {
+                width: 100%;
+            }
+        }
     </style>
-    <!-- Include Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
 </head>
 <body>
 
@@ -81,6 +94,7 @@
     </div>
 </div>
 
+<!-- Audio element for the ice breaking sound -->
 <audio id="ice-sound" src="ice-10-104149.mp3" preload="auto"></audio>
 
 <script>
@@ -89,19 +103,12 @@
         "What’s a pizza topping that most people hate but you secretly love?",
         "Window seat or aisle seat?",
         "What’s the funniest thing you’ve read online recently?",
-        "What would be your elevator pitch to aliens for why they should abduct you?",
-        "In your opinion, what’s the funniest word in the English language?",
-        "What non-dairy item do you think would make a great alternative milk?",
-        "What’s your hot take on a very popular movie or TV show?",
-        "If you were a sitcom character, what would be your catchphrase?",
-        "Who would win in an arm wrestle, you or the person next to you?",
-        // ... [Rest of your questions]
+        // ... [Include all your questions here]
         "If you could have an animal as a sidekick, which would you choose?"
     ];
 
-    // Image sources
+    // Image source
     const initialImageSrc = "ice-cubes.png";
-    const hoverImageSrc = "mallet.png";
     const clickImageSrc = "broken-ice.png";
 
     const widgetImage = document.getElementById('widget-image');
@@ -116,14 +123,6 @@
         const randomIndex = Math.floor(Math.random() * prompts.length);
         return prompts[randomIndex];
     }
-
-    widgetImage.addEventListener('mouseover', () => {
-        widgetImage.src = hoverImageSrc;
-    });
-
-    widgetImage.addEventListener('mouseout', () => {
-        widgetImage.src = initialImageSrc;
-    });
 
     widgetImage.addEventListener('click', () => {
         // Play random portion of the ice sound
@@ -142,6 +141,17 @@
 
     function showIcebreaker() {
         icebreakerText.textContent = getRandomPrompt();
+
+        // Adjust background color randomly within ±10% lightness
+        const baseColor = '#FFFFF0'; // Ivory color
+        const hsl = hexToHsl(baseColor);
+        // Adjust lightness by ±10%
+        const lightnessAdjustment = (Math.random() * 20) - 10; // Random between -10 and +10
+        const newL = Math.min(100, Math.max(0, hsl.l + lightnessAdjustment));
+        const newColor = hslToHex(hsl.h, hsl.s, newL);
+
+        icebreakerCard.style.backgroundColor = newColor;
+
         icebreakerCard.style.display = 'flex';
         icebreakerCard.style.animationName = 'fadeInFlip';
     }
@@ -157,29 +167,99 @@
 
     function playRandomIceSound() {
         const duration = 1.5; // Play 1.5 seconds
-        const totalDuration = iceSound.duration;
 
-        if (isNaN(totalDuration) || totalDuration <= duration) {
-            iceSound.currentTime = 0;
-        } else {
-            const maxStartTime = totalDuration - duration;
+        if (iceSound.readyState >= 2) { // HAVE_CURRENT_DATA
+            const totalDuration = iceSound.duration;
+            const maxStartTime = Math.max(0, totalDuration - duration);
             const randomStartTime = Math.random() * maxStartTime;
             iceSound.currentTime = randomStartTime;
+            iceSound.play();
+
+            setTimeout(() => {
+                iceSound.pause();
+                iceSound.currentTime = 0;
+            }, duration * 1000);
+        } else {
+            iceSound.addEventListener('loadedmetadata', () => {
+                playRandomIceSound();
+            }, { once: true });
         }
-
-        iceSound.play();
-
-        // Stop the sound after 1.5 seconds
-        setTimeout(() => {
-            iceSound.pause();
-            iceSound.currentTime = 0;
-        }, duration * 1000);
     }
 
-    // Ensure the audio duration is loaded before playing
-    iceSound.addEventListener('loadedmetadata', () => {
-        // Now the duration is available
-    });
+    // Helper functions to convert between Hex and HSL
+    function hexToHsl(hex) {
+        // Convert hex to RGB first
+        let r = 0, g = 0, b = 0;
+        if (hex.length == 4) {
+            r = "0x" + hex[1] + hex[1];
+            g = "0x" + hex[2] + hex[2];
+            b = "0x" + hex[3] + hex[3];
+        } else if (hex.length == 7) {
+            r = "0x" + hex[1] + hex[2];
+            g = "0x" + hex[3] + hex[4];
+            b = "0x" + hex[5] + hex[6];
+        }
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        const cmin = Math.min(r,g,b);
+        const cmax = Math.max(r,g,b);
+        const delta = cmax - cmin;
+        let h = 0, s = 0, l = 0;
+
+        if (delta == 0)
+            h = 0;
+        else if (cmax == r)
+            h = ((g - b) / delta) % 6;
+        else if (cmax == g)
+            h = (b - r) / delta + 2;
+        else
+            h = (r - g) / delta + 4;
+
+        h = Math.round(h * 60);
+        if (h < 0)
+            h += 360;
+
+        l = (cmax + cmin) / 2;
+        s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l -1));
+        s = +(s * 100).toFixed(1);
+        l = +(l * 100).toFixed(1);
+
+        return {h, s, l};
+    }
+
+    function hslToHex(h, s, l) {
+        s /= 100;
+        l /= 100;
+        const c = (1 - Math.abs(2 * l - 1)) * s;
+        const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+        const m = l - c/2;
+        let r = 0, g = 0, b = 0;
+
+        if (0 <= h && h < 60) {
+            r = c; g = x; b = 0;
+        } else if (60 <= h && h < 120) {
+            r = x; g = c; b = 0;
+        } else if (120 <= h && h < 180) {
+            r = 0; g = c; b = x;
+        } else if (180 <= h && h < 240) {
+            r = 0; g = x; b = c;
+        } else if (240 <= h && h < 300) {
+            r = x; g = 0; b = c;
+        } else if (300 <= h && h < 360) {
+            r = c; g = 0; b = x;
+        }
+
+        r = Math.round((r + m) * 255);
+        g = Math.round((g + m) * 255);
+        b = Math.round((b + m) * 255);
+
+        const rHex = ("0" + r.toString(16)).slice(-2);
+        const gHex = ("0" + g.toString(16)).slice(-2);
+        const bHex = ("0" + b.toString(16)).slice(-2);
+
+        return "#" + rHex + gHex + bHex;
+    }
 </script>
 
 </body>
