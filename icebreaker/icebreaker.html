@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Icebreaker Widget</title>
     <!-- Include Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=UnifrakturCook:700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap">
     <style>
         html, body {
             height: 100%;
@@ -90,7 +90,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: black;
+            background-color: #3B1C0A; /* Dark coffee brown */
             color: white;
             display: none; /* Hidden by default */
             align-items: center;
@@ -100,13 +100,18 @@
             z-index: 10; /* Ensure it overlays other elements */
             padding: 10px;
             box-sizing: border-box;
+            border-radius: 15px; /* Same corner radius */
         }
         #cover-text {
-            font-family: 'UnifrakturCook', 'Montserrat', Arial, sans-serif;
+            font-family: 'Montserrat', Arial, sans-serif;
             font-size: 1.2em;
             font-weight: bold;
             line-height: 1.4;
+            letter-spacing: 0.05em; /* Same kerning as main card text */
             margin: 0;
+        }
+        #cover-text span {
+            font-weight: normal; /* "Click here" not bold */
         }
         /* Animations for card */
         @keyframes fadeInFlip {
@@ -136,7 +141,10 @@
 <div id="widget-container">
     <!-- Cover Overlay -->
     <div id="cover-overlay">
-        <div id="cover-text">Fun Ice Breaker Questions<br>(click here)</div>
+        <div id="cover-text">
+            Fun Ice Breaker Questions<br><br>
+            <span>Click here</span>
+        </div>
     </div>
     <!-- Ice Cubes Image -->
     <img id="widget-image" src="ice-cubes.png" alt="Ice Cubes">
@@ -224,7 +232,6 @@
         const icebreakerText = document.getElementById('icebreaker-text');
         const iceSound = document.getElementById('ice-sound');
         const coverOverlay = document.getElementById('cover-overlay');
-        const coverText = document.getElementById('cover-text');
 
         // Set initial image source
         widgetImage.src = initialImageSrc;
