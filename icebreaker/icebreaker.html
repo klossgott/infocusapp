@@ -12,15 +12,17 @@
         }
         #widget-container {
             position: relative;
-            width: 200px;
-            height: 200px;
+            width: 200px; /* Adjust the widget width as needed */
+            height: 200px; /* Adjust the widget height as needed */
             margin: 0 auto;
             background: transparent;
         }
         #widget-image {
             width: 100%;
             height: 100%;
+            object-fit: contain; /* Ensures the image scales to fit without distortion */
             cursor: pointer;
+            display: block;
         }
         #icebreaker-card {
             position: absolute;
@@ -41,7 +43,7 @@
         }
         #icebreaker-text {
             font-family: Arial, sans-serif;
-            font-size: 1.2em;
+            font-size: 1em;
             color: #333;
         }
         /* Animations */
@@ -78,14 +80,14 @@
 
 <script>
     const prompts = [
-        // [Include your list of icebreaker questions here]
+        // Include your list of icebreaker questions here
         "What’s the weirdest movie you’ve ever seen?",
         "What’s a pizza topping that most people hate but you secretly love?",
-        // ... [Rest of your questions]
+        // ... rest of your questions
         "If you could have an animal as a sidekick, which would you choose?"
     ];
 
-    // Updated Image Sources with Correct Paths
+    // Image sources
     const initialImageSrc = "https://klossgott.github.io/infocusapp/icebreaker/ice-cubes.png";
     const hoverImageSrc = "https://klossgott.github.io/infocusapp/icebreaker/mallet.png";
     const clickImageSrc = "https://klossgott.github.io/infocusapp/icebreaker/broken-ice.png";
