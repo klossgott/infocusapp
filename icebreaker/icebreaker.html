@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Icebreaker Widget</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+        }
+        #widget-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            background: transparent;
+        }
+        #widget-image {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        #icebreaker-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 15px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+        }
+        #icebreaker-text {
+            font-family: Arial, sans-serif;
+            font-size: 1.2em;
+            color: #333;
+        }
+        /* Animations */
+        @keyframes fadeInFlip {
+            0% {
+                opacity: 0;
+                transform: rotateY(90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: rotateY(0deg);
+            }
+        }
+        @keyframes fadeOutFlip {
+            0% {
+                opacity: 1;
+                transform: rotateY(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: rotateY(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="widget-container">
+    <img id="widget-image" src="" alt="Ice Cubes">
+    <div id="icebreaker-card">
+        <div id="icebreaker-text"></div>
+    </div>
+</div>
+
+<script>
+    const prompts = [
+        // [Include your list of icebreaker questions here]
+        "What’s the weirdest movie you’ve ever seen?",
+        "What’s a pizza topping that most people hate but you secretly love?",
+        // ... [Rest of the questions]
+        "If you could have an animal as a sidekick, which would you choose?"
+    ];
+
+    // Base64 Encoded Images
+    const initialImageSrc = "data:image/png;base64, [Base64 code for ice-cubes.png]";
+    const hoverImageSrc = "data:image/png;base64, [Base64 code for mallet.png]";
+    const clickImageSrc = "data:image/png;base64, [Base64 code for broken-ice.png]";
+
+    const widgetImage = document.getElementById('widget-image');
+    const icebreakerCard = document.getElementById('icebreaker-card');
+    const icebreakerText = document.getElementById('icebreaker-text');
+
+    // Set initial image source
+    widgetImage.src = initialImageSrc;
+
+    function getRandomPrompt() {
+        const randomIndex = Math.floor(Math.random() * prompts.length);
+        return prompts[randomIndex];
+    }
+
+    widgetImage.addEventListener('mouseover', () => {
+        widgetImage.src = hoverImageSrc;
+    });
+
+    widgetImage.addEventListener('mouseout', () => {
+        widgetImage.src = initialImageSrc;
+    });
+
+    widgetImage.addEventListener('click', () => {
+        widgetImage.src = clickImageSrc;
+        setTimeout(() => {
+            widgetImage.style.display = 'none';
+            showIcebreaker();
+        }, 500); // Adjust the delay as needed
+    });
+
+    function showIcebreaker() {
+        icebreakerText.textContent = getRandomPrompt();
+        icebreakerCard.style.display = 'flex';
+        icebreakerCard.style.animationName = 'fadeInFlip';
+    }
+
+    icebreakerCard.addEventListener('click', () => {
+        icebreakerCard.style.animationName = 'fadeOutFlip';
+        icebreakerCard.addEventListener('animationend', () => {
+            icebreakerCard.style.display = 'none';
+            widgetImage.src = initialImageSrc;
+            widgetImage.style.display = 'block';
+        }, { once: true });
+    });
+</script>
+
+</body>
+</html>
