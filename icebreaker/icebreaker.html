@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Icebreaker Widget</title>
     <!-- Include Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
     <style>
         html, body {
             height: 100%;
@@ -22,6 +22,7 @@
             height: 180px; /* Fixed height for 16:9 aspect ratio */
             background: transparent;
             overflow: hidden; /* Ensure content stays within the container */
+            perspective: 1000px; /* Add perspective for 3D rotations */
         }
         #widget-image {
             position: absolute;
@@ -72,13 +73,14 @@
             overflow: hidden;
             transform: translate(-50%, -50%); /* Center the card */
             transform-origin: center center; /* Ensure flip happens around center */
+            backface-visibility: hidden;
         }
         #icebreaker-text {
             font-family: 'Montserrat', Arial, sans-serif;
             font-size: 1em;
             color: #333;
             line-height: 1.5;
-            font-weight: bold;
+            font-weight: normal; /* Regular font weight */
             letter-spacing: 0.05em; /* Increase kerning by 5% */
             margin: 0;
             background: transparent;
@@ -86,13 +88,13 @@
         /* Cover overlay */
         #cover-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 50%;
+            left: 50%;
+            width: 320px; /* Same as container width */
+            height: 180px; /* Same as container height */
             background-color: #3B1C0A; /* Dark coffee brown */
             color: white;
-            display: none; /* Hidden by default */
+            display: flex; /* Displayed by default for animation */
             align-items: center;
             justify-content: center;
             text-align: center;
@@ -101,6 +103,10 @@
             padding: 10px;
             box-sizing: border-box;
             border-radius: 15px; /* Same corner radius */
+            transform: translate(-50%, -50%); /* Center the overlay */
+            transform-origin: center center;
+            animation: coverFadeIn 1s forwards; /* Fade-in animation */
+            backface-visibility: hidden;
         }
         #cover-text {
             font-family: 'Montserrat', Arial, sans-serif;
@@ -113,7 +119,28 @@
         #cover-text span {
             font-weight: normal; /* "Click here" not bold */
         }
-        /* Animations for card */
+        /* Animations for cover overlay */
+        @keyframes coverFadeIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotateY(-90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
+        }
+        @keyframes coverFadeOutFlip {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotateY(90deg);
+            }
+        }
+        /* Animations for icebreaker card */
         @keyframes fadeInFlip {
             0% {
                 opacity: 0;
@@ -142,7 +169,8 @@
     <!-- Cover Overlay -->
     <div id="cover-overlay">
         <div id="cover-text">
-            Fun Ice Breaker Questions<br><br>
+            Fun Ice Breaker<br>
+            Questions<br><br>
             <span>Click here</span>
         </div>
     </div>
@@ -239,16 +267,20 @@
         // Check if it's the first time the widget is loaded
         const isFirstTime = !localStorage.getItem('icebreakerWidgetSeen');
 
-        if (isFirstTime) {
-            // Display the cover overlay
-            coverOverlay.style.display = 'flex';
+        if (!isFirstTime) {
+            // Hide the cover overlay if it's not the first time
+            coverOverlay.style.display = 'none';
         }
 
         coverOverlay.addEventListener('click', () => {
-            // Hide the cover overlay
-            coverOverlay.style.display = 'none';
-            // Set the flag in localStorage
-            localStorage.setItem('icebreakerWidgetSeen', 'true');
+            // Apply the fade-out flip animation
+            coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
+            coverOverlay.addEventListener('animationend', () => {
+                // Hide the cover overlay after animation
+                coverOverlay.style.display = 'none';
+                // Set the flag in localStorage
+                localStorage.setItem('icebreakerWidgetSeen', 'true');
+            }, { once: true });
         });
 
         function getRandomPrompt() {
