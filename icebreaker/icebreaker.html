@@ -267,7 +267,12 @@
         // Check if it's the first time the widget is loaded
         const isFirstTime = !localStorage.getItem('icebreakerWidgetSeen');
 
-        if (!isFirstTime) {
+        if (isFirstTime) {
+            // Display the cover overlay
+            coverOverlay.style.display = 'flex';
+            // Start the fade-in animation
+            coverOverlay.style.animation = 'coverFadeIn 1s forwards';
+        } else {
             // Hide the cover overlay if it's not the first time
             coverOverlay.style.display = 'none';
         }
