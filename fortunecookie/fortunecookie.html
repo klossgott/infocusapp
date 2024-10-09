@@ -1,1 +1,246 @@
-html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Virtual Fortune Cookie Widget</title>
+    <!-- Use a web-safe font -->
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #widget-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            background: transparent;
+        }
+        /* Fortune Cookie Images */
+        .cookie {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px; /* Adjust as needed */
+            height: auto;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+        #cookie-left, #cookie-right {
+            display: none;
+        }
+        #cookie-left {
+            transform-origin: right center;
+        }
+        #cookie-right {
+            transform-origin: left center;
+        }
+        /* Fortune Slip */
+        #fortune-slip {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 20px; /* Adjust as needed */
+            background-color: #F8F0E3;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, opacity 0.5s ease;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+            padding: 0 10px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<div id="widget-container">
+    <!-- Whole Fortune Cookie Image -->
+    <img id="cookie-whole" class="cookie" src="fortune-cookie-whole-1.png" alt="Fortune Cookie">
+    <!-- Left and Right Cookie Halves -->
+    <img id="cookie-left" class="cookie" src="fortune-cookie-left.png" alt="Fortune Cookie Left Half">
+    <img id="cookie-right" class="cookie" src="fortune-cookie-right.png" alt="Fortune Cookie Right Half">
+    <!-- Fortune Slip -->
+    <div id="fortune-slip">Your fortune appears here</div>
+</div>
+
+<!-- Audio element for the cookie cracking sound -->
+<audio id="cookie-sound" src="ice-10-104149.mp3" preload="auto"></audio>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fortunes = [
+            // Inspirational Fortunes
+            "Adventure awaits you this week.",
+            "A pleasant surprise is in store for you.",
+            "Your hard work will soon pay off.",
+            "Embrace unexpected opportunities.",
+            "Trust your instincts; they lead to success.",
+            "Good news will come to you from afar.",
+            "A new friendship will bring joy to your life.",
+            "You are capable of achieving great things.",
+            "Positive thoughts attract positive outcomes.",
+            "Your creativity will inspire others.",
+            "Always be kind. Have a good attitude. Never give up.",
+            "You can create your own happiness.",
+            "May your cookie jar overflow with goodies.",
+            "There is great love in your future.",
+            "Love is like oxygen. You need it to survive.",
+            "The best way to defeat an enemy is to become their friend.",
+            "The time is right to make new friends.",
+            "A warm smile is testimony of a generous nature.",
+            "Take the time to invest in yourself today.",
+            "You will live a long, happy life.",
+            "Life's journey is always an adventure.",
+            "A single kind word will keep one warm for years.",
+            "Always be loyal to your friends.",
+            "Be alert, practical, and honest.",
+            "Appreciate your own uniqueness and talents.",
+            "Say yes to exciting opportunities.",
+            "Mistakes happen. Turn them into opportunities.",
+            "Be efficient with things. With people, be effective.",
+            "Love always and deeply.",
+            "Your heart is a place to draw true happiness.",
+            "It's not the destination; it's the journey.",
+            "Before honor is humility.",
+            "To love is to forgive.",
+            "Good ideas come free of charge.",
+            "In the middle of difficulty lies opportunity.",
+            "A good example is the best sermon.",
+            "Do everything with confidence.",
+            "Your flair for the creative takes an important place in your life.",
+            // Humorous Fortunes
+            "You will soon find the missing sock.",
+            "An alien of some sort will be appearing to you shortly.",
+            "Today is the day you answer 'maybe' to every question.",
+            "Your fortune is in another cookie.",
+            "Help! I'm trapped in a fortune cookie factory.",
+            "A closed mouth gathers no feet.",
+            "You will be hungry again in one hour.",
+            "Change is inevitable, except from vending machines.",
+            "Avoid taking unnecessary gambles. Lucky numbers: 12, 15, 23, 28, 37.",
+            "A clean conscience is a soft pillow.",
+            "A razor-sharp weapon is an extension to a razor-sharp mind.",
+            "What is weird? Someone who is different or someone that is different from you?",
+            "A problem is an opportunity in backwards disguise.",
+            "All people smile in the same language.",
+            // Cryptic Fortunes
+            "The early bird gets the worm, but the second mouse gets the cheese.",
+            "He who laughs last is laughing at you.",
+            "A conclusion is simply the place where you got tired of thinking.",
+            "The wheel of fortune is spinning in your favor.",
+            "A golden egg of opportunity falls into your lap this month.",
+            "A wise person knows there is something to be learned from everyone.",
+            "Hidden treasures will be found where least expected.",
+            "A mystery will soon be revealed to you.",
+            "The fortune teller knows your fortune, but won't tell.",
+            "Your path is more intricate than you imagine.",
+            "In each and every one of us, there are obstacles that hold us back. Only when you conquer that fear, will your heart be free.",
+            "Find and control your element.",
+            "Learn to wield many types of weapons.",
+            "Master the art of stealth.",
+            "May life throw you a pleasant curve.",
+            // Other Fortunes
+            "Never put off for tomorrow what could be done today.",
+            "You won't know until you try.",
+            "When it is all over, then we will see who laughs last.",
+            "Even a lesson learned the hard way is a lesson learned.",
+            "Do not mistake temptation for opportunity."
+        ];
+
+        const widgetContainer = document.getElementById('widget-container');
+        const cookieWhole = document.getElementById('cookie-whole');
+        const cookieLeft = document.getElementById('cookie-left');
+        const cookieRight = document.getElementById('cookie-right');
+        const fortuneSlip = document.getElementById('fortune-slip');
+        const cookieSound = document.getElementById('cookie-sound');
+
+        // Adjust sound volume and duration
+        cookieSound.volume = 0.5;
+
+        // Randomly select whole cookie image
+        const wholeCookieImages = [
+            "fortune-cookie-whole-1.png",
+            "fortune-cookie-whole-2.png"
+        ];
+        function setRandomWholeCookie() {
+            const randomWholeCookie = wholeCookieImages[Math.floor(Math.random() * wholeCookieImages.length)];
+            cookieWhole.src = randomWholeCookie;
+        }
+        setRandomWholeCookie();
+
+        cookieWhole.addEventListener('click', function() {
+            // Play sound for 0.25 of its duration
+            cookieSound.currentTime = 0;
+            cookieSound.play();
+            setTimeout(() => {
+                cookieSound.pause();
+            }, (cookieSound.duration * 0.25) * 1000);
+
+            // Hide whole cookie
+            cookieWhole.style.display = 'none';
+
+            // Show cookie halves
+            cookieLeft.style.display = 'block';
+            cookieRight.style.display = 'block';
+
+            // Position cookie halves to look like a whole cookie
+            cookieLeft.style.transform = 'translate(-50%, -50%) rotate(45deg)';
+            cookieRight.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+
+            // Animate cookie halves moving apart
+            setTimeout(() => {
+                cookieLeft.style.transition = 'transform 0.5s ease';
+                cookieRight.style.transition = 'transform 0.5s ease';
+                cookieLeft.style.transform = 'translate(-150%, -50%) rotate(30deg)';
+                cookieRight.style.transform = 'translate(50%, -50%) rotate(-30deg)';
+            }, 50);
+
+            // Show fortune slip
+            const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+            fortuneSlip.textContent = randomFortune;
+
+            setTimeout(() => {
+                fortuneSlip.style.opacity = 1;
+                fortuneSlip.style.width = '180px'; // Adjust as needed
+            }, 500);
+        });
+
+        // Reset widget on clicking fortune slip
+        fortuneSlip.addEventListener('click', function() {
+            // Hide fortune slip
+            fortuneSlip.style.opacity = 0;
+            fortuneSlip.style.width = '0';
+
+            // Hide cookie halves
+            cookieLeft.style.display = 'none';
+            cookieRight.style.display = 'none';
+
+            // Reset cookie halves position
+            cookieLeft.style.transform = 'translate(-50%, -50%) rotate(45deg)';
+            cookieRight.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+            cookieLeft.style.transition = 'none';
+            cookieRight.style.transition = 'none';
+
+            // Show whole cookie with new random image
+            setRandomWholeCookie();
+            cookieWhole.style.display = 'block';
+        });
+    });
+</script>
+
+</body>
+</html>
