@@ -16,8 +16,10 @@
         }
 
         .square-container {
-            width: 300px;
-            height: 300px;
+            width: 90vw;
+            max-width: 300px;
+            height: 90vh;
+            max-height: 300px;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -28,8 +30,8 @@
         #container {
             text-align: center;
             position: relative;
-            height: 120px;
-            width: 200px;
+            height: auto;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -37,11 +39,8 @@
         }
 
         #displayArea {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
+            position: relative;
+            width: 100%;
             height: 60px;
             display: flex;
             align-items: center;
@@ -50,11 +49,12 @@
 
         #timeInput {
             font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
-            font-size: 48px;
+            font-size: 8vw;
+            max-width: 200px;
             border: none;
             background: transparent;
             text-align: center;
-            width: 200px;
+            width: 100%;
             outline: none;
             padding: 0;
             margin: 0;
@@ -69,13 +69,13 @@
 
         #timer, #thumbsUp, #error {
             position: absolute;
-            font-size: 48px;
-            width: 200px;
+            font-size: 8vw;
+            max-width: 200px;
             text-align: center;
             opacity: 0;
             transition: opacity 1s;
             font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
-            pointer-events: none; /* Prevent blocking clicks when hidden */
+            pointer-events: none;
         }
 
         #timer.flash {
@@ -97,7 +97,7 @@
         }
 
         .shake {
-            animation: shake 0.2s; /* Apply shake animation */
+            animation: shake 0.2s;
         }
 
         /* Add zoom animation */
@@ -114,10 +114,11 @@
         }
 
         button {
-            font-family: 'Noto Emoji', sans-serif; /* Apply Noto Emoji font to buttons */
+            font-family: 'Noto Emoji', sans-serif;
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 6vw;
+            max-width: 50px;
             padding: 10px;
             cursor: pointer;
             opacity: 0.5;
@@ -140,7 +141,8 @@
 
         #error {
             color: black;
-            font-size: 14px;
+            font-size: 3vw;
+            max-width: 200px;
             position: absolute;
             width: 100%;
             text-align: center;
@@ -165,9 +167,9 @@
             </div>
         </div>
         <div id="controls">
-            <button id="playBtn" class="active">▶</button>
-            <button id="pauseBtn">⏸</button>
-            <button id="stopBtn">■</button>
+            <button id="playBtn" class="active">▶️</button>
+            <button id="pauseBtn">⏸️</button>
+            <button id="stopBtn">⏹️</button>
         </div>
     </div>
 
@@ -201,14 +203,17 @@
         }
 
         function playCuteQuirkySound() {
-            const baseFrequency = 800; // High frequency for cuteness
-            const harmonyRatios = [1, 1.25, 1.5]; // Unison, major third, perfect fifth
-            const durations = [1.5, 1.0, 2.0]; // Durations for each note
-            const volumes = [0.2, 0.4, 0.15]; // Volumes for each note
+            if (!audioContext) initAudio();
+
+            const baseFrequency = 600; // Adjusted for a cute sound
+            const harmonyRatios = [1, 1.2, 1.5, 1.6]; // Harmonious intervals
+            const volumes = [0.2, 0.4, 0.15, 0.1]; // Volumes for each note
+            const durations = [1.0, 0.5, 1.5, 2.0]; // Durations for each note
 
             for (let i = 0; i < 3; i++) {
                 setTimeout(() => {
-                    const frequency = baseFrequency * harmonyRatios[i];
+                    const ratio = harmonyRatios[Math.floor(Math.random() * harmonyRatios.length)];
+                    const frequency = baseFrequency * ratio;
 
                     const oscillator = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
@@ -216,14 +221,14 @@
                     oscillator.connect(gainNode);
                     gainNode.connect(audioContext.destination);
 
-                    oscillator.type = 'sine'; // Sine wave for a cute sound
+                    oscillator.type = 'sine';
                     oscillator.frequency.value = frequency;
 
                     const now = audioContext.currentTime;
 
                     gainNode.gain.setValueAtTime(0, now);
-                    gainNode.gain.linearRampToValueAtTime(volumes[i], now + 0.01); // Sharp attack
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + durations[i]); // Decay
+                    gainNode.gain.linearRampToValueAtTime(volumes[i], now + 0.01);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + durations[i]);
 
                     oscillator.start(now);
                     oscillator.stop(now + durations[i]);
@@ -234,7 +239,7 @@
                         timer.classList.remove('shake');
                     }, 200);
 
-                }, i * 500);
+                }, i * 400); // Shortened interval for better rhythm
             }
         }
 
@@ -310,7 +315,7 @@
                 timer.style.animation = '';
                 timer.classList.remove('flash');
                 isPaused = false;
-                pauseBtn.textContent = '⏸';
+                pauseBtn.textContent = '⏸️';
                 timer.removeEventListener('animationend', onTimerAnimationEnd);
 
                 setTimeout(() => {
@@ -362,7 +367,7 @@
         pauseBtn.addEventListener('click', () => {
             if (pauseBtn.classList.contains('active')) {
                 isPaused = !isPaused;
-                pauseBtn.textContent = isPaused ? '▶' : '⏸';
+                pauseBtn.textContent = isPaused ? '▶️' : '⏸️';
             }
         });
 
@@ -378,7 +383,7 @@
             timer.style.pointerEvents = 'none';
             timer.classList.remove('flash');
             isPaused = false;
-            pauseBtn.textContent = '⏸';
+            pauseBtn.textContent = '⏸️';
 
             setTimeout(() => {
                 thumbsUp.style.opacity = '1';
