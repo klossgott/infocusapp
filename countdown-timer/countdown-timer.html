@@ -20,13 +20,14 @@
             position: relative;
             cursor: pointer;
         }
-        #timer {
+        #timer, #countdownInput {
             font-size: 3em;
             margin-top: 20px;
             opacity: 1;
             transition: opacity 2s ease-in-out, font-weight 0.5s ease-in-out;
             letter-spacing: 0.1em;
             font-family: 'Futura', sans-serif;
+            text-align: center;
         }
         .flashing {
             animation: smoothFlash 2s infinite alternate;
@@ -43,21 +44,16 @@
             cursor: pointer;
             margin: 10px;
             color: black;
-            opacity: 0;
+            opacity: 0.3;
             transition: opacity 0.3s ease-in-out;
             font-family: 'Noto Emoji', sans-serif;
         }
-        #timer-container:hover .control-button {
+        .control-button.active {
             opacity: 1;
+            pointer-events: all;
         }
-        #countdownInput {
-            text-align: center;
-            border: none;
-            font-size: 1.5em;
-            margin-top: 10px;
+        #timer-container:hover .control-button.active {
             opacity: 1;
-            transition: opacity 2s ease-in-out;
-            font-family: 'Futura', sans-serif;
         }
         #countdownInput.hidden {
             opacity: 0;
@@ -131,17 +127,23 @@
         function stopCountdown() {
             clearInterval(timerInterval);
             document.getElementById('timer').classList.remove('flashing');
-            document.getElementById('timer').style.visibility = 'hidden'; // Fade out timer for thumbs up
+            document.getElementById('timer').style.opacity = '0'; // Fade out timer for thumbs up
             timerRunning = false;
             timerPaused = false;
-            document.getElementById('countdownInput').classList.remove('hidden');
 
-            // Show thumbs up on stop
+            // Show reload icon in place of the timer
+            document.getElementById('timer').innerHTML = "↺";
+            document.getElementById('timer').style.opacity = '1';
+
+            document.getElementById('timer').addEventListener('click', showThumbsUpAndReset);
+        }
+
+        function showThumbsUpAndReset() {
             const thumbsUp = document.getElementById('thumbs-up');
             thumbsUp.style.opacity = '1';
             setTimeout(() => {
                 thumbsUp.style.opacity = '0';
-                document.getElementById('timer').style.visibility = 'visible'; // Fade back in timer
+                resetCountdown();
             }, 2000);
         }
 
@@ -149,7 +151,6 @@
             clearInterval(timerInterval);
             document.getElementById('timer').innerHTML = "0:00";
             document.getElementById('timer').classList.remove('flashing');
-            document.getElementById('timer').style.visibility = 'visible';
             document.getElementById('timer').style.opacity = '1';
             timerRunning = false;
             timerPaused = false;
@@ -216,14 +217,17 @@
             document.getElementById('stopButton').addEventListener('click', stopCountdown);
             document.getElementById('resetButton').addEventListener('click', resetCountdown);
             document.getElementById('pauseButton').addEventListener('click', togglePauseCountdown);
-            document.getElementById('timer-container').addEventListener('click', function() {
-                if (timerRunning && !timerPaused) {
-                    togglePauseCountdown();
-                } else if (timerPaused) {
-                    togglePauseCountdown();
-                } else {
+            document.getElementById('countdownInput').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
                     setCountdown();
                 }
+            });
+            document.getElementById('countdownInput').addEventListener('input', function() {
+                // Activate Play button and gray out others
+                document.getElementById('startButton').classList.add('active');
+                document.getElementById('stopButton').classList.remove('active');
+                document.getElementById('pauseButton').classList.remove('active');
+                document.getElementById('resetButton').classList.remove('active');
             });
         };
     </script>
