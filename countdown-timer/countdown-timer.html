@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Futura:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Futura', Arial, sans-serif;
             background: transparent;
             color: black;
             text-align: center;
@@ -26,6 +26,7 @@
             opacity: 1;
             transition: opacity 2s ease-in-out, font-weight 0.5s ease-in-out;
             letter-spacing: 0.1em;
+            font-family: 'Futura', sans-serif;
         }
         .flashing {
             animation: smoothFlash 2s infinite alternate;
@@ -44,7 +45,7 @@
             color: black;
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
-            font-family: 'Noto Sans', sans-serif;
+            font-family: 'Noto Emoji', sans-serif;
         }
         #timer-container:hover .control-button {
             opacity: 1;
@@ -56,6 +57,7 @@
             margin-top: 10px;
             opacity: 1;
             transition: opacity 2s ease-in-out;
+            font-family: 'Futura', sans-serif;
         }
         #countdownInput.hidden {
             opacity: 0;
@@ -65,7 +67,8 @@
             color: black;
             font-size: 1em;
             margin-top: 5px;
-            display: none;
+            display: block;
+            font-family: 'Futura', sans-serif;
         }
         #thumbs-up {
             position: absolute;
@@ -75,6 +78,7 @@
             font-size: 4em;
             opacity: 0;
             transition: opacity 2s ease-in-out;
+            font-family: 'Noto Emoji', sans-serif;
         }
     </style>
     <script>
@@ -127,7 +131,7 @@
         function stopCountdown() {
             clearInterval(timerInterval);
             document.getElementById('timer').classList.remove('flashing');
-            document.getElementById('timer').style.visibility = 'visible';
+            document.getElementById('timer').style.visibility = 'hidden'; // Fade out timer for thumbs up
             timerRunning = false;
             timerPaused = false;
             document.getElementById('countdownInput').classList.remove('hidden');
@@ -137,6 +141,7 @@
             thumbsUp.style.opacity = '1';
             setTimeout(() => {
                 thumbsUp.style.opacity = '0';
+                document.getElementById('timer').style.visibility = 'visible'; // Fade back in timer
             }, 2000);
         }
 
@@ -178,7 +183,7 @@
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const gainNode = audioCtx.createGain();
             gainNode.connect(audioCtx.destination);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Set initial volume
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); // Set initial volume for a soft sound
 
             // Function to play a note with a given frequency and duration
             function playNoteWithFade(frequency, duration, delay) {
@@ -231,10 +236,10 @@
             <input type="number" id="countdownInput" placeholder="How long?" min="1">
             <div id="error-message"></div>
             <div>
-                <button id="startButton" class="control-button">▶ Start</button>
-                <button id="stopButton" class="control-button">■ Stop</button>
-                <button id="pauseButton" class="control-button">⏸ Pause/▶ Resume</button>
-                <button id="resetButton" class="control-button">↺ Reset</button>
+                <button id="startButton" class="control-button">▶</button>
+                <button id="stopButton" class="control-button">■</button>
+                <button id="pauseButton" class="control-button">⏸</button>
+                <button id="resetButton" class="control-button">↺</button>
             </div>
         </div>
     </div>
