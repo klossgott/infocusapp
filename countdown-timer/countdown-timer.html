@@ -5,62 +5,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown Timer</title>
-    <script>
-        function fetchCountdownData() {
-            const countdowns = {
-                "default": {
-                    "endDate": "2024-12-31T23:59:59",
-                    "backgroundImage": ""
-                },
-                "event1": {
-                    "endDate": "2025-01-01T00:00:00",
-                    "backgroundImage": ""
-                }
-            };
-            return countdowns;
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
+        #timer {
+            font-size: 3em;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .flashing {
+            animation: flash 1s infinite alternate;
+        }
+        @keyframes flash {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+    <script>
+        let timerInterval;
+        let isFlashing = false;
+        let flashingSpeed = 1000; // Initial flashing speed
 
-        function startCountdown(name) {
-            const countdowns = fetchCountdownData();
-            const countdown = countdowns[name];
-            if (!countdown) {
-                document.getElementById('timer').innerHTML = "Countdown not found";
-                return;
-            }
-            const endDate = new Date(countdown.endDate);
-            
+        function startCountdown(duration) {
+            clearInterval(timerInterval);
+            const endDate = new Date().getTime() + duration * 1000;
+            isFlashing = false;
+            flashingSpeed = 1000;
+            document.getElementById('timer').classList.remove('flashing');
+
             function updateTimer() {
                 const now = new Date().getTime();
                 const distance = endDate - now;
 
                 if (distance < 0) {
-                    document.getElementById('timer').innerHTML = "Countdown Ended";
+                    document.getElementById('timer').innerHTML = "Time's Up!";
+                    document.getElementById('timer').classList.add('flashing');
                     clearInterval(timerInterval);
+                    rapidFlash();
                     return;
                 }
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                document.getElementById('timer').innerHTML = 
-                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                document.getElementById('timer').innerHTML = `${minutes}m ${seconds}s`;
+
+                if (distance < 10000 && !isFlashing) { // Start flashing when less than 10 seconds left
+                    isFlashing = true;
+                    flashingSpeed = 500;
+                    document.getElementById('timer').classList.add('flashing');
+                    document.querySelector("@keyframes flash").style.animationDuration = `${flashingSpeed}ms`;
+                }
             }
 
-            const timerInterval = setInterval(updateTimer, 1000);
+            timerInterval = setInterval(updateTimer, 1000);
             updateTimer();
         }
 
+        function rapidFlash() {
+            setInterval(() => {
+                document.getElementById('timer').style.visibility = document.getElementById('timer').style.visibility === 'hidden' ? 'visible' : 'hidden';
+            }, 100);
+        }
+
+        function stopCountdown() {
+            clearInterval(timerInterval);
+            document.getElementById('timer').classList.remove('flashing');
+            document.getElementById('timer').style.visibility = 'visible';
+        }
+
+        function setCountdown() {
+            const minutes = parseInt(prompt("Enter countdown time in minutes:"), 10);
+            if (!isNaN(minutes)) {
+                startCountdown(minutes * 60);
+            }
+        }
+
         window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const timerName = urlParams.get('name') || 'default';
-            startCountdown(timerName);
+            document.getElementById('startButton').addEventListener('click', setCountdown);
+            document.getElementById('stopButton').addEventListener('click', stopCountdown);
         };
     </script>
 </head>
 <body>
     <h1>Countdown Timer</h1>
-    <div id="timer"></div>
+    <div id="timer">0m 0s</div>
+    <div style="text-align: center; margin-top: 20px;">
+        <button id="startButton">Start Countdown</button>
+        <button id="stopButton">Stop Countdown</button>
+    </div>
 </body>
 </html>
