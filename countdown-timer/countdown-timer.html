@@ -3,7 +3,7 @@
 <head>
     <title>Countdown Timer</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Emoji&display=swap');
 
         body {
             display: flex;
@@ -74,7 +74,7 @@
             text-align: center;
             opacity: 0;
             transition: opacity 1s;
-            font-family: 'Noto Color Emoji', sans-serif; /* Ensure Noto Emoji font is used */
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif; /* Ensure Futura font is used */
         }
 
         #timer.flash {
@@ -86,6 +86,21 @@
             50% { opacity: 0.5; }
         }
 
+        /* Add shake animation */
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-1px, 0); }
+            50% { transform: translate(1px, 0); }
+            75% { transform: translate(-1px, 0); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Add zoom animation */
+        @keyframes zoomOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.2); opacity: 0; }
+        }
+
         #controls {
             margin-top: 20px;
             display: flex;
@@ -94,7 +109,7 @@
         }
 
         button {
-            font-family: 'Noto Color Emoji', sans-serif; /* Apply Noto Emoji font to buttons */
+            font-family: 'Noto Emoji', sans-serif; /* Apply Noto Emoji font to buttons */
             background: none;
             border: none;
             font-size: 24px;
@@ -160,172 +175,4 @@
         const error = document.getElementById('error');
         const playBtn = document.getElementById('playBtn');
         const pauseBtn = document.getElementById('pauseBtn');
-        const stopBtn = document.getElementById('stopBtn');
-
-        let countdown;
-        let timeLeft;
-        let isPaused = false;
-
-        // Show input field on load
-        window.onload = () => {
-            setTimeout(() => {
-                timeInput.style.opacity = '1';
-                timeInput.focus();
-            }, 100);
-        };
-
-        // Audio context and sounds
-        let audioContext;
-
-        function initAudio() {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        function playGlockenspielSound() {
-            const baseFrequencies = [880, 1046.5]; // High frequencies (A5 and C6)
-            const harmonyRatios = [1, 1.5]; // Unison and perfect fifth (1:1 and 3:2 ratios)
-            const baseFrequency = baseFrequencies[Math.floor(Math.random() * baseFrequencies.length)];
-
-            for (let i = 0; i < harmonyRatios.length; i++) {
-                setTimeout(() => {
-                    const frequency = baseFrequency * harmonyRatios[i];
-
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-
-                    oscillator.type = 'triangle'; // Triangle wave for metallic sound
-                    oscillator.frequency.value = frequency;
-
-                    const now = audioContext.currentTime;
-
-                    gainNode.gain.setValueAtTime(0, now);
-                    gainNode.gain.linearRampToValueAtTime(0.8, now + 0.01); // Sharp attack
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 2); // Long decay (echo)
-
-                    oscillator.start(now);
-                    oscillator.stop(now + 2); // Stop after decay
-
-                }, i * 500);
-            }
-        }
-
-        function showError() {
-            timeInput.style.opacity = '0';
-            setTimeout(() => {
-                error.style.opacity = '1';
-                setTimeout(() => {
-                    error.style.opacity = '0';
-                    setTimeout(() => {
-                        timeInput.value = '';
-                        timeInput.style.opacity = '1';
-                        timeInput.focus();
-                    }, 1000);
-                }, 2000);
-            }, 1000);
-        }
-
-        function startTimer(minutes) {
-            if (!audioContext) initAudio();
-
-            clearInterval(countdown);
-            timeLeft = minutes * 60;
-
-            timeInput.style.opacity = '0';
-            timeInput.blur();
-
-            setTimeout(() => {
-                timer.style.opacity = '1';
-                updateButtons(true);
-            }, 1000);
-
-            countdown = setInterval(() => {
-                if (!isPaused) {
-                    timeLeft--;
-                    updateDisplay();
-
-                    if (timeLeft <= 10) {
-                        timer.classList.add('flash');
-                    }
-
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        playGlockenspielSound(); // Use the new sound function
-                        stopTimer();
-                    }
-                }
-            }, 1000);
-        }
-
-        function updateDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        function stopTimer() {
-            clearInterval(countdown);
-            timer.style.opacity = '0';
-            timer.classList.remove('flash');
-            isPaused = false;
-            pauseBtn.textContent = '⏸';
-
-            setTimeout(() => {
-                thumbsUp.style.opacity = '1';
-                setTimeout(() => {
-                    thumbsUp.style.opacity = '0';
-                    setTimeout(() => {
-                        timeInput.value = '';
-                        timeInput.style.opacity = '1';
-                        timeInput.focus();
-                        updateButtons(false);
-                    }, 1000);
-                }, 2000);
-            }, 1000);
-        }
-
-        function updateButtons(isRunning) {
-            playBtn.classList.toggle('active', !isRunning);
-            pauseBtn.classList.toggle('active', isRunning);
-            stopBtn.classList.toggle('active', isRunning);
-        }
-
-        function validateAndStart() {
-            const minutes = parseFloat(timeInput.value);
-            if (minutes > 0) {
-                startTimer(minutes);
-            } else {
-                showError();
-            }
-        }
-
-        // Event Listeners
-        timeInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                validateAndStart();
-            }
-        });
-
-        playBtn.addEventListener('click', () => {
-            if (playBtn.classList.contains('active')) {
-                validateAndStart();
-            }
-        });
-
-        pauseBtn.addEventListener('click', () => {
-            if (pauseBtn.classList.contains('active')) {
-                isPaused = !isPaused;
-                pauseBtn.textContent = isPaused ? '▶' : '⏸';
-            }
-        });
-
-        stopBtn.addEventListener('click', () => {
-            if (stopBtn.classList.contains('active')) {
-                stopTimer();
-            }
-        });
-    </script>
-</body>
-</html>
+        const stopBtn = document.getElementBy
