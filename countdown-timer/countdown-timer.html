@@ -1,249 +1,325 @@
-<!-- Front-end: index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Futura:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji&display=swap" rel="stylesheet">
+    <title>Countdown Timer</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+        
         body {
-            font-family: 'Futura', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
             background: transparent;
-            color: black;
-            text-align: center;
         }
-        #timer-container {
-            display: inline-block;
-            padding: 20px;
+
+        .square-container {
+            width: 300px;
+            height: 300px;
             position: relative;
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        #timer, #countdownInput {
-            font-size: 3em;
-            margin-top: 20px;
-            opacity: 0;
-            transition: opacity 3s ease-in-out, font-weight 0.5s ease-in-out;
-            letter-spacing: 0.1em;
-            font-family: 'Futura', sans-serif;
+
+        #container {
             text-align: center;
+            position: relative;
+            height: 120px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        #timer.show, #countdownInput.show {
-            opacity: 1;
-        }
-        .flashing {
-            animation: smoothFlash 2s infinite alternate;
-            font-weight: bold;
-        }
-        @keyframes smoothFlash {
-            0% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-        .control-button {
-            background: none;
-            border: none;
-            font-size: 2em;
-            cursor: pointer;
-            margin: 10px;
-            color: black;
-            opacity: 0.3;
-            transition: opacity 0.3s ease-in-out;
-            font-family: 'Noto Emoji', sans-serif;
-            pointer-events: none;
-        }
-        .control-button.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .control-button:hover {
-            opacity: 0.5;
-        }
-        #countdownInput.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        #error-message {
-            color: black;
-            font-size: 1em;
-            margin-top: 5px;
-            display: block;
-            font-family: 'Futura', sans-serif;
-        }
-        #thumbs-up {
+
+        #displayArea {
             position: absolute;
-            top: 20%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 4em;
+            width: 200px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #timeInput {
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+            font-size: 48px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            width: 200px;
+            outline: none;
+            padding: 0;
+            margin: 0;
             opacity: 0;
-            transition: opacity 3s ease-in-out;
-            font-family: 'Noto Emoji', sans-serif;
+            transition: opacity 1s;
+        }
+
+        #timeInput::placeholder {
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        #timer, #thumbsUp {
+            position: absolute;
+            font-size: 48px;
+            width: 200px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        #timer.flash {
+            animation: flash 1s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button {
+            font-family: 'Noto Color Emoji', sans-serif;
+            background: none;
+            border: none;
+            font-size: 24px;
+            padding: 10px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.75;
+        }
+
+        button.active {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        button:not(.active) {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        #error {
+            color: black;
+            font-size: 14px;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 1s;
+            white-space: nowrap;
+            pointer-events: none;
         }
     </style>
+</head>
+<body>
+    <div class="square-container">
+        <div id="container">
+            <div id="displayArea">
+                <input type="text" id="timeInput" placeholder="?" />
+                <div id="timer">0:00</div>
+                <div id="thumbsUp">👍</div>
+                <div id="error">Please enter a valid number of minutes</div>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="playBtn" class="active">▶</button>
+            <button id="pauseBtn">⏸</button>
+            <button id="stopBtn">■</button>
+        </div>
+    </div>
+
     <script>
-        let timerInterval;
-        let isFlashing = false;
-        let remainingTime = 0;
-        let timerRunning = false;
-        let timerPaused = false;
+        const displayArea = document.getElementById('displayArea');
+        const timeInput = document.getElementById('timeInput');
+        const timer = document.getElementById('timer');
+        const thumbsUp = document.getElementById('thumbsUp');
+        const error = document.getElementById('error');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
 
-        function startCountdown(duration) {
-            clearInterval(timerInterval);
-            const endDate = new Date().getTime() + duration * 1000;
-            isFlashing = false;
-            document.getElementById('timer').classList.remove('flashing');
-            document.getElementById('timer').classList.add('show');
-            timerRunning = true;
-            timerPaused = false;
+        let countdown;
+        let timeLeft;
+        let isPaused = false;
 
-            document.getElementById('countdownInput').classList.add('hidden');
-            document.getElementById('error-message').style.display = 'none';
+        // Show input field on load
+        window.onload = () => {
+            setTimeout(() => {
+                timeInput.style.opacity = '1';
+                timeInput.focus();
+            }, 100);
+        };
 
-            function updateTimer() {
-                const now = new Date().getTime();
-                const distance = endDate - now;
-
-                if (distance < 0) {
-                    document.getElementById('timer').innerHTML = "Time's Up!";
-                    document.getElementById('timer').classList.add('flashing');
-                    clearInterval(timerInterval);
-                    timerRunning = false;
-                    playRandomNote();
-                    return;
-                }
-
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                document.getElementById('timer').innerHTML = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-
-                if (distance < 10000 && !isFlashing) { // Start flashing when less than 10 seconds left
-                    isFlashing = true;
-                    document.getElementById('timer').classList.add('flashing');
-                }
-            }
-
-            timerInterval = setInterval(updateTimer, 1000);
-            updateTimer();
+        // Audio context and sounds
+        let audioContext;
+        
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
 
-        function stopCountdown() {
-            clearInterval(timerInterval);
-            document.getElementById('timer').classList.remove('flashing');
-            document.getElementById('timer').style.opacity = '0'; // Fade out timer for thumbs up
-            timerRunning = false;
-            timerPaused = false;
+        function playPentatonicSound() {
+            const pentatonicScale = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21];
+            const baseFrequency = 220; // A3
+            
+            for (let i = 0; i < 2; i++) {
+                setTimeout(() => {
+                    const note = pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)];
+                    const frequency = baseFrequency * Math.pow(2, note/12);
+                    
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = frequency;
+                    gainNode.gain.value = 0;
+                    
+                    oscillator.start();
+                    gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.1);
+                    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+                    
+                    setTimeout(() => oscillator.stop(), 500);
+                }, i * 500);
+            }
+        }
 
-            // Show thumbs up icon
+        function showError() {
+            timeInput.style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('timer').innerHTML = "";
-                const thumbsUp = document.getElementById('thumbs-up');
+                error.style.opacity = '1';
+                setTimeout(() => {
+                    error.style.opacity = '0';
+                    setTimeout(() => {
+                        timeInput.value = '';
+                        timeInput.style.opacity = '1';
+                        timeInput.focus();
+                    }, 1000);
+                }, 2000);
+            }, 1000);
+        }
+
+        function startTimer(minutes) {
+            if (!audioContext) initAudio();
+            
+            clearInterval(countdown);
+            timeLeft = minutes * 60;
+            
+            timeInput.style.opacity = '0';
+            timeInput.blur();
+            
+            setTimeout(() => {
+                timer.style.opacity = '1';
+                updateButtons(true);
+            }, 1000);
+
+            countdown = setInterval(() => {
+                if (!isPaused) {
+                    timeLeft--;
+                    updateDisplay();
+                    
+                    if (timeLeft <= 10) {
+                        timer.classList.add('flash');
+                    }
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        playPentatonicSound();
+                        stopTimer();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function stopTimer() {
+            clearInterval(countdown);
+            timer.style.opacity = '0';
+            timer.classList.remove('flash');
+            isPaused = false;
+            pauseBtn.textContent = '⏸';
+            
+            setTimeout(() => {
                 thumbsUp.style.opacity = '1';
                 setTimeout(() => {
                     thumbsUp.style.opacity = '0';
-                    resetCountdown();
-                }, 3000);
-            }, 3000);
+                    setTimeout(() => {
+                        timeInput.value = '';
+                        timeInput.style.opacity = '1';
+                        timeInput.focus();
+                        updateButtons(false);
+                    }, 1000);
+                }, 2000);
+            }, 1000);
         }
 
-        function resetCountdown() {
-            clearInterval(timerInterval);
-            document.getElementById('timer').innerHTML = "0:00";
-            document.getElementById('timer').classList.remove('flashing');
-            document.getElementById('timer').style.opacity = '1';
-            timerRunning = false;
-            timerPaused = false;
-            document.getElementById('countdownInput').classList.remove('hidden');
-            document.getElementById('countdownInput').classList.add('show');
+        function updateButtons(isRunning) {
+            playBtn.classList.toggle('active', !isRunning);
+            pauseBtn.classList.toggle('active', isRunning);
+            stopBtn.classList.toggle('active', isRunning);
         }
 
-        function setCountdown() {
-            const minutes = parseInt(document.getElementById('countdownInput').value, 10);
-            if (!isNaN(minutes) && minutes > 0) {
-                startCountdown(minutes * 60);
+        function validateAndStart() {
+            const minutes = parseFloat(timeInput.value);
+            if (minutes > 0) {
+                startTimer(minutes);
             } else {
-                document.getElementById('error-message').innerText = "Please enter a valid number of minutes.";
-                document.getElementById('error-message').style.display = 'block';
+                showError();
             }
         }
 
-        function togglePauseCountdown() {
-            if (timerRunning && !timerPaused) {
-                clearInterval(timerInterval);
-                const timerText = document.getElementById('timer').innerHTML.split(':');
-                const minutes = parseInt(timerText[0], 10);
-                const seconds = parseInt(timerText[1], 10);
-                remainingTime = (minutes * 60) + seconds;
-                timerPaused = true;
-            } else if (timerPaused) {
-                startCountdown(remainingTime);
+        // Event Listeners
+        timeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                validateAndStart();
             }
-        }
+        });
 
-        function playRandomNote() {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const gainNode = audioCtx.createGain();
-            gainNode.connect(audioCtx.destination);
-            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); // Set initial volume for a soft sound
-
-            // Function to play a note with a given frequency and duration
-            function playNoteWithFade(frequency, duration, delay) {
-                const oscillator = audioCtx.createOscillator();
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime + delay);
-                oscillator.connect(gainNode);
-                gainNode.gain.setValueAtTime(0, audioCtx.currentTime + delay);
-                gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + delay + 0.1); // Fade in
-                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + delay + duration); // Fade out
-                oscillator.start(audioCtx.currentTime + delay);
-                oscillator.stop(audioCtx.currentTime + delay + duration);
+        playBtn.addEventListener('click', () => {
+            if (playBtn.classList.contains('active')) {
+                validateAndStart();
             }
+        });
 
-            // Randomize two pentatonic frequencies and durations
-            const pentatonicFrequencies = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
-            const frequency1 = pentatonicFrequencies[Math.floor(Math.random() * pentatonicFrequencies.length)];
-            const frequency2 = pentatonicFrequencies[Math.floor(Math.random() * pentatonicFrequencies.length)];
-            const duration1 = 0.5 + Math.random() * 0.5;
-            const duration2 = 0.5 + Math.random() * 0.5;
+        pauseBtn.addEventListener('click', () => {
+            if (pauseBtn.classList.contains('active')) {
+                isPaused = !isPaused;
+                pauseBtn.textContent = isPaused ? '▶' : '⏸';
+            }
+        });
 
-            // Play two notes in sequence with fade in/out
-            playNoteWithFade(frequency1, duration1, 0);
-            playNoteWithFade(frequency2, duration2, duration1);
-        }
-
-        window.onload = function() {
-            document.getElementById('countdownInput').classList.add('show');
-            document.getElementById('startButton').addEventListener('click', setCountdown);
-            document.getElementById('stopButton').addEventListener('click', stopCountdown);
-            document.getElementById('pauseButton').addEventListener('click', togglePauseCountdown);
-            document.getElementById('countdownInput').addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    setCountdown();
-                }
-            });
-            document.getElementById('countdownInput').addEventListener('input', function() {
-                // Activate Play button and gray out others
-                document.getElementById('startButton').classList.add('active');
-                document.getElementById('stopButton').classList.add('active');
-                document.getElementById('pauseButton').classList.remove('active');
-            });
-        };
+        stopBtn.addEventListener('click', () => {
+            if (stopBtn.classList.contains('active')) {
+                stopTimer();
+            }
+        });
     </script>
-</head>
-<body>
-    <div id="timer-container">
-        <div id="timer" class="show">0:00</div>
-        <div id="thumbs-up">👍</div>
-        <div style="margin-top: 20px;">
-            <input type="number" id="countdownInput" placeholder="How long?" min="1">
-            <div id="error-message"></div>
-            <div>
-                <button id="startButton" class="control-button">▶</button>
-                <button id="stopButton" class="control-button">■</button>
-                <button id="pauseButton" class="control-button">⏸</button>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
