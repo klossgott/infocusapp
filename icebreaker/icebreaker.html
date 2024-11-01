@@ -23,6 +23,11 @@
             background: transparent;
             overflow: hidden;
             perspective: 1000px;
+
+            /* Initial scale and transition for zoom effect */
+            transform: scale(0.3);
+            transform-origin: center center;
+            transition: transform 0.5s ease;
         }
         #widget-image {
             position: absolute;
@@ -91,7 +96,7 @@
             height: 180px;
             background-color: #3B1C0A;
             color: white;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
@@ -249,6 +254,7 @@
         const initialImageSrc = "ice-cubes.png";
         const clickImageSrc = "broken-ice.png";
 
+        const widgetContainer = document.getElementById('widget-container');
         const widgetImage = document.getElementById('widget-image');
         const icebreakerCard = document.getElementById('icebreaker-card');
         const icebreakerText = document.getElementById('icebreaker-text');
@@ -261,6 +267,9 @@
         // Use a JavaScript variable to track if it's the first interaction
         let isFirstTime = true;
 
+        // Initially scale the widget to 30%
+        scaleWidget(0.3);
+
         // Always display the cover overlay on page load
         if (isFirstTime) {
             coverOverlay.style.display = 'flex';
@@ -270,6 +279,9 @@
         }
 
         coverOverlay.addEventListener('click', () => {
+            // Scale up the widget
+            scaleWidget(1);
+
             // Apply the fade-out flip animation
             coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
             coverOverlay.addEventListener('animationend', () => {
@@ -286,6 +298,9 @@
         }
 
         widgetImage.addEventListener('click', () => {
+            // Ensure the widget is scaled up
+            scaleWidget(1);
+
             // Play random portion of the ice sound
             playRandomIceSound();
 
@@ -336,6 +351,9 @@
                 widgetImage.style.display = 'block';
                 widgetImage.style.width = '50%';
                 widgetImage.style.transform = 'translate(-50%, -50%)';
+
+                // Scale down the widget
+                scaleWidget(0.3);
             }, { once: true });
         });
 
@@ -360,9 +378,13 @@
             }
         }
 
+        // Function to scale the widget
+        function scaleWidget(scaleValue) {
+            widgetContainer.style.transform = `scale(${scaleValue})`;
+        }
+
         // Helper functions to convert between Hex and HSL
         function hexToHsl(hex) {
-            // [Conversion code remains the same]
             let r = 0, g = 0, b = 0;
             if (hex.length === 4) {
                 r = parseInt(hex[1] + hex[1], 16);
