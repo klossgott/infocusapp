@@ -268,13 +268,12 @@
         // Set initial image source
         widgetImage.src = initialImageSrc;
 
-        // Use a JavaScript variable to track if it's the first interaction
+        // Variables to track state
         let isFirstTime = true;
         let hasZoomedIn = false;
 
         // Function to proceed after the cover overlay zooms in
         function proceedAfterCover() {
-            // Remove the zoom-in class
             coverOverlay.classList.remove('zoom-in');
 
             // Apply the fade-out flip animation
@@ -284,7 +283,7 @@
                 coverOverlay.style.display = 'none';
                 // Show the ice cubes image
                 widgetImage.style.display = 'block';
-                // Set the flag to false
+                // Reset flags
                 isFirstTime = false;
                 hasZoomedIn = false;
             }, { once: true });
