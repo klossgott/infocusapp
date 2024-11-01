@@ -4,7 +4,7 @@
     <title>Countdown Timer</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
-        
+
         body {
             display: flex;
             align-items: center;
@@ -74,6 +74,7 @@
             text-align: center;
             opacity: 0;
             transition: opacity 1s;
+            font-family: 'Noto Color Emoji', sans-serif; /* Ensure Noto Emoji font is used */
         }
 
         #timer.flash {
@@ -93,7 +94,7 @@
         }
 
         button {
-            font-family: 'Noto Color Emoji', sans-serif;
+            font-family: 'Noto Color Emoji', sans-serif; /* Apply Noto Emoji font to buttons */
             background: none;
             border: none;
             font-size: 24px;
@@ -140,7 +141,8 @@
                 <input type="text" id="timeInput" placeholder="?" />
                 <div id="timer">0:00</div>
                 <div id="thumbsUp">👍</div>
-                <div id="error">Please enter a valid number of minutes</div>
+                <div id="error">Please enter a valid<br>number of minutes</div>
+                <!-- Added <br> tag after "valid" -->
             </div>
         </div>
         <div id="controls">
@@ -174,34 +176,38 @@
 
         // Audio context and sounds
         let audioContext;
-        
+
         function initAudio() {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
 
-        function playPentatonicSound() {
-            const pentatonicScale = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21];
-            const baseFrequency = 220; // A3
-            
-            for (let i = 0; i < 2; i++) {
+        function playGlockenspielSound() {
+            const baseFrequencies = [880, 1046.5]; // High frequencies (A5 and C6)
+            const harmonyRatios = [1, 1.5]; // Unison and perfect fifth (1:1 and 3:2 ratios)
+            const baseFrequency = baseFrequencies[Math.floor(Math.random() * baseFrequencies.length)];
+
+            for (let i = 0; i < harmonyRatios.length; i++) {
                 setTimeout(() => {
-                    const note = pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)];
-                    const frequency = baseFrequency * Math.pow(2, note/12);
-                    
+                    const frequency = baseFrequency * harmonyRatios[i];
+
                     const oscillator = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
-                    
+
                     oscillator.connect(gainNode);
                     gainNode.connect(audioContext.destination);
-                    
+
+                    oscillator.type = 'triangle'; // Triangle wave for metallic sound
                     oscillator.frequency.value = frequency;
-                    gainNode.gain.value = 0;
-                    
-                    oscillator.start();
-                    gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.1);
-                    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
-                    
-                    setTimeout(() => oscillator.stop(), 500);
+
+                    const now = audioContext.currentTime;
+
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(0.8, now + 0.01); // Sharp attack
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 2); // Long decay (echo)
+
+                    oscillator.start(now);
+                    oscillator.stop(now + 2); // Stop after decay
+
                 }, i * 500);
             }
         }
@@ -223,13 +229,13 @@
 
         function startTimer(minutes) {
             if (!audioContext) initAudio();
-            
+
             clearInterval(countdown);
             timeLeft = minutes * 60;
-            
+
             timeInput.style.opacity = '0';
             timeInput.blur();
-            
+
             setTimeout(() => {
                 timer.style.opacity = '1';
                 updateButtons(true);
@@ -239,14 +245,14 @@
                 if (!isPaused) {
                     timeLeft--;
                     updateDisplay();
-                    
+
                     if (timeLeft <= 10) {
                         timer.classList.add('flash');
                     }
-                    
+
                     if (timeLeft <= 0) {
                         clearInterval(countdown);
-                        playPentatonicSound();
+                        playGlockenspielSound(); // Use the new sound function
                         stopTimer();
                     }
                 }
@@ -265,7 +271,7 @@
             timer.classList.remove('flash');
             isPaused = false;
             pauseBtn.textContent = '⏸';
-            
+
             setTimeout(() => {
                 thumbsUp.style.opacity = '1';
                 setTimeout(() => {
