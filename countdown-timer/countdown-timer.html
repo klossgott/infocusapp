@@ -67,7 +67,7 @@
             color: rgba(0, 0, 0, 0.5);
         }
 
-        #timer, #thumbsUp, #error {
+        #timer, #error {
             position: absolute;
             font-size: 48px;
             width: 200px;
@@ -75,6 +75,18 @@
             opacity: 0;
             transition: opacity 1s;
             font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+            pointer-events: none;
+        }
+
+        #thumbsUp {
+            position: absolute;
+            font-size: 48px;
+            width: 200px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
+            /* Apply Noto Emoji font to thumbs up */
+            font-family: 'Noto Emoji', sans-serif;
             pointer-events: none;
         }
 
