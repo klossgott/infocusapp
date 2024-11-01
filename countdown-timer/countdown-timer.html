@@ -23,7 +23,7 @@
         #timer {
             font-size: 3em;
             margin-top: 20px;
-            opacity: 0;
+            opacity: 1;
             transition: opacity 2s ease-in-out, font-weight 0.5s ease-in-out;
             letter-spacing: 0.1em;
         }
@@ -164,11 +164,14 @@
             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Set initial volume
 
             // Function to play a note with a given frequency and duration
-            function playNote(frequency, duration, delay) {
+            function playNoteWithFade(frequency, duration, delay) {
                 const oscillator = audioCtx.createOscillator();
                 oscillator.type = 'sine';
                 oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime + delay);
                 oscillator.connect(gainNode);
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime + delay);
+                gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + delay + 0.1); // Fade in
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + delay + duration); // Fade out
                 oscillator.start(audioCtx.currentTime + delay);
                 oscillator.stop(audioCtx.currentTime + delay + duration);
             }
@@ -180,9 +183,9 @@
             const duration1 = 0.5 + Math.random() * 0.5;
             const duration2 = 0.5 + Math.random() * 0.5;
 
-            // Play two notes in sequence
-            playNote(frequency1, duration1, 0);
-            playNote(frequency2, duration2, duration1);
+            // Play two notes in sequence with fade in/out
+            playNoteWithFade(frequency1, duration1, 0);
+            playNoteWithFade(frequency2, duration2, duration1);
         }
 
         window.onload = function() {
@@ -205,4 +208,17 @@
 </head>
 <body>
     <div id="timer-container">
-        <div id="timer
+        <div id="timer">0:00</div>
+        <div style="margin-top: 20px;">
+            <input type="number" id="countdownInput" placeholder="Enter minutes" min="1">
+            <div id="error-message"></div>
+            <div>
+                <button id="startButton" class="control-button">Start</button>
+                <button id="stopButton" class="control-button">Stop</button>
+                <button id="pauseButton" class="control-button">Pause/Resume</button>
+                <button id="resetButton" class="control-button">Reset</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
