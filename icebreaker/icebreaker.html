@@ -34,6 +34,7 @@
             cursor: pointer;
             transition: filter 0.3s;
             transform-origin: center center;
+            display: none; /* Hide initially */
         }
         #widget-image:hover {
             filter: brightness(1.2);
@@ -102,8 +103,22 @@
             border-radius: 15px;
             transform-origin: center center;
             backface-visibility: hidden;
-            /* Start smaller and animate zoom in */
-            animation: zoomIn 1s forwards;
+            /* Start small and stay small until clicked */
+            transform: translate(-50%, -50%) scale(0.3);
+        }
+        #cover-overlay.zoom-in {
+            /* Zoom in animation when class is added */
+            animation: zoomIn 0.5s forwards;
+        }
+        @keyframes zoomIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
         }
         #cover-text {
             font-family: 'Montserrat', Arial, sans-serif;
@@ -115,40 +130,10 @@
         }
         #cover-text span {
             font-weight: normal;
-        }
-        /* Animation for zooming in the cover overlay */
-        @keyframes zoomIn {
-            0% {
-                transform: translate(-50%, -50%) scale(0.3);
-                opacity: 0;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-        /* Animation for zooming out the cover overlay */
-        @keyframes zoomOut {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(0.3);
-                opacity: 0;
-            }
+            display: block;
+            margin-top: 10px;
         }
         /* Adjust existing animations */
-        @keyframes coverFadeIn {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) rotateY(-90deg) scale(0.3);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) rotateY(0deg) scale(1);
-            }
-        }
         @keyframes coverFadeOutFlip {
             0% {
                 opacity: 1;
@@ -156,7 +141,7 @@
             }
             100% {
                 opacity: 0;
-                transform: translate(-50%, -50%) rotateY(90deg) scale(0.3);
+                transform: translate(-50%, -50%) rotateY(90deg) scale(1);
             }
         }
         @keyframes fadeInFlip {
@@ -188,8 +173,8 @@
     <div id="cover-overlay">
         <div id="cover-text">
             Fun Ice Breaker<br>
-            Questions<br><br>
-            <span>Click here</span>
+            Questions<br>
+            <span>Click to play<br>Double-click to close</span>
         </div>
     </div>
     <!-- Ice Cubes Image -->
@@ -222,44 +207,54 @@
 
         // Set initial image source
         widgetImage.src = initialImageSrc;
-        widgetImage.style.display = 'none'; // Hide initially
 
         // Use a JavaScript variable to track if it's the first interaction
         let isFirstTime = true;
 
-        // Function to proceed to the next step after the cover overlay
+        // Function to proceed after the cover overlay zooms in
         function proceedAfterCover() {
-            // Hide the cover overlay
-            coverOverlay.style.display = 'none';
-            // Show the ice cubes image
-            widgetImage.style.display = 'block';
+            // Remove the zoom-in class
+            coverOverlay.classList.remove('zoom-in');
+
+            // Apply the fade-out flip animation
+            coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
+            coverOverlay.addEventListener('animationend', () => {
+                // Hide the cover overlay after animation
+                coverOverlay.style.display = 'none';
+                // Show the ice cubes image
+                widgetImage.style.display = 'block';
+                // Set the flag to false
+                isFirstTime = false;
+            }, { once: true });
         }
 
-        // Function to reverse to the initial state
-        function reverseToInitialState() {
-            // Hide the ice cubes image and icebreaker card
-            widgetImage.style.display = 'none';
-            icebreakerCard.style.display = 'none';
-            // Reset cover overlay styles
-            coverOverlay.style.display = 'flex';
-            coverOverlay.style.animation = 'zoomIn 1s forwards';
-            isFirstTime = true;
-        }
-
-        // Event listener for double-click to reverse
-        coverOverlay.addEventListener('dblclick', () => {
-            reverseToInitialState();
+        // Event listener for click to zoom in
+        coverOverlay.addEventListener('click', () => {
+            if (!coverOverlay.classList.contains('zoom-in')) {
+                // Add the zoom-in class to trigger the animation
+                coverOverlay.classList.add('zoom-in');
+            } else {
+                // Proceed after the zoom-in animation
+                proceedAfterCover();
+            }
         });
 
-        // After the zoom-in animation completes, hold for up to five seconds, then proceed
+        // Event listener for double-click to close
+        coverOverlay.addEventListener('dblclick', () => {
+            // Reset to initial state
+            coverOverlay.style.animation = '';
+            coverOverlay.classList.remove('zoom-in');
+            coverOverlay.style.transform = 'translate(-50%, -50%) scale(0.3)';
+            widgetImage.style.display = 'none';
+            icebreakerCard.style.display = 'none';
+            coverOverlay.style.display = 'flex';
+            isFirstTime = true;
+        });
+
+        // After the zoom-in animation completes, wait for the next click
         coverOverlay.addEventListener('animationend', (event) => {
             if (event.animationName === 'zoomIn') {
-                setTimeout(() => {
-                    if (isFirstTime) {
-                        proceedAfterCover();
-                        isFirstTime = false;
-                    }
-                }, 5000); // Hold for 5 seconds
+                // Now waiting for the next click to proceed
             }
         });
 
