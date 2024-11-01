@@ -23,11 +23,6 @@
             background: transparent;
             overflow: hidden;
             perspective: 1000px;
-
-            /* Initial scale and transition for zoom effect */
-            transform: scale(0.3);
-            transform-origin: center center;
-            transition: transform 0.5s ease;
         }
         #widget-image {
             position: absolute;
@@ -35,8 +30,7 @@
             left: 50%;
             width: 50%;
             height: auto;
-            /* Remove initial transform */
-            /* transform: translate(-50%, -50%); */
+            transform: translate(-50%, -50%);
             cursor: pointer;
             transition: filter 0.3s;
             transform-origin: center center;
@@ -106,9 +100,10 @@
             padding: 10px;
             box-sizing: border-box;
             border-radius: 15px;
-            transform: translate(-50%, -50%);
             transform-origin: center center;
             backface-visibility: hidden;
+            /* Start smaller and animate zoom in */
+            animation: zoomIn 1s forwards;
         }
         #cover-text {
             font-family: 'Montserrat', Arial, sans-serif;
@@ -121,24 +116,47 @@
         #cover-text span {
             font-weight: normal;
         }
+        /* Animation for zooming in the cover overlay */
+        @keyframes zoomIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        /* Animation for zooming out the cover overlay */
+        @keyframes zoomOut {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 0;
+            }
+        }
+        /* Adjust existing animations */
         @keyframes coverFadeIn {
             0% {
                 opacity: 0;
-                transform: translate(-50%, -50%) rotateY(-90deg);
+                transform: translate(-50%, -50%) rotateY(-90deg) scale(0.3);
             }
             100% {
                 opacity: 1;
-                transform: translate(-50%, -50%) rotateY(0deg);
+                transform: translate(-50%, -50%) rotateY(0deg) scale(1);
             }
         }
         @keyframes coverFadeOutFlip {
             0% {
                 opacity: 1;
-                transform: translate(-50%, -50%) rotateY(0deg);
+                transform: translate(-50%, -50%) rotateY(0deg) scale(1);
             }
             100% {
                 opacity: 0;
-                transform: translate(-50%, -50%) rotateY(90deg);
+                transform: translate(-50%, -50%) rotateY(90deg) scale(0.3);
             }
         }
         @keyframes fadeInFlip {
@@ -204,44 +222,49 @@
 
         // Set initial image source
         widgetImage.src = initialImageSrc;
+        widgetImage.style.display = 'none'; // Hide initially
 
         // Use a JavaScript variable to track if it's the first interaction
         let isFirstTime = true;
 
-        // Initially scale the widget to 30%
-        scaleWidget(0.3);
-
-        // Always display the cover overlay on page load
-        if (isFirstTime) {
-            coverOverlay.style.display = 'flex';
-            coverOverlay.style.animation = 'coverFadeIn 1s forwards';
-        } else {
+        // Function to proceed to the next step after the cover overlay
+        function proceedAfterCover() {
+            // Hide the cover overlay
             coverOverlay.style.display = 'none';
+            // Show the ice cubes image
+            widgetImage.style.display = 'block';
         }
 
-        coverOverlay.addEventListener('click', () => {
-            // Scale up the widget
-            scaleWidget(1);
+        // Function to reverse to the initial state
+        function reverseToInitialState() {
+            // Hide the ice cubes image and icebreaker card
+            widgetImage.style.display = 'none';
+            icebreakerCard.style.display = 'none';
+            // Reset cover overlay styles
+            coverOverlay.style.display = 'flex';
+            coverOverlay.style.animation = 'zoomIn 1s forwards';
+            isFirstTime = true;
+        }
 
-            // Apply the fade-out flip animation
-            coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
-            coverOverlay.addEventListener('animationend', () => {
-                // Hide the cover overlay after animation
-                coverOverlay.style.display = 'none';
-                // Set the flag to false
-                isFirstTime = false;
-            }, { once: true });
+        // Event listener for double-click to reverse
+        coverOverlay.addEventListener('dblclick', () => {
+            reverseToInitialState();
         });
 
-        function getRandomPrompt() {
-            const randomIndex = Math.floor(Math.random() * prompts.length);
-            return prompts[randomIndex];
-        }
+        // After the zoom-in animation completes, hold for up to five seconds, then proceed
+        coverOverlay.addEventListener('animationend', (event) => {
+            if (event.animationName === 'zoomIn') {
+                setTimeout(() => {
+                    if (isFirstTime) {
+                        proceedAfterCover();
+                        isFirstTime = false;
+                    }
+                }, 5000); // Hold for 5 seconds
+            }
+        });
 
+        // Click event on the ice cubes image
         widgetImage.addEventListener('click', () => {
-            // Ensure the widget is scaled up
-            scaleWidget(1);
-
             // Play random portion of the ice sound
             playRandomIceSound();
 
@@ -261,7 +284,7 @@
             // Remove the explode class
             widgetImage.classList.remove('explode');
             // Reset the transform
-            widgetImage.style.transform = `translate(-50%, -50%) scale(1)`;
+            widgetImage.style.transform = 'translate(-50%, -50%)';
             // Reset the size
             widgetImage.style.width = '50%';
             // Show the icebreaker card
@@ -291,14 +314,14 @@
                 widgetImage.src = initialImageSrc;
                 widgetImage.style.display = 'block';
                 widgetImage.style.width = '50%';
-
-                // Scale down the widget
-                scaleWidget(0.3);
-
-                // Reset the ice image transform
-                widgetImage.style.transform = `translate(-50%, -50%) scale(${1 / 0.3})`;
+                widgetImage.style.transform = 'translate(-50%, -50%)';
             }, { once: true });
         });
+
+        function getRandomPrompt() {
+            const randomIndex = Math.floor(Math.random() * prompts.length);
+            return prompts[randomIndex];
+        }
 
         function playRandomIceSound() {
             const duration = 0.5;
@@ -319,14 +342,6 @@
                     playRandomIceSound();
                 }, { once: true });
             }
-        }
-
-        // Function to scale the widget
-        function scaleWidget(scaleValue) {
-            widgetContainer.style.transform = `scale(${scaleValue})`;
-
-            // Adjust the ice image scale inversely to keep it the same size
-            widgetImage.style.transform = `translate(-50%, -50%) scale(${1 / scaleValue})`;
         }
 
         // Helper functions to convert between Hex and HSL
