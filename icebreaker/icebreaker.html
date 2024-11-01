@@ -6,9 +6,128 @@
     <!-- Include Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
     <style>
-        /* ... (CSS remains largely the same) ... */
-
-        /* Adjust the zoomOut animation */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        #widget-container {
+            position: relative;
+            width: 320px;
+            height: 180px;
+            background: transparent;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        #widget-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: auto;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: filter 0.3s;
+            transform-origin: center center;
+            display: none; /* Hide initially */
+        }
+        #widget-image:hover {
+            filter: brightness(1.2);
+        }
+        .explode {
+            animation: explodeAndFade 0.3s forwards;
+        }
+        @keyframes explodeAndFade {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+        #icebreaker-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 180px;
+            background-color: #F8F0E3;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
+            backface-visibility: hidden;
+        }
+        #icebreaker-text {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1em;
+            color: #333;
+            line-height: 1.5;
+            font-weight: normal;
+            letter-spacing: 0.05em;
+            margin: 0;
+            background: transparent;
+        }
+        #cover-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 180px;
+            background-color: #3B1C0A;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            z-index: 10;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 15px;
+            transform-origin: center center;
+            backface-visibility: hidden;
+            /* Start small and stay small until clicked */
+            transform: translate(-50%, -50%) scale(0.3);
+        }
+        #cover-text {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1.2em;
+            font-weight: bold;
+            line-height: 1.4;
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+        #cover-text span {
+            font-weight: normal;
+            display: block;
+            margin-top: 10px;
+        }
+        /* Animations */
+        @keyframes zoomIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
         @keyframes zoomOut {
             0% {
                 transform: translate(-50%, -50%) scale(1);
@@ -19,20 +138,35 @@
                 opacity: 1;
             }
         }
-
-        /* Add this to ensure the icebreaker card's animation */
-        #icebreaker-card.fade-in {
-            animation: fadeInFlip 0.5s forwards;
+        @keyframes fadeInFlip {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotateY(-90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
         }
-
-        #icebreaker-card.fade-out {
-            animation: fadeOutFlip 0.5s forwards;
+        @keyframes fadeOutFlip {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotateY(90deg);
+            }
         }
-
-        /* Ensure the icebreaker text is visible */
-        #icebreaker-text {
-            /* Ensure text color is set */
-            color: #333;
+        @keyframes coverFlipIn {
+            0% {
+                transform: translate(-50%, -50%) rotateY(90deg) scale(1);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) rotateY(0deg) scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -58,9 +192,308 @@
 <!-- Audio element for the ice breaking sound -->
 <audio id="ice-sound" src="ice-10-104149.mp3" preload="auto"></audio>
 
-<!-- JavaScript will go here -->
 <script>
-    // (JavaScript code will be provided below)
+    document.addEventListener('DOMContentLoaded', function() {
+        const prompts = [
+            "What’s the weirdest movie you’ve ever seen?",
+            "Is there a pizza topping that most people hate but you secretly love?",
+            "Window seat or aisle seat?",
+            "What’s the funniest thing you’ve read online recently?",
+            "In your opinion, what’s the funniest word in the English language?",
+            "Is there a non-dairy item you think would make a great alternative milk?",
+            "If you were a sitcom character, what would be your catchphrase?",
+            "Who would win in an arm wrestle, you or the person next to you?",
+            "If you could be invisible for a day, what would you do?",
+            "What’s your most embarrassing childhood memory?",
+            "What’s the cringiest dad joke you know?",
+            "What’s the most embarrassing outfit you’ve ever worn?",
+            "What’s the cringiest thing you’ve ever shared on social media?",
+            "Do you have an embarrassing nickname? What is it?",
+            "What’s your favorite, kind of obscure meme?",
+            "What’s the funniest dance move you can come up with on the spot?",
+            "What’s the best Wi-Fi name you’ve ever seen?",
+            "What’s the most awkward interaction you’ve ever had with another person?",
+            "What’s the worst thing you’ve ever smelled?",
+            "Do you have a strange nervous habit?",
+            "Do you know a niche joke that probably only you find funny?",
+            "Do you have a funny habit you do at home while no one is watching?",
+            "If you were on AIM in the early 2000s, what was your screen name?",
+            "What’s the funniest song you know all the lyrics to?",
+            "Is cereal a soup? Why or why not?",
+            "Is soup a drink or a meal?",
+            "Is there a conspiracy theory you kind of believe to be true?",
+            "What’s the most random fact you know?",
+            "What’s something that’s not illegal that feels illegal?",
+            "What funny saying would be written on your tombstone to describe the life you lived?",
+            "If you were sent back in time 1,000 years, how would you prove that you’re from the future?",
+            "What’s your funniest high school memory?",
+            "Serious question: How long would you survive a zombie apocalypse?",
+            "What’s the most ridiculous thing you would buy if you were given a million dollars?",
+            "If your pet could talk, what would they say?",
+            "What funny question would you ask me to make me laugh?",
+            "What’s the most gimmicky home gadget you own?",
+            "Which character from 'Friends' are you?",
+            "If you could only listen to one song for the rest of your life, which would it be?",
+            "What day should be a holiday that isn’t?",
+            "Is a hot dog a sandwich?",
+            "Is ravioli a dumpling?",
+            "What’s the weirdest fashion trend you’ve tried?",
+            "What haircut of yours would you never recreate?",
+            "If you had to prank call someone right now, what would you say?",
+            "What’s your favorite pun?",
+            "If you could eliminate one food from existence, which one would you choose?",
+            "If you could make a new ice cream flavor, what would it be?",
+            "What's the wackiest thing you believed as a kid?",
+            "What's the strangest thing you've ever eaten, and would you eat it again?",
+            "If animals could talk, which would be the funniest?",
+            "What useless superpower do you want?",
+            "What city kind of annoys you?",
+            "What TikTok trend do you dislike?",
+            "If you could only eat one condiment for the rest of your life, what would it be?",
+            "What's the weirdest thing you've ever done while alone in your car?",
+            "What’s your most annoying habit?",
+            "What’s your most boring hobby?",
+            "What’s a weird dream you’ve had that you wish were true?",
+            "What slang word or phrase do you hope we retire soon?",
+            "If you could have an animal as a sidekick, which would you choose?"
+        ];
+
+        // Image source
+        const initialImageSrc = "ice-cubes.png";
+        const clickImageSrc = "broken-ice.png";
+
+        const widgetContainer = document.getElementById('widget-container');
+        const widgetImage = document.getElementById('widget-image');
+        const icebreakerCard = document.getElementById('icebreaker-card');
+        const icebreakerText = document.getElementById('icebreaker-text');
+        const iceSound = document.getElementById('ice-sound');
+        const coverOverlay = document.getElementById('cover-overlay');
+
+        // Set initial image source
+        widgetImage.src = initialImageSrc;
+
+        // Variables to track state
+        let isFirstTime = true;
+        let hasZoomedIn = false;
+
+        // Function to proceed after the cover overlay zooms in
+        function proceedAfterCover() {
+            coverOverlay.classList.remove('zoom-in');
+
+            // Apply the fade-out flip animation
+            coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
+            coverOverlay.addEventListener('animationend', () => {
+                // Hide the cover overlay after animation
+                coverOverlay.style.display = 'none';
+                // Show the ice cubes image
+                widgetImage.style.display = 'block';
+                // Reset flags
+                isFirstTime = false;
+                hasZoomedIn = false;
+            }, { once: true });
+        }
+
+        // Event listener for click to zoom in or proceed
+        coverOverlay.addEventListener('click', () => {
+            if (!hasZoomedIn) {
+                // Add the zoom-in animation
+                coverOverlay.style.animation = 'zoomIn 0.5s forwards';
+                hasZoomedIn = true;
+            } else {
+                // Proceed after the zoom-in animation
+                proceedAfterCover();
+            }
+        });
+
+        // Event listener for double-click to reset
+        coverOverlay.addEventListener('dblclick', () => {
+            // Ensure the cover overlay is visible
+            coverOverlay.style.display = 'flex';
+
+            // Remove any existing animations
+            coverOverlay.style.animation = '';
+
+            // Apply the flip-in animation
+            coverOverlay.style.animation = 'coverFlipIn 0.5s forwards';
+
+            coverOverlay.addEventListener('animationend', () => {
+                // After flip-in, apply the zoom-out animation
+                coverOverlay.style.animation = 'zoomOut 0.5s forwards';
+
+                coverOverlay.addEventListener('animationend', () => {
+                    // Reset to initial state
+                    coverOverlay.classList.remove('zoom-in');
+                    coverOverlay.style.transform = 'translate(-50%, -50%) scale(0.3)';
+                    widgetImage.style.display = 'none';
+                    icebreakerCard.style.display = 'none';
+                    isFirstTime = true;
+                    hasZoomedIn = false;
+                    // Remove any existing animations
+                    coverOverlay.style.animation = '';
+                }, { once: true });
+            }, { once: true });
+        });
+
+        // Click event on the ice cubes image
+        widgetImage.addEventListener('click', () => {
+            // Play random portion of the ice sound
+            playRandomIceSound();
+
+            // Change to broken ice image
+            widgetImage.src = clickImageSrc;
+
+            // Add class to trigger exploding animation
+            widgetImage.classList.add('explode');
+
+            // Listen for animation end
+            widgetImage.addEventListener('animationend', onExplodeAnimationEnd, { once: true });
+        });
+
+        function onExplodeAnimationEnd() {
+            // Hide the image
+            widgetImage.style.display = 'none';
+            // Remove the explode class
+            widgetImage.classList.remove('explode');
+            // Reset the transform
+            widgetImage.style.transform = 'translate(-50%, -50%)';
+            // Reset the size
+            widgetImage.style.width = '50%';
+            // Show the icebreaker card
+            showIcebreaker();
+        }
+
+        function showIcebreaker() {
+            icebreakerText.textContent = getRandomPrompt();
+
+            // Adjust background color randomly within ±10% lightness
+            const baseColor = '#F8F0E3';
+            const hsl = hexToHsl(baseColor);
+            const lightnessAdjustment = (Math.random() * 20) - 10;
+            const newL = Math.min(100, Math.max(0, hsl.l + lightnessAdjustment));
+            const newColor = hslToHex(hsl.h, hsl.s, newL);
+
+            icebreakerCard.style.backgroundColor = newColor;
+
+            icebreakerCard.style.display = 'flex';
+
+            // Remove any existing animation
+            icebreakerCard.style.animation = '';
+
+            // Trigger the fade-in animation
+            icebreakerCard.style.animation = 'fadeInFlip 0.5s forwards';
+        }
+
+        icebreakerCard.addEventListener('click', () => {
+            // Remove any existing animation
+            icebreakerCard.style.animation = '';
+
+            // Trigger the fade-out animation
+            icebreakerCard.style.animation = 'fadeOutFlip 0.5s forwards';
+
+            icebreakerCard.addEventListener('animationend', () => {
+                icebreakerCard.style.display = 'none';
+                // Reset the ice cubes image
+                widgetImage.src = initialImageSrc;
+                widgetImage.style.display = 'block';
+                widgetImage.style.width = '50%';
+                widgetImage.style.transform = 'translate(-50%, -50%)';
+            }, { once: true });
+        });
+
+        function getRandomPrompt() {
+            const randomIndex = Math.floor(Math.random() * prompts.length);
+            return prompts[randomIndex];
+        }
+
+        function playRandomIceSound() {
+            const duration = 0.5;
+
+            if (iceSound.readyState >= 2) {
+                const totalDuration = iceSound.duration;
+                const maxStartTime = Math.max(0, totalDuration - duration);
+                const randomStartTime = Math.random() * maxStartTime;
+                iceSound.currentTime = randomStartTime;
+                iceSound.play();
+
+                setTimeout(() => {
+                    iceSound.pause();
+                    iceSound.currentTime = 0;
+                }, duration * 1000);
+            } else {
+                iceSound.addEventListener('loadedmetadata', () => {
+                    playRandomIceSound();
+                }, { once: true });
+            }
+        }
+
+        // Corrected helper functions to convert between Hex and HSL
+        function hexToHsl(H) {
+            // Convert hex to RGB first
+            let r = 0, g = 0, b = 0;
+            if (H.length == 7) {
+                r = parseInt(H.substring(1, 3), 16) / 255;
+                g = parseInt(H.substring(3, 5), 16) / 255;
+                b = parseInt(H.substring(5, 7), 16) / 255;
+            } else {
+                return null;
+            }
+            // Then convert RGB to HSL
+            let max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max == min) {
+                h = s = 0; // achromatic
+            } else {
+                let d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r:
+                        h = ((g - b) / d + (g < b ? 6 : 0));
+                        break;
+                    case g:
+                        h = ((b - r) / d + 2);
+                        break;
+                    case b:
+                        h = ((r - g) / d + 4);
+                        break;
+                }
+                h /= 6;
+            }
+
+            h = Math.round(360 * h);
+            s = Math.round(100 * s);
+            l = Math.round(100 * l);
+
+            return { h, s, l };
+        }
+
+        function hslToHex(h, s, l) {
+            // Convert HSL to RGB
+            s /= 100;
+            l /= 100;
+
+            let c = (1 - Math.abs(2 * l - 1)) * s,
+                x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+                m = l - c / 2,
+                r = 0,
+                g = 0,
+                b = 0;
+
+            if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+            else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+            else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+            else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+            else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+            else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+
+            r = Math.round((r + m) * 255);
+            g = Math.round((g + m) * 255);
+            b = Math.round((b + m) * 255);
+
+            // Convert RGB to Hex
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+    });
 </script>
 
 </body>
