@@ -32,7 +32,7 @@
             height: 100%;
             background-color: #B0E0E6;
             border-radius: 15px;
-            padding: 20px;
+            padding: 30px; /* Increased padding for better margin */
             box-sizing: border-box;
             transform: translate(-50%, -50%);
             transform-origin: center center;
@@ -44,6 +44,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            animation-duration: 0.6s; /* Animation duration */
         }
         #widget-card.resting {
             transform: translate(-50%, -50%) scale(0.7);
@@ -81,6 +82,26 @@
             from, to { border-right-color: transparent; }
             50% { border-right-color: black; }
         }
+        @keyframes flipIn {
+            from {
+                transform: rotateY(90deg);
+                opacity: 0;
+            }
+            to {
+                transform: rotateY(0deg);
+                opacity: 1;
+            }
+        }
+        @keyframes flipOut {
+            from {
+                transform: rotateY(0deg);
+                opacity: 1;
+            }
+            to {
+                transform: rotateY(-90deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -96,25 +117,29 @@
     document.addEventListener('DOMContentLoaded', function () {
         const prompts = {
             "gameMaster": [
-                "A new character enters the story.",
-                "Suddenly...",
-                "The [place] was ... [describe].",
+                "<b>A new character enters the story.</b>",
+                "<i>Suddenly...</i>",
+                "The <b>[place]</b> was ... [describe].",
                 "Describe the weather in this scene.",
-                "Add a dramatic moment!"
+                "<b>Add a dramatic moment!</b>"
             ],
             "numberCard": [
-                "Add [x] words to describe what happens next.",
+                "Add [x] word describing what happens next.", // Singular form for '1 word'
                 "Add [x] words explaining how [Character] reacts.",
                 "Add [x] words to set up a new challenge.",
                 "Add [x] words describing the setting.",
                 "Add [x] words to build tension."
             ],
             "stuck": [
-                "Then, something unexpected happened...",
-                "At this moment, [Character] felt [emotion]...",
-                "Suddenly, [...] joined the scene.",
+                "<i>Then, something unexpected happened...</i>",
+                "At this moment, [Character] felt <b>[emotion]</b>...",
+                "<i>Suddenly, [...] joined the scene.</i>",
                 "What happens if something goes wrong?",
                 "Describe a noise they heard nearby."
+            ],
+            "instructions": [
+                "Welcome to <b>Story Flip</b>!<br><br>Click the card to start. Each turn, flip the card to receive story instructions. Work together to create a fantastic story!",
+                "When you're stuck, press <b>'S'</b> to get a helpful prompt.<br>Click outside the card to end the game."
             ]
         };
 
@@ -123,8 +148,11 @@
         const timerElement = document.getElementById('timer');
 
         let isExpanded = false;
-        let cardState = 'resting'; // resting, active
+        let cardState = 'resting'; // resting, active, instructions
         let timerInterval;
+
+        // Initial Instructions
+        showInstructions();
 
         // Handle card clicks
         cardElement.addEventListener('click', () => {
@@ -132,26 +160,54 @@
                 expandCard();
             } else if (cardState === 'active') {
                 flipCard();
+            } else if (cardState === 'instructions') {
+                startGame();
             }
         });
+
+        // Close game when clicking outside card
+        document.addEventListener('click', (e) => {
+            if (!cardElement.contains(e.target)) {
+                endGame();
+            }
+        });
+
+        // Function to show initial instructions
+        function showInstructions() {
+            const instructionText = prompts.instructions.join("<br><br>");
+            cardTextElement.innerHTML = instructionText;
+            setCardColor('#FFD700'); // Golden color for instructions
+            cardState = 'instructions';
+        }
 
         // Function to expand the card
         function expandCard() {
             cardElement.classList.remove('resting');
             cardElement.classList.add('active');
+            cardElement.style.animationName = 'flipIn'; // Flip-in animation
             cardState = 'active';
+        }
+
+        // Function to start the game after instructions
+        function startGame() {
+            cardState = 'resting';
+            expandCard();
         }
 
         // Function to flip the card and show a prompt
         function flipCard() {
             const cardType = getRandomCardType();
-            if (cardType === 'gameMaster') {
-                showGameMasterPrompt();
-            } else if (cardType === 'numberCard') {
-                showNumberCardPrompt();
-            } else if (cardType === 'stuck') {
-                showStuckPrompt();
-            }
+            cardElement.style.animationName = 'flipOut'; // Flip-out animation for current prompt
+            cardElement.addEventListener('animationend', () => {
+                if (cardType === 'gameMaster') {
+                    showGameMasterPrompt();
+                } else if (cardType === 'numberCard') {
+                    showNumberCardPrompt();
+                } else if (cardType === 'stuck') {
+                    showStuckPrompt();
+                }
+                cardElement.style.animationName = 'flipIn'; // Flip-in for new prompt
+            }, { once: true });
             startTimer(); // Start the timer when a card is flipped
         }
 
@@ -170,9 +226,11 @@
 
         // Show Number Card prompt
         function showNumberCardPrompt() {
-            const prompt = getRandomPrompt('numberCard').replace('[x]', getRandomNumber(1, 6));
+            let prompt = getRandomPrompt('numberCard');
+            const num = getRandomNumber(1, 6);
+            prompt = num === 1 ? prompt.replace('[x] words', '1 word') : prompt.replace('[x]', num); // Handle singular form
             setCardColor('#ADD8E6'); // Light blue color for number cards
-            cardTextElement.textContent = prompt;
+            cardTextElement.innerHTML = prompt;
         }
 
         // Show Stuck Card prompt
@@ -216,6 +274,16 @@
                     timerElement.textContent = ''; // Clear timer text when finished
                 }
             }, 1000);
+        }
+
+        // End game function when clicking outside the card
+        function endGame() {
+            cardState = 'resting';
+            cardElement.classList.remove('active');
+            cardElement.classList.add('resting');
+            cardTextElement.innerHTML = "The game has ended. Refresh to start a new story.";
+            setCardColor('#f5f5f5'); // Neutral color for the end
+            timerElement.textContent = ''; // Clear timer
         }
     });
 </script>
