@@ -10,12 +10,12 @@
         html, body {
             height: 100%;
             margin: 0;
+            background: transparent; /* Transparent background */
         }
         body {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f5f5f5;
         }
         #widget-container {
             position: relative;
@@ -38,7 +38,6 @@
             transition: transform 0.5s ease, background-color 0.5s ease;
             backface-visibility: hidden;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -57,11 +56,20 @@
             word-wrap: break-word;
             white-space: normal;
         }
+        /* Resting state styling */
+        #widget-card.resting {
+            background-color: #FFD700; /* Yellow color */
+        }
+        #widget-card.resting #card-text {
+            font-size: 3em;
+            font-weight: bold;
+            color: #fff;
+        }
         .typing-animation {
             display: inline-block;
             overflow: hidden;
-            white-space: normal;
-            animation: typing 2s steps(40, end);
+            white-space: nowrap;
+            animation: typing 3s steps(40, end);
             border-right: 2px solid black;
         }
         #timer-bar {
@@ -84,7 +92,7 @@
 <div id="widget-container">
     <!-- Card Front -->
     <div id="widget-card" class="resting">
-        <div id="card-text"></div>
+        <div id="card-text">S</div>
         <div id="timer-bar"></div> <!-- Timer bar element -->
     </div>
 </div>
@@ -114,32 +122,101 @@
                 "Change everything in just [x] word[s].",
                 "Continue the sentence adding [x] word[s].",
                 "Expand the scene adding [x] word[s].",
-                "Tell us about what [Name] is doing.",
+                "Tell us about what NAME is doing.",
                 "Start a new challenge using [x] word[s].",
-                "[Name] feels [x] word[s]."
+                "NAME feels [x] word[s]."
             ],
             "wildcard": [
                 "<i>Then, something unexpected happened...</i>",
-                "At this moment, the character felt <b><i>[emotion]</i></b>...",
+                "At this moment, NAME felt <b><i>[emotion]</i></b>...",
                 "<i>Suddenly, a new element joined the scene.</i>",
                 "What happens if something goes wrong?",
-                "Describe a noise they heard nearby."
+                "Describe a noise they heard nearby.",
+                // Additional Wildcard Prompts
+                "Out of nowhere, something happened that no one could have predicted...",
+                "A decision had to be made immediately, and the stakes were...",
+                "Without warning, NAME was presented with an option that could..."
+            ],
+            // Additional categories and prompts from your list
+            "setting": [
+                "It felt cold because...",
+                "The place was unlike anything they'd seen before, with...",
+                "The noise in the background was growing louder, and...",
+                "The sky above was...",
+                "They noticed something unusual in the surroundings: a..."
+            ],
+            "character": [
+                "The person looked at NAME with eyes that seemed...",
+                "This was NAME known for their ability to...",
+                "No one could figure out why NAME was so protective of...",
+                "A stranger appeared, holding a...",
+                "NAME smiled, but it didn’t quite reach their eyes. It was because..."
+            ],
+            "action": [
+                "Suddenly, NAME decided to...",
+                "There was no time to waste, NAME had to...",
+                "The next thing NAME did was...",
+                "NAME took a deep breath and chose to...",
+                "The group collectively decided that the only way forward was to..."
+            ],
+            "emotion": [
+                "A chill of fear ran through NAME as they thought about...",
+                "A feeling of hope surged in NAME when they saw...",
+                "Anger bubbled beneath the surface, triggered by...",
+                "NAME couldn’t hide their excitement because...",
+                "The tension in the air shifted when NAME felt a sudden wave of..."
+            ],
+            "object": [
+                "NAME stumbled upon an object—it was...",
+                "Something small but significant caught NAME's eye...",
+                "NAME held a mysterious item that seemed to...",
+                "The item was ordinary to most people, but to NAME, it meant...",
+                "NAME carefully placed the object on the ground, knowing it would..."
+            ],
+            "dialogue": [
+                "NAME whispered, 'I think it's time we talk about...'",
+                "'Are you sure we should be doing this?' NAME asked.",
+                "'There’s something I need to tell you,' NAME said, with hesitation.",
+                "'If you go now, there’s no coming back,' was the warning given.",
+                "'I have a plan, but you’re not going to like it,' NAME stated plainly."
+            ],
+            "conflict": [
+                "Something suddenly stood in NAME's way—something that...",
+                "NAME realized there was a critical piece missing that could...",
+                "A disagreement broke out over...",
+                "The group had to deal with a sudden change that threw everything into...",
+                "NAME decided to break the rules, which led to..."
+            ],
+            "resolution": [
+                "After a long pause, NAME finally chose to...",
+                "Things were resolved when NAME decided to...",
+                "It wasn’t what NAME expected, but they accepted it and moved on because...",
+                "NAME reached a quiet understanding that meant...",
+                "With a final effort, NAME managed to..."
             ]
         };
 
         const usedPrompts = {
             "gameMaster": [],
-            "wildcard": []
+            "wildcard": [],
+            "setting": [],
+            "character": [],
+            "action": [],
+            "emotion": [],
+            "object": [],
+            "dialogue": [],
+            "conflict": [],
+            "resolution": []
         };
 
         const card = document.getElementById("widget-card");
         const cardTextElement = document.getElementById("card-text");
         const timerBarElement = document.getElementById("timer-bar");
 
-        let cardState = 'resting'; // resting, title, instructions, active
+        let cardState = 'resting'; // resting, title, instructions, active, exitOptions
         let timerInterval;
 
-        // Initial minimized state
+        // Initial minimized state with 'S' on the card
         card.classList.add('resting');
         cardState = 'resting';
 
@@ -153,12 +230,12 @@
                 showInstructions();
             } else if (cardState === 'instructions') {
                 startGame();
-            } else if (cardState === 'active') {
+            } else if (cardState === 'active' || cardState === 'exitOptions') {
                 flipCard();
             }
         });
 
-        // Remove popup, handle clicks outside the card within the card itself
+        // Handle clicks outside the card
         document.addEventListener('click', (e) => {
             if (!card.contains(e.target)) {
                 showExitOptions();
@@ -181,13 +258,16 @@
         function showExitOptions() {
             cardTextElement.innerHTML = "<b>Press 'X' to minimize the card or click to continue playing.</b>";
             cardState = 'exitOptions';
+            clearInterval(timerInterval);
+            timerBarElement.style.display = 'none';
         }
 
         function minimizeCard() {
             cardState = 'resting';
             card.classList.remove('active');
             card.classList.add('resting');
-            cardTextElement.innerHTML = ''; // Clear any text
+            cardTextElement.innerHTML = 'S'; // Display 'S' again
+            cardTextElement.style.fontSize = '3em';
             timerBarElement.style.width = '0%'; // Clear timer bar
             timerBarElement.style.display = 'none'; // Hide timer bar
             clearInterval(timerInterval); // Clear any running timer
@@ -196,6 +276,8 @@
         function expandCard() {
             card.classList.remove('resting');
             card.classList.add('active');
+            cardTextElement.style.fontSize = ''; // Reset font size
+            cardTextElement.style.color = '#333'; // Reset text color
         }
 
         function showTitlePage() {
@@ -220,10 +302,10 @@
             cardTextElement.style.opacity = '0';
             setTimeout(() => {
                 const cardType = getRandomCardType();
-                if (cardType === 'gameMaster') {
-                    showGameMasterPrompt();
-                } else if (cardType === 'numberCard') {
+                if (cardType === 'numberCard') {
                     showNumberCardPrompt();
+                } else {
+                    showGamePrompt(cardType);
                 }
                 // Start the timer after showing the prompt
                 startTimer();
@@ -232,19 +314,19 @@
         }
 
         function getRandomCardType() {
-            const types = ['gameMaster', 'numberCard'];
+            const types = ['gameMaster', 'setting', 'character', 'action', 'emotion', 'object', 'dialogue', 'conflict', 'resolution', 'numberCard'];
             return types[Math.floor(Math.random() * types.length)];
         }
 
-        function showGameMasterPrompt() {
-            const prompt = getUniquePrompt('gameMaster');
+        function showGamePrompt(category) {
+            const prompt = getUniquePrompt(category);
             if (!prompt) {
-                cardTextElement.innerHTML = "<b>No more prompts available. Press 'N' for a new game.</b>";
+                cardTextElement.innerHTML = "<b>No more prompts available in this category. Press 'N' for a new game.</b>";
                 clearInterval(timerInterval);
                 timerBarElement.style.display = 'none';
                 return;
             }
-            setCardColor('#FFA500'); // Warm yellow-orange color
+            setCardColor(getCategoryColor(category));
             showTypingAnimation(prompt);
         }
 
@@ -253,7 +335,7 @@
             const num = getRandomNumber(1, 6);
             let plural = num === 1 ? '' : 's';
             prompt = prompt.replace('[x]', num).replace('[s]', plural);
-            prompt = prompt.replace('[Name]', 'the character');
+            prompt = prompt.replace(/NAME/g, '<u>NAME</u>');
             setCardColor('#ADD8E6'); // Light blue color for number cards
             cardTextElement.innerHTML = prompt;
         }
@@ -280,11 +362,27 @@
             }
             const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
             usedPrompts[category].push(prompt);
-            return prompt;
+            return prompt.replace(/NAME/g, '<u>NAME</u>').replace(/\[emotion\]/g, '<u>EMOTION</u>');
         }
 
         function setCardColor(color) {
             card.style.backgroundColor = color;
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                "gameMaster": "#FFA500",
+                "setting": "#E6E6FA",
+                "character": "#FFFACD",
+                "action": "#E0FFFF",
+                "emotion": "#F0E68C",
+                "object": "#D8BFD8",
+                "dialogue": "#FFE4E1",
+                "conflict": "#FAFAD2",
+                "resolution": "#E6E6FA",
+                "wildcard": "#F5A9A9"
+            };
+            return colors[category] || "#FFFFFF";
         }
 
         function showTypingAnimation(text) {
