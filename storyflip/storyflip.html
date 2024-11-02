@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Story Flip</title>
     <!-- Include Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&display=swap">
     <style>
         html, body {
             height: 100%;
@@ -29,13 +29,10 @@
             left: 50%;
             width: 100%;
             height: 100%;
-            background-color: #B0E0E6;
-            border-radius: 15px;
-            padding: 30px;
-            box-sizing: border-box;
+            border-radius: 10px;
             transform: translate(-50%, -50%);
             cursor: pointer;
-            transition: background-color 0.5s ease; /* Only color should transition smoothly */
+            transition: background-color 1s ease; /* Smooth fading between card colors */
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
@@ -44,6 +41,27 @@
             text-align: center;
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow around the card */
         }
+        #widget-card-back {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background:
+                radial-gradient(circle at center, black 20%, transparent 21%), /* Central medallion */
+                repeating-radial-gradient(circle, transparent 0, transparent 10%, black 11%, black 20%), /* Circular pattern repetition */
+                repeating-linear-gradient(135deg, black 0, black 3px, white 3px, white 8px), /* Thin diagonal lines pattern */
+                linear-gradient(to bottom right, transparent, black 20%, black 40%, transparent 60%); /* Angular curved line */
+            background-blend-mode: multiply;
+            background-size: 50% 50%, 100% 100%, 20% 20%, 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(calc(45deg * var(--random-rotation, 1)));
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow for depth */
+        }
         #widget-card.resting {
             transform: translate(-50%, -50%) scale(0.15); /* Resting state at 15% of full size */
         }
@@ -51,11 +69,11 @@
             transform: translate(-50%, -50%) scale(1);
         }
         #card-text {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'EB Garamond', serif;
             font-size: 1.4em;
             color: #333;
             line-height: 1.5;
-            font-weight: normal;
+            font-weight: 400; /* Regular weight for card prompts */
             letter-spacing: 0.05em;
             margin: 0;
             word-wrap: break-word; /* Ensures text wraps */
@@ -83,41 +101,13 @@
             from, to { border-right-color: transparent; }
             50% { border-right-color: black; }
         }
-        @keyframes shake {
-            0%, 100% { transform: translate(-50%, -50%); }
-            25% { transform: translate(calc(-50% + 4px), calc(-50% + 4px)); }
-            50% { transform: translate(calc(-50% - 4px), calc(-50% - 4px)); }
-            75% { transform: translate(calc(-50% + 4px), calc(-50% - 4px)); }
-        }
-        #widget-card-back {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background-color: #3B1C0A; /* Dark color for card back */
-            border-radius: 15px;
-            transform: translate(-50%, -50%);
-            backface-visibility: hidden;
-            z-index: 0; /* Ensures it's behind the front card */
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow around the card back */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white; /* White text for contrast */
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5em;
-            padding: 20px;
-            box-sizing: border-box;
-        }
     </style>
 </head>
 <body>
 
 <div id="widget-container">
     <!-- Card Back -->
-    <div id="widget-card-back">Time's up! Press 'N' to start a new story.</div>
+    <div id="widget-card-back"></div>
     <!-- Card Front -->
     <div id="widget-card" class="resting">
         <div id="card-text"></div>
@@ -126,42 +116,15 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const prompts = {
-            "title": [
-                "<b style='font-size: 2em; font-variant: small-caps;'>Story</b><br><b style='font-size: 2em;'>Flip</b>"
-            ],
-            "instructions": [
-                "Welcome to <b>Story Flip</b>!<br><br>Click the card to start. Each turn, flip the card to receive story instructions. Work together to create a fantastic story!",
-                "When you're stuck, press <b>'S'</b> to get a helpful prompt.<br>Click outside the card to end the game."
-            ],
-            "gameMaster": [
-                "<b><i>A new character enters the story.</i></b>",
-                "<i>Suddenly...</i>",
-                "The <b>[place]</b> was ... [describe].",
-                "Describe the weather in this scene.",
-                "<b><i>Add a dramatic moment!</i></b>"
-            ],
-            "numberCard": [
-                "Add [x] word describing what happens next.", // Singular form for '1 word'
-                "Add [x] words explaining how [Character] reacts.",
-                "Add [x] words to set up a new challenge.",
-                "Add [x] words describing the setting.",
-                "Add [x] words to build tension."
-            ],
-            "stuck": [
-                "<i>Then, something unexpected happened...</i>",
-                "At this moment, [Character] felt <b><i>[emotion]</i></b>...",
-                "<i>Suddenly, [...] joined the scene.</i>",
-                "What happens if something goes wrong?",
-                "Describe a noise they heard nearby."
-            ]
-        };
+    document.addEventListener("DOMContentLoaded", function() {
+        const cardBack = document.getElementById("widget-card-back");
+        const cardFront = document.getElementById("widget-card");
+        const cardTextElement = document.getElementById("card-text");
+        const timerBarElement = document.getElementById("timer-bar");
 
-        const cardElement = document.getElementById('widget-card');
-        const cardTextElement = document.getElementById('card-text');
-        const timerBarElement = document.getElementById('timer-bar');
-        const cardBackElement = document.getElementById('widget-card-back');
+        // Randomize card back appearance
+        cardBack.style.setProperty('--random-rotation', Math.random() * 8 - 4); // Random rotation between -4 and 4 degrees
+        cardBack.style.setProperty('--random-line-thickness', Math.random() * 2); // Random line thickness between 0 and 2 pixels
 
         let cardState = 'resting'; // resting, active, instructions, title
         let timerInterval;
@@ -170,7 +133,7 @@
         showTitlePage();
 
         // Handle card clicks
-        cardElement.addEventListener('click', (event) => {
+        cardFront.addEventListener('click', (event) => {
             event.stopPropagation(); // Prevent triggering the document click event
             if (cardState === 'title') {
                 showInstructions();
@@ -181,41 +144,35 @@
             } else if (cardState === 'active') {
                 flipCard();
             }
-
-            // Add shake effect when card is clicked
-            cardElement.style.animation = 'shake 0.3s';
-            cardElement.addEventListener('animationend', () => {
-                cardElement.style.animation = ''; // Reset animation after shake
-            }, { once: true });
         });
 
         // Close game when clicking outside card
         document.addEventListener('click', (e) => {
-            if (!cardElement.contains(e.target)) {
+            if (!cardFront.contains(e.target)) {
                 endGame();
             }
         });
 
         // Function to show title page
         function showTitlePage() {
-            cardElement.classList.remove('resting');
-            cardElement.classList.add('active');
-            cardTextElement.innerHTML = prompts.title;
+            cardFront.classList.remove('resting');
+            cardFront.classList.add('active');
+            cardTextElement.innerHTML = "<b style='font-size: 2em; font-variant: small-caps; font-weight: 700;'>Story</b><br><b style='font-size: 2em; font-weight: 700;'>Flip</b>";
             setCardColor('#FFD700'); // Golden color for title page
             cardState = 'title';
         }
 
         // Function to show initial instructions
         function showInstructions() {
-            cardTextElement.innerHTML = prompts.instructions.join("<br><br>");
+            cardTextElement.innerHTML = "Welcome to <b style='font-weight: 700;'>Story Flip</b>!<br><br>Click the card to start. Each turn, flip the card to receive story instructions. Work together to create a fantastic story!";
             setCardColor('#FFE4B5'); // Lighter warm color for instructions
             cardState = 'instructions';
         }
 
         // Function to expand the card
         function expandCard() {
-            cardElement.classList.remove('resting');
-            cardElement.classList.add('active');
+            cardFront.classList.remove('resting');
+            cardFront.classList.add('active');
             cardState = 'active';
         }
 
@@ -228,12 +185,12 @@
         // Function to flip the card and show a prompt
         function flipCard() {
             // Show the back of the card during transition
-            cardElement.style.display = 'none';
-            cardBackElement.style.display = 'none'; // Ensure card back is not shown unexpectedly
+            cardFront.style.display = 'none';
+            cardBack.style.display = 'flex';
 
             setTimeout(() => {
-                cardBackElement.style.display = 'none';
-                cardElement.style.display = 'flex';
+                cardBack.style.display = 'none';
+                cardFront.style.display = 'flex';
 
                 const cardType = getRandomCardType();
                 if (cardType === 'gameMaster') {
@@ -279,12 +236,35 @@
 
         // Helper to get a random prompt from a specific category
         function getRandomPrompt(category) {
+            const prompts = {
+                "gameMaster": [
+                    "<b><i>A new character enters the story.</i></b>",
+                    "<i>Suddenly...</i>",
+                    "The <b>[place]</b> was ... [describe].",
+                    "Describe the weather in this scene.",
+                    "<b><i>Add a dramatic moment!</i></b>"
+                ],
+                "numberCard": [
+                    "Add [x] word describing what happens next.",
+                    "Add [x] words explaining how [Character] reacts.",
+                    "Add [x] words to set up a new challenge.",
+                    "Add [x] words describing the setting.",
+                    "Add [x] words to build tension."
+                ],
+                "stuck": [
+                    "<i>Then, something unexpected happened...</i>",
+                    "At this moment, [Character] felt <b><i>[emotion]</i></b>...",
+                    "<i>Suddenly, [...] joined the scene.</i>",
+                    "What happens if something goes wrong?",
+                    "Describe a noise they heard nearby."
+                ]
+            };
             return prompts[category][Math.floor(Math.random() * prompts[category].length)];
         }
 
         // Set the card color
         function setCardColor(color) {
-            cardElement.style.backgroundColor = color;
+            cardFront.style.backgroundColor = color;
         }
 
         // Show typing animation for game master or stuck cards
@@ -312,36 +292,29 @@
 
                 if (timeLeft <= 3) {
                     // Flash white towards the end of the countdown
-                    cardElement.style.backgroundColor = timeLeft % 2 === 0 ? 'white' : '#FFA500';
+                    cardFront.style.backgroundColor = timeLeft % 2 === 0 ? 'white' : '#FFA500';
                 }
 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     timerBarElement.style.width = '0%'; // Clear timer bar when finished
-                    endGameDueToTimer();
+                    handleTimerEnd();
                 }
             }, 1000);
         }
 
-        // End game when the timer reaches 0
-        function endGameDueToTimer() {
-            cardElement.style.display = 'none';
-            cardBackElement.style.display = 'flex'; // Show card back with the time's up message
-            cardState = 'ended'; // Set the state to ended
-
-            // Listen for 'N' key to restart the game
-            document.addEventListener('keydown', (e) => {
-                if (e.key.toLowerCase() === 'n') {
-                    window.location.reload(); // Reload page to restart the game
-                }
-            }, { once: true }); // Only listen once to prevent multiple reloads
+        // Handle what happens when the timer ends
+        function handleTimerEnd() {
+            setCardColor('#777777'); // Change card to medium grey
+            cardTextElement.innerHTML = "Time's up! Take a deep breath and try again."; // Encourage the player to try again
+            cardState = 'active'; // Keep the game in an active state to continue the flow
         }
 
         // End game function when clicking outside the card
         function endGame() {
             cardState = 'ended';
-            cardElement.classList.remove('active');
-            cardElement.classList.add('resting');
+            cardFront.classList.remove('active');
+            cardFront.classList.add('resting');
             cardTextElement.innerHTML = "The game has ended. Press 'N' to start a new story.";
             setCardColor('#f5f5f5'); // Neutral color for the end
             timerBarElement.style.width = '0%'; // Clear timer bar
