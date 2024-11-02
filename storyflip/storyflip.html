@@ -18,8 +18,8 @@
         }
         #widget-container {
             position: relative;
-            width: 320px;
-            height: 480px;
+            width: 320px;  /* Full width of the card in active state */
+            height: 480px; /* Full height of the card in active state */
             background: transparent;
             overflow: hidden;
             perspective: 1000px;
@@ -37,34 +37,36 @@
             transform: translate(-50%, -50%);
             transform-origin: center center;
             cursor: pointer;
-            transition: transform 0.5s ease, background-color 0.3s ease;
+            transition: transform 0.5s ease, background-color 1s ease; /* Slow fade for color transition */
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            animation-duration: 0.6s; /* Animation duration */
+            animation-duration: 0.6s;
         }
         #widget-card.resting {
-            transform: translate(-50%, -50%) scale(0.7);
+            transform: translate(-50%, -50%) scale(0.05); /* Set resting state to 5% of full card size */
         }
         #widget-card.active {
             transform: translate(-50%, -50%) scale(1);
         }
         #card-text {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5em;
+            font-size: 1.4em;
             color: #333;
             line-height: 1.5;
             font-weight: normal;
             letter-spacing: 0.05em;
             margin: 0;
+            word-wrap: break-word; /* Ensures text wraps */
+            white-space: normal; /* Allows the text to wrap normally */
         }
         .typing-animation {
             display: inline-block;
             overflow: hidden;
-            white-space: nowrap;
+            white-space: normal; /* Wraps the typing text within card */
             animation: typing 2s steps(30, end), blink 0.5s step-end infinite alternate;
         }
         #timer {
@@ -82,31 +84,48 @@
             from, to { border-right-color: transparent; }
             50% { border-right-color: black; }
         }
-        @keyframes flipIn {
+        @keyframes squeezeIn {
             from {
-                transform: rotateY(90deg);
+                transform: scale(1.1);
                 opacity: 0;
             }
             to {
-                transform: rotateY(0deg);
+                transform: scale(1);
                 opacity: 1;
             }
         }
-        @keyframes flipOut {
+        @keyframes squeezeOut {
             from {
-                transform: rotateY(0deg);
+                transform: scale(1);
                 opacity: 1;
             }
             to {
-                transform: rotateY(-90deg);
+                transform: scale(0.9);
                 opacity: 0;
             }
+        }
+        #widget-card-back {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: #3B1C0A; /* Dark color for card back */
+            border-radius: 15px;
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
+            backface-visibility: hidden;
+            z-index: 0; /* Ensures it's behind the front card */
         }
     </style>
 </head>
 <body>
 
 <div id="widget-container">
+    <!-- Card Back -->
+    <div id="widget-card-back"></div>
+    <!-- Card Front -->
     <div id="widget-card" class="resting">
         <div id="card-text"></div>
         <div id="timer"></div> <!-- Timer element -->
@@ -116,6 +135,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const prompts = {
+            "title": [
+                "<b>Welcome to Story Flip</b>"
+            ],
+            "instructions": [
+                "Welcome to <b>Story Flip</b>!<br><br>Click the card to start. Each turn, flip the card to receive story instructions. Work together to create a fantastic story!",
+                "When you're stuck, press <b>'S'</b> to get a helpful prompt.<br>Click outside the card to end the game."
+            ],
             "gameMaster": [
                 "<b>A new character enters the story.</b>",
                 "<i>Suddenly...</i>",
@@ -136,32 +162,31 @@
                 "<i>Suddenly, [...] joined the scene.</i>",
                 "What happens if something goes wrong?",
                 "Describe a noise they heard nearby."
-            ],
-            "instructions": [
-                "Welcome to <b>Story Flip</b>!<br><br>Click the card to start. Each turn, flip the card to receive story instructions. Work together to create a fantastic story!",
-                "When you're stuck, press <b>'S'</b> to get a helpful prompt.<br>Click outside the card to end the game."
             ]
         };
 
         const cardElement = document.getElementById('widget-card');
         const cardTextElement = document.getElementById('card-text');
         const timerElement = document.getElementById('timer');
+        const cardBackElement = document.getElementById('widget-card-back');
 
         let isExpanded = false;
-        let cardState = 'resting'; // resting, active, instructions
+        let cardState = 'resting'; // resting, active, instructions, title
         let timerInterval;
 
-        // Initial Instructions
-        showInstructions();
+        // Initial Title Page
+        showTitlePage();
 
         // Handle card clicks
         cardElement.addEventListener('click', () => {
-            if (cardState === 'resting') {
+            if (cardState === 'title') {
+                showInstructions();
+            } else if (cardState === 'instructions') {
+                startGame();
+            } else if (cardState === 'resting') {
                 expandCard();
             } else if (cardState === 'active') {
                 flipCard();
-            } else if (cardState === 'instructions') {
-                startGame();
             }
         });
 
@@ -172,11 +197,17 @@
             }
         });
 
+        // Function to show title page
+        function showTitlePage() {
+            cardTextElement.innerHTML = prompts.title;
+            setCardColor('#FFD700'); // Golden color for title page
+            cardState = 'title';
+        }
+
         // Function to show initial instructions
         function showInstructions() {
-            const instructionText = prompts.instructions.join("<br><br>");
-            cardTextElement.innerHTML = instructionText;
-            setCardColor('#FFD700'); // Golden color for instructions
+            cardTextElement.innerHTML = prompts.instructions.join("<br><br>");
+            setCardColor('#FFE4B5'); // Lighter warm color for instructions
             cardState = 'instructions';
         }
 
@@ -184,7 +215,7 @@
         function expandCard() {
             cardElement.classList.remove('resting');
             cardElement.classList.add('active');
-            cardElement.style.animationName = 'flipIn'; // Flip-in animation
+            cardElement.style.animationName = 'squeezeIn'; // Squeeze-in animation
             cardState = 'active';
         }
 
@@ -196,9 +227,16 @@
 
         // Function to flip the card and show a prompt
         function flipCard() {
-            const cardType = getRandomCardType();
-            cardElement.style.animationName = 'flipOut'; // Flip-out animation for current prompt
-            cardElement.addEventListener('animationend', () => {
+            // Show the back of the card during transition
+            cardElement.style.display = 'none';
+            cardBackElement.style.display = 'block';
+            cardBackElement.style.animationName = 'squeezeOut';
+
+            cardBackElement.addEventListener('animationend', () => {
+                cardBackElement.style.display = 'none';
+                cardElement.style.display = 'flex';
+
+                const cardType = getRandomCardType();
                 if (cardType === 'gameMaster') {
                     showGameMasterPrompt();
                 } else if (cardType === 'numberCard') {
@@ -206,8 +244,9 @@
                 } else if (cardType === 'stuck') {
                     showStuckPrompt();
                 }
-                cardElement.style.animationName = 'flipIn'; // Flip-in for new prompt
+                cardElement.style.animationName = 'squeezeIn';
             }, { once: true });
+
             startTimer(); // Start the timer when a card is flipped
         }
 
