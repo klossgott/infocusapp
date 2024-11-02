@@ -22,7 +22,7 @@
             width: 340px;
             height: 500px;
             background: transparent;
-            overflow: visible;
+            overflow: hidden; /* Prevent overflow */
         }
         #widget-card {
             position: absolute;
@@ -30,7 +30,7 @@
             left: 50%;
             width: 100%;
             height: 100%;
-            background-color: #fff;
+            background-color: #FFD700; /* Yellow for resting state */
             border-radius: 10px;
             transform: translate(-50%, -50%) scale(0.15);
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
@@ -41,6 +41,8 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            padding: 20px; /* Padding to prevent text from touching borders */
+            box-sizing: border-box;
         }
         #widget-card.active {
             transform: translate(-50%, -50%) scale(1);
@@ -52,25 +54,22 @@
             line-height: 1.5;
             font-weight: 400;
             letter-spacing: 0.05em;
-            margin: 20px;
             word-wrap: break-word;
             white-space: normal;
         }
-        /* Resting state styling */
-        #widget-card.resting {
-            background-color: #FFD700; /* Yellow color */
-        }
+        /* Resting state styling with large 'S' */
         #widget-card.resting #card-text {
             font-size: 3em;
             font-weight: bold;
-            color: #fff;
+            color: #FFA500; /* Bright orange 'S' */
+            margin: 0; /* Remove margin to center 'S' */
         }
         .typing-animation {
             display: inline-block;
             overflow: hidden;
-            white-space: nowrap;
-            animation: typing 3s steps(40, end);
-            border-right: 2px solid black;
+            white-space: pre-wrap; /* Allow wrapping */
+            word-wrap: break-word;
+            animation: typing 2s steps(40, end) forwards;
         }
         #timer-bar {
             position: absolute;
@@ -116,83 +115,132 @@
                 "<b><i>A new character enters the story.</i></b>",
                 "<i>Suddenly...</i>",
                 "Describe the weather in this scene.",
-                "<b><i>Add a dramatic moment!</i></b>"
+                "<b><i>Add a dramatic moment!</i></b>",
+                "What if...",
+                "Meanwhile...",
+                "Embrace an opposite.",
+                "Pick a fight.",
+                "Lose the best asset.",
+                "Compare something to something. Use a metaphor.",
+                "Invent a new word and use it.",
+                "Make an unlikely comparison.",
+                "Say something ridiculous.",
+                "Say something wise.",
+                "Say something crazy.",
+                "Smell.",
+                "See.",
+                "Touch.",
+                "Hear.",
+                "Taste.",
+                "Run.",
+                "Walk.",
+                "Crawl.",
+                "Fly.",
+                "Create an unlikely alliance."
             ],
             "numberCard": [
                 "Change everything in just [x] word[s].",
                 "Continue the sentence adding [x] word[s].",
                 "Expand the scene adding [x] word[s].",
-                "Tell us about what NAME is doing.",
+                "Tell us about what <u>NAME</u> is doing.",
                 "Start a new challenge using [x] word[s].",
-                "NAME feels [x] word[s]."
+                "<u>NAME</u> feels [x] word[s]."
             ],
             "wildcard": [
                 "<i>Then, something unexpected happened...</i>",
-                "At this moment, NAME felt <b><i>[emotion]</i></b>...",
+                "At this moment, <u>NAME</u> felt <u>EMOTION</u>...",
                 "<i>Suddenly, a new element joined the scene.</i>",
                 "What happens if something goes wrong?",
                 "Describe a noise they heard nearby.",
-                // Additional Wildcard Prompts
                 "Out of nowhere, something happened that no one could have predicted...",
                 "A decision had to be made immediately, and the stakes were...",
-                "Without warning, NAME was presented with an option that could..."
+                "Without warning, <u>NAME</u> was presented with an option that could..."
             ],
-            // Additional categories and prompts from your list
+            // Additional categories and prompts
             "setting": [
-                "It felt cold because...",
-                "The place was unlike anything they'd seen before, with...",
-                "The noise in the background was growing louder, and...",
-                "The sky above was...",
-                "They noticed something unusual in the surroundings: a..."
+                "It felt cold because <u>ACTION</u>.",
+                "The place was unlike anything they'd seen before, with <u>DESCRIPTION</u>.",
+                "The noise in the background was growing louder, and <u>ACTION</u>.",
+                "The sky above was <u>DESCRIPTION</u>.",
+                "They noticed something unusual in the surroundings: a <u>OBJECT</u>."
             ],
             "character": [
-                "The person looked at NAME with eyes that seemed...",
-                "This was NAME known for their ability to...",
-                "No one could figure out why NAME was so protective of...",
-                "A stranger appeared, holding a...",
-                "NAME smiled, but it didn’t quite reach their eyes. It was because..."
+                "The person looked at <u>NAME</u> with eyes that seemed <u>DESCRIPTION</u>.",
+                "This was <u>NAME</u> known for their ability to <u>ACTION</u>.",
+                "No one could figure out why <u>NAME</u> was so protective of <u>OBJECT</u>.",
+                "A stranger appeared, holding a <u>OBJECT</u>.",
+                "<u>NAME</u> smiled, but it didn’t quite reach their eyes. It was because <u>EMOTION</u>."
             ],
             "action": [
-                "Suddenly, NAME decided to...",
-                "There was no time to waste, NAME had to...",
-                "The next thing NAME did was...",
-                "NAME took a deep breath and chose to...",
-                "The group collectively decided that the only way forward was to..."
+                "Suddenly, <u>NAME</u> decided to <u>ACTION</u>.",
+                "There was no time to waste, <u>NAME</u> had to <u>ACTION</u>.",
+                "The next thing <u>NAME</u> did was <u>ACTION</u>.",
+                "<u>NAME</u> took a deep breath and chose to <u>ACTION</u>.",
+                "The group collectively decided that the only way forward was to <u>ACTION</u>."
             ],
             "emotion": [
-                "A chill of fear ran through NAME as they thought about...",
-                "A feeling of hope surged in NAME when they saw...",
-                "Anger bubbled beneath the surface, triggered by...",
-                "NAME couldn’t hide their excitement because...",
-                "The tension in the air shifted when NAME felt a sudden wave of..."
+                "A chill of fear ran through <u>NAME</u> as they thought about <u>ACTION</u>.",
+                "A feeling of hope surged in <u>NAME</u> when they saw <u>DESCRIPTION</u>.",
+                "Anger bubbled beneath the surface, triggered by <u>ACTION</u>.",
+                "<u>NAME</u> couldn’t hide their excitement because <u>ACTION</u>.",
+                "The tension in the air shifted when <u>NAME</u> felt a sudden wave of <u>EMOTION</u>."
             ],
             "object": [
-                "NAME stumbled upon an object—it was...",
-                "Something small but significant caught NAME's eye...",
-                "NAME held a mysterious item that seemed to...",
-                "The item was ordinary to most people, but to NAME, it meant...",
-                "NAME carefully placed the object on the ground, knowing it would..."
+                "<u>NAME</u> stumbled upon an object—it was <u>DESCRIPTION</u>.",
+                "Something small but significant caught <u>NAME</u>'s eye—a <u>OBJECT</u>.",
+                "<u>NAME</u> held a mysterious item that seemed to <u>ACTION</u>.",
+                "The item was ordinary to most people, but to <u>NAME</u>, it meant <u>PURPOSE</u>.",
+                "<u>NAME</u> carefully placed the object on the ground, knowing it would <u>ACTION</u>."
             ],
             "dialogue": [
-                "NAME whispered, 'I think it's time we talk about...'",
-                "'Are you sure we should be doing this?' NAME asked.",
-                "'There’s something I need to tell you,' NAME said, with hesitation.",
-                "'If you go now, there’s no coming back,' was the warning given.",
-                "'I have a plan, but you’re not going to like it,' NAME stated plainly."
+                "<u>NAME</u> whispered, 'I think it's time we talk about <u>PURPOSE</u>.'",
+                "'Are you sure we should be doing this?' <u>NAME</u> asked.",
+                "'There’s something I need to tell you,' <u>NAME</u> said, with hesitation.",
+                "'If you go now, there’s no coming back,' was the warning given by <u>NAME</u>.",
+                "'I have a plan, but you’re not going to like it,' <u>NAME</u> stated plainly."
             ],
             "conflict": [
-                "Something suddenly stood in NAME's way—something that...",
-                "NAME realized there was a critical piece missing that could...",
-                "A disagreement broke out over...",
-                "The group had to deal with a sudden change that threw everything into...",
-                "NAME decided to break the rules, which led to..."
+                "Something suddenly stood in <u>NAME</u>'s way—something that <u>ACTION</u>.",
+                "<u>NAME</u> realized there was a critical piece missing that could <u>ACTION</u>.",
+                "A disagreement broke out over <u>PURPOSE</u>.",
+                "The group had to deal with a sudden change that threw everything into <u>CONFLICT</u>.",
+                "<u>NAME</u> decided to break the rules, which led to <u>CONFLICT</u>."
             ],
             "resolution": [
-                "After a long pause, NAME finally chose to...",
-                "Things were resolved when NAME decided to...",
-                "It wasn’t what NAME expected, but they accepted it and moved on because...",
-                "NAME reached a quiet understanding that meant...",
-                "With a final effort, NAME managed to..."
+                "After a long pause, <u>NAME</u> finally chose to <u>ACTION</u>.",
+                "Things were resolved when <u>NAME</u> decided to <u>ACTION</u>.",
+                "It wasn’t what <u>NAME</u> expected, but they accepted it and moved on because <u>PURPOSE</u>.",
+                "<u>NAME</u> reached a quiet understanding that meant <u>RESOLUTION</u>.",
+                "With a final effort, <u>NAME</u> managed to <u>ACTION</u>."
+            ],
+            "openStoryDriver": [
+                "What's next?",
+                "What now?",
+                "And then?",
+                "What if...",
+                "Meanwhile...",
+                "After that...",
+                "Suddenly...",
+                "Then...",
+                "Further along, ...",
+                "Thereafter, ...",
+                "Again, ...",
+                "Surprisingly, ...",
+                "Wow!",
+                "Incredible!",
+                "Sadly, ...",
+                "Unbelievable, but true, ...",
+                "How strange!",
+                "Yes, it was true.",
+                "It was time.",
+                "This was the place.",
+                "That's how it had to be done.",
+                "It had to happen that way.",
+                "There was nothing else to do now.",
+                "Yes!",
+                "No!",
+                "Maybe.",
+                "Actually, ..."
             ]
         };
 
@@ -215,6 +263,7 @@
 
         let cardState = 'resting'; // resting, title, instructions, active, exitOptions
         let timerInterval;
+        let tryAgainCount = 0; // Counter for "Time's up! Try again"
 
         // Initial minimized state with 'S' on the card
         card.classList.add('resting');
@@ -271,6 +320,7 @@
             timerBarElement.style.width = '0%'; // Clear timer bar
             timerBarElement.style.display = 'none'; // Hide timer bar
             clearInterval(timerInterval); // Clear any running timer
+            tryAgainCount = 0; // Reset try again counter
         }
 
         function expandCard() {
@@ -304,6 +354,8 @@
                 const cardType = getRandomCardType();
                 if (cardType === 'numberCard') {
                     showNumberCardPrompt();
+                } else if (cardType === 'openStoryDriver') {
+                    showOpenStoryDriver();
                 } else {
                     showGamePrompt(cardType);
                 }
@@ -314,7 +366,7 @@
         }
 
         function getRandomCardType() {
-            const types = ['gameMaster', 'setting', 'character', 'action', 'emotion', 'object', 'dialogue', 'conflict', 'resolution', 'numberCard'];
+            const types = ['gameMaster', 'setting', 'character', 'action', 'emotion', 'object', 'dialogue', 'conflict', 'resolution', 'wildcard', 'openStoryDriver', 'numberCard'];
             return types[Math.floor(Math.random() * types.length)];
         }
 
@@ -336,6 +388,7 @@
             let plural = num === 1 ? '' : 's';
             prompt = prompt.replace('[x]', num).replace('[s]', plural);
             prompt = prompt.replace(/NAME/g, '<u>NAME</u>');
+            prompt = prompt.replace(/EMOTION/g, '<u>EMOTION</u>');
             setCardColor('#ADD8E6'); // Light blue color for number cards
             cardTextElement.innerHTML = prompt;
         }
@@ -350,19 +403,29 @@
             showTypingAnimation(prompt);
         }
 
+        function showOpenStoryDriver() {
+            const prompt = getRandomPrompt('openStoryDriver');
+            setCardColor('#D3D3D3'); // Light grey color for open story drivers
+            showTypingAnimation(prompt);
+        }
+
         function getRandomPrompt(category) {
             const categoryPrompts = prompts[category];
             return categoryPrompts[Math.floor(Math.random() * categoryPrompts.length)];
         }
 
         function getUniquePrompt(category) {
+            if (category === 'numberCard' || category === 'openStoryDriver') {
+                // Number cards and open story drivers can repeat
+                return getRandomPrompt(category);
+            }
             const availablePrompts = prompts[category].filter(p => !usedPrompts[category].includes(p));
             if (availablePrompts.length === 0) {
                 return null;
             }
             const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
             usedPrompts[category].push(prompt);
-            return prompt.replace(/NAME/g, '<u>NAME</u>').replace(/\[emotion\]/g, '<u>EMOTION</u>');
+            return prompt.replace(/NAME/g, '<u>NAME</u>').replace(/EMOTION/g, '<u>EMOTION</u>');
         }
 
         function setCardColor(color) {
@@ -371,22 +434,40 @@
 
         function getCategoryColor(category) {
             const colors = {
-                "gameMaster": "#FFA500",
-                "setting": "#E6E6FA",
-                "character": "#FFFACD",
-                "action": "#E0FFFF",
-                "emotion": "#F0E68C",
-                "object": "#D8BFD8",
-                "dialogue": "#FFE4E1",
-                "conflict": "#FAFAD2",
-                "resolution": "#E6E6FA",
-                "wildcard": "#F5A9A9"
+                "gameMaster": "#FFA500", // Orange
+                "setting": "#E6E6FA", // Lavender
+                "character": "#FFFACD", // Lemon Chiffon
+                "action": "#E0FFFF", // Light Cyan
+                "emotion": "#F0E68C", // Khaki
+                "object": "#D8BFD8", // Thistle
+                "dialogue": "#FFE4E1", // Misty Rose
+                "conflict": "#FAFAD2", // Light Goldenrod Yellow
+                "resolution": "#E6E6FA", // Lavender
+                "wildcard": "#F5A9A9", // Desaturated pink-orange
+                "openStoryDriver": "#D3D3D3", // Light grey
+                "numberCard": "#ADD8E6" // Light blue
             };
             return colors[category] || "#FFFFFF";
         }
 
         function showTypingAnimation(text) {
-            cardTextElement.innerHTML = `<span class="typing-animation">${text}</span>`;
+            cardTextElement.innerHTML = '';
+            let index = 0;
+            const speed = 30; // milliseconds per character
+
+            function type() {
+                if (index < text.length) {
+                    if (text.charAt(index) === '\n') {
+                        cardTextElement.innerHTML += '<br>';
+                    } else {
+                        cardTextElement.innerHTML += text.charAt(index);
+                    }
+                    index++;
+                    setTimeout(type, speed);
+                }
+            }
+
+            type();
         }
 
         function getRandomNumber(min, max) {
@@ -408,7 +489,7 @@
 
                 if (timeLeft <= 3) {
                     // Flash white towards the end
-                    card.style.backgroundColor = timeLeft % 2 === 0 ? 'white' : card.style.backgroundColor;
+                    card.style.backgroundColor = timeLeft % 2 === 0 ? 'white' : getCategoryColor(currentCategory);
                 }
 
                 if (timeLeft <= 0) {
@@ -420,13 +501,43 @@
             }, 1000);
         }
 
+        let currentCategory = ''; // To keep track of current prompt category
+
         function handleTimerEnd() {
+            tryAgainCount++;
+            if (tryAgainCount > 1) {
+                // Display reminder to use Wildcards
+                cardTextElement.innerHTML = "<b style='color: white;'>Time's up!<br>Take a deep breath and try again.<br>Try pressing 'W' for Wildcards!</b>";
+            } else {
+                cardTextElement.innerHTML = "<b style='color: white;'>Time's up!<br>Take a deep breath and try again.</b>";
+            }
             setCardColor('#777777'); // Medium grey
-            cardTextElement.innerHTML = "<b style='color: white;'>Time's up!<br>Take a deep breath and try again.</b>";
             // Hide timer bar
             timerBarElement.style.display = 'none';
             // Keep the game in the 'active' state to allow the player to continue
             cardState = 'active';
+        }
+
+        // Update category in flipCard function
+        function flipCard() {
+            // Hide card content briefly to simulate flip
+            cardTextElement.style.opacity = '0';
+            setTimeout(() => {
+                const cardType = getRandomCardType();
+                if (cardType === 'numberCard') {
+                    currentCategory = 'numberCard';
+                    showNumberCardPrompt();
+                } else if (cardType === 'openStoryDriver') {
+                    currentCategory = 'openStoryDriver';
+                    showOpenStoryDriver();
+                } else {
+                    currentCategory = cardType;
+                    showGamePrompt(cardType);
+                }
+                // Start the timer after showing the prompt
+                startTimer();
+                cardTextElement.style.opacity = '1';
+            }, 300);
         }
     });
 </script>
