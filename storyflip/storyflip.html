@@ -18,11 +18,10 @@
         }
         #widget-container {
             position: relative;
-            width: 320px;  /* Full width of the card in active state */
-            height: 480px; /* Full height of the card in active state */
+            width: 340px;  /* Adjusted to fit the card and shadow */
+            height: 500px; /* Adjusted to fit the card and shadow */
             background: transparent;
-            overflow: hidden;
-            perspective: 1000px;
+            overflow: visible; /* Allows drop shadow to be fully visible */
         }
         #widget-card {
             position: absolute;
@@ -32,23 +31,21 @@
             height: 100%;
             background-color: #B0E0E6;
             border-radius: 15px;
-            padding: 30px; /* Increased padding for better margin */
+            padding: 30px;
             box-sizing: border-box;
             transform: translate(-50%, -50%);
-            transform-origin: center center;
             cursor: pointer;
-            transition: transform 0.5s ease, background-color 1s ease; /* Smooth transition for color */
+            transition: background-color 1s ease, transform 0.5s ease; /* Smooth color and scaling */
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            animation-duration: 0.6s;
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow around the card */
         }
         #widget-card.resting {
-            transform: translate(-50%, -50%) scale(0.15); /* Set resting state to 15% of full card size */
+            transform: translate(-50%, -50%) scale(0.15); /* Resting state at 15% of full size */
         }
         #widget-card.active {
             transform: translate(-50%, -50%) scale(1);
@@ -86,26 +83,6 @@
             from, to { border-right-color: transparent; }
             50% { border-right-color: black; }
         }
-        @keyframes squeezeIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-        @keyframes squeezeOut {
-            from {
-                transform: scale(1);
-                opacity: 1;
-            }
-            to {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-        }
         #widget-card-back {
             display: none;
             position: absolute;
@@ -116,9 +93,9 @@
             background-color: #3B1C0A; /* Dark color for card back */
             border-radius: 15px;
             transform: translate(-50%, -50%);
-            transform-origin: center center;
             backface-visibility: hidden;
             z-index: 0; /* Ensures it's behind the front card */
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow around the card back */
         }
     </style>
 </head>
@@ -172,7 +149,6 @@
         const timerBarElement = document.getElementById('timer-bar');
         const cardBackElement = document.getElementById('widget-card-back');
 
-        let isExpanded = false;
         let cardState = 'resting'; // resting, active, instructions, title
         let timerInterval;
 
@@ -202,6 +178,8 @@
 
         // Function to show title page
         function showTitlePage() {
+            cardElement.classList.remove('resting');
+            cardElement.classList.add('active');
             cardTextElement.innerHTML = prompts.title;
             setCardColor('#FFD700'); // Golden color for title page
             cardState = 'title';
@@ -218,7 +196,6 @@
         function expandCard() {
             cardElement.classList.remove('resting');
             cardElement.classList.add('active');
-            cardElement.style.animationName = 'squeezeIn'; // Squeeze-in animation
             cardState = 'active';
         }
 
@@ -233,9 +210,8 @@
             // Show the back of the card during transition
             cardElement.style.display = 'none';
             cardBackElement.style.display = 'block';
-            cardBackElement.style.animationName = 'squeezeOut';
 
-            cardBackElement.addEventListener('animationend', () => {
+            setTimeout(() => {
                 cardBackElement.style.display = 'none';
                 cardElement.style.display = 'flex';
 
@@ -247,8 +223,7 @@
                 } else if (cardType === 'stuck') {
                     showStuckPrompt();
                 }
-                cardElement.style.animationName = 'squeezeIn';
-            }, { once: true });
+            }, 500); // Half-second delay to simulate a smooth transition
 
             startTimer(); // Start the timer when a card is flipped
         }
@@ -304,7 +279,7 @@
 
         // Start the timer when a card is flipped
         function startTimer() {
-            let timeLeft = 30; // 30-second timer
+            let timeLeft = 20; // 20-second timer
             let timerWidth = 100; // Initial width of the timer bar
 
             clearInterval(timerInterval); // Clear any previous timer interval
@@ -312,10 +287,10 @@
 
             timerInterval = setInterval(() => {
                 timeLeft--;
-                timerWidth -= 3.33; // Reduce width over 30 seconds (100/30)
+                timerWidth -= 5; // Reduce width over 20 seconds (100/20)
                 timerBarElement.style.width = timerWidth + '%';
 
-                if (timeLeft <= 5) {
+                if (timeLeft <= 3) {
                     // Flash white towards the end of the countdown
                     cardElement.style.backgroundColor = timeLeft % 2 === 0 ? 'white' : '#FFA500';
                 }
@@ -323,8 +298,25 @@
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     timerBarElement.style.width = '0%'; // Clear timer bar when finished
+                    endGameDueToTimer();
                 }
             }, 1000);
+        }
+
+        // End game when the timer reaches 0
+        function endGameDueToTimer() {
+            cardElement.style.display = 'none';
+            cardBackElement.style.display = 'block'; // Show card back when time runs out
+            cardTextElement.innerHTML = "Time's up! Press 'N' to start a new story.";
+            setCardColor('#3B1C0A'); // Color reset for the back
+            timerBarElement.style.width = '0%'; // Clear timer bar
+
+            // Listen for 'N' key to restart the game
+            document.addEventListener('keydown', (e) => {
+                if (e.key.toLowerCase() === 'n') {
+                    window.location.reload(); // Reload page to restart the game
+                }
+            }, { once: true }); // Only listen once to prevent multiple reloads
         }
 
         // End game function when clicking outside the card
