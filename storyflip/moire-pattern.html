@@ -41,14 +41,9 @@
       width: 100%;
       height: 100%;
       position: relative;
-    }
-
-    .random-axis {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      background: radial-gradient(circle at -150% -150%, transparent, transparent 60%, rgba(255, 255, 255, 0.7) 70%, transparent 80%),
+                  radial-gradient(circle at 150% 150%, transparent, transparent 60%, rgba(255, 255, 255, 0.7) 70%, transparent 80%);
+      background-size: 200% 200%;
     }
   </style>
 </head>
@@ -68,22 +63,6 @@
       const mirrorContainer = document.getElementById('mirrorContainer');
       mirrorContainer.innerHTML = '';
 
-      // Create just one base pattern - keeping it simple
-      const lineThickness = random(1.5, 2.5);
-      const spacing = random(30, 40); // Much sparser
-      const angle = random(-30, 30);
-
-      // Base pattern CSS
-      const patternStyle = `
-        repeating-linear-gradient(
-          ${angle}deg,
-          transparent,
-          transparent ${lineThickness}px,
-          rgba(255,255,255,0.5) ${lineThickness}px,
-          rgba(255,255,255,0.5) ${lineThickness + spacing}px
-        )
-      `;
-
       // Create four quadrants with proper mirroring
       const positions = [
         { transform: 'translate(0, 0)' },
@@ -92,31 +71,13 @@
         { transform: 'translate(100%, 100%) scale(-1, -1)' }
       ];
 
-      positions.forEach((pos, i) => {
+      positions.forEach((pos) => {
         const quadrant = document.createElement('div');
         quadrant.className = 'quadrant';
         quadrant.style.transform = pos.transform;
         
         const pattern = document.createElement('div');
         pattern.className = 'quadrant-pattern';
-        pattern.style.background = patternStyle;
-        
-        // Optionally add a random diagonal axis to one of the quadrants
-        if (i === Math.floor(random(0, 4))) {
-          const randomAxis = document.createElement('div');
-          randomAxis.className = 'random-axis';
-          const axisAngle = random(0, 360);
-          randomAxis.style.background = `
-            repeating-linear-gradient(
-              ${axisAngle}deg,
-              transparent,
-              transparent 2px,
-              rgba(255, 255, 255, 0.7) 2px,
-              rgba(255, 255, 255, 0.7) 6px
-            )
-          `;
-          pattern.appendChild(randomAxis);
-        }
 
         quadrant.appendChild(pattern);
         mirrorContainer.appendChild(quadrant);
