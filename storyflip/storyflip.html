@@ -69,7 +69,6 @@
             overflow: hidden;
             white-space: pre-wrap; /* Allow wrapping */
             word-wrap: break-word;
-            animation: typing 2s steps(40, end) forwards;
         }
         #timer-bar {
             position: absolute;
@@ -80,15 +79,28 @@
             transition: width 1s linear;
             display: none;
         }
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
         /* Placeholder Highlight */
         .placeholder {
             background-color: rgba(255, 255, 255, 0.15); /* White highlight at 15% opacity */
             padding: 2px 4px;
             border-radius: 3px;
+        }
+        /* Paused State Overlay */
+        #paused-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            border-radius: 10px;
+            display: none; /* Hidden by default */
+            z-index: 10;
         }
     </style>
 </head>
@@ -99,6 +111,7 @@
     <div id="widget-card" class="resting">
         <div id="card-text">S</div>
         <div id="timer-bar"></div> <!-- Timer bar element -->
+        <div id="paused-overlay">Game Paused. Press Spacebar to resume.</div>
     </div>
 </div>
 
@@ -106,22 +119,25 @@
     // Inline JavaScript
     document.addEventListener('DOMContentLoaded', function() {
         const prompts = {
-            "title": "<b style='font-size: 2em; font-variant: small-caps;'>Story Flip</b>",
+            "title": "Story Flip",
             "instructions": [
-                "Welcome to <b>Story Flip</b>!",
-                "Take turns to tell each other or type in the chat what happens next. You have 20 seconds.",
-                "Click the card to flip and receive story instructions.",
-                "If you're stuck, press 'W' for a Wildcard.",
-                "Press 'N' for a new game, 'X' to exit."
+                "Welcome, Storytellers",
+                "Decide how long you want to play and set a timer.",
+                "The aim is to listen carefully, pick up on what you hear, and keep the story going.",
+                "What happens next? Take turns to tell each other, or type in the chat. You have 20 seconds.",
+                "Click the card to flip, get inspired, and start telling!",
+                "'W' for a Wildcard, if you're stuck.",
+                "'N' for a new game, 'X' to exit.",
+                "'Space Bar' to 'Pause-and-tell'."
             ],
             "gameMaster": [
-                "<b><i>Add a sentence that expands on what has happened so far.</i></b>",
-                "<b><i>What happened next?</i></b>",
-                "<b><i>And then?</i></b>",
-                "<b><i>A new character enters the story.</i></b>",
-                "<i>Suddenly...</i>",
+                "Add a sentence that expands on what has happened so far.",
+                "What happened next?",
+                "And then?",
+                "A new character enters the story.",
+                "Suddenly...",
                 "Describe the weather in this scene.",
-                "<b><i>Add a dramatic moment!</i></b>",
+                "Add a dramatic moment!",
                 "What if...",
                 "Meanwhile...",
                 "Further along, ...",
@@ -175,10 +191,23 @@
                 "Introduce a new character using [x] word[s].",
                 "Create a conflict in [x] word[s]."
             ],
+            "storyRhythm": [
+                "Repeatedly remind us of the weather for the next [x] turn[s].",
+                "For the next [x] turn[s], emphasise the same point.",
+                "For the next [x] turn[s], take the opposite view.",
+                "For the next [x] turn[s], create contrast.",
+                "Repeatedly remind us of the beginning for the next [x] turn[s].",
+                "Bring back the past for the next [x] turn[s].",
+                "For the next [x] turn[s], add a strange comparison.",
+                "Think of the future for the next [x] turn[s].",
+                "For the next [x] turn[s], repeat the moral of the story.",
+                "Be enthusiastic for the next [x] turn[s].",
+                "Add the same wise phrase for the next [x] turn[s]."
+            ],
             "wildcard": [
-                "<i>Then, something unexpected happened...</i>",
+                "Then, something unexpected happened...",
                 "At this moment, NAME felt EMOTION...",
-                "<i>Suddenly, a new element joined the scene.</i>",
+                "Suddenly, a new element joined the scene.",
                 "What happens if something goes wrong?",
                 "Describe a noise they heard nearby.",
                 "Out of nowhere, something happened that no one could have predicted...",
@@ -269,7 +298,14 @@
                 "Yes!",
                 "No!",
                 "Maybe.",
-                "Actually, ..."
+                "Actually, ...",
+                "Shortly thereafter, ...",
+                "Unexpectedly, ...",
+                "Once more, ...",
+                "Immediately, ...",
+                "Gradually, ...",
+                "Instantly, ...",
+                "Eventually, ..."
             ]
         };
 
@@ -283,16 +319,20 @@
             "object": [],
             "dialogue": [],
             "conflict": [],
-            "resolution": []
+            "resolution": [],
+            "storyRhythm": []
         };
 
         const card = document.getElementById("widget-card");
         const cardTextElement = document.getElementById("card-text");
         const timerBarElement = document.getElementById("timer-bar");
+        const pausedOverlay = document.getElementById("paused-overlay");
 
-        let cardState = 'resting'; // resting, title, instructions, active, exitOptions
+        let cardState = 'resting'; // resting, title, instructions, active, exitOptions, paused
         let timerInterval;
         let tryAgainCount = 0; // Counter for "Time's up! Try again"
+        let turnCount = 0; // To track the number of turns
+        let lastPromptCategory = null; // To prevent same category twice in a row
 
         // Initial minimized state with 'S' on the card
         card.classList.add('resting');
@@ -354,6 +394,8 @@
             timerBarElement.style.display = 'none'; // Hide timer bar
             clearInterval(timerInterval); // Clear any running timer
             tryAgainCount = 0; // Reset try again counter
+            turnCount = 0; // Reset turn count
+            lastPromptCategory = null; // Reset last prompt category
             resumePause(); // Ensure game is not paused
         }
 
@@ -366,12 +408,13 @@
 
         function showTitlePage() {
             cardState = 'title';
-            cardTextElement.innerHTML = prompts.title;
+            cardTextElement.innerHTML = `<b>Story Flip</b>`;
             setCardColor('#FFD700'); // Golden color for title page
         }
 
         function showInstructions() {
             cardState = 'instructions';
+            // Combine instructions with line breaks
             cardTextElement.innerHTML = prompts.instructions.join("<br><br>");
             setCardColor('#FFE4B5'); // Light warm color
         }
@@ -382,20 +425,23 @@
         }
 
         function flipCard() {
+            if (cardState === 'paused') return; // Do nothing if paused
+
             // Hide card content briefly to simulate flip
             cardTextElement.style.opacity = '0';
             setTimeout(() => {
-                const cardType = getRandomCardType();
-                if (cardType === 'numberCard') {
-                    currentCategory = 'numberCard';
-                    showNumberCardPrompt();
-                } else if (cardType === 'openStoryDriver') {
-                    currentCategory = 'openStoryDriver';
-                    showOpenStoryDriver();
+                turnCount++; // Increment turn count
+                let isStoryRhythmTurn = (turnCount % 10 === 0);
+
+                if (isStoryRhythmTurn) {
+                    currentCategory = 'storyRhythm';
+                    showStoryRhythmPrompt();
                 } else {
+                    const cardType = getRandomCardType();
                     currentCategory = cardType;
                     showGamePrompt(cardType);
                 }
+
                 // Start the timer after showing the prompt
                 startTimer();
                 cardTextElement.style.opacity = '1';
@@ -403,8 +449,16 @@
         }
 
         function getRandomCardType() {
-            const types = ['gameMaster', 'setting', 'character', 'action', 'emotion', 'object', 'dialogue', 'conflict', 'resolution', 'wildcard', 'openStoryDriver', 'numberCard'];
-            return types[Math.floor(Math.random() * types.length)];
+            const types = ['gameMaster', 'setting', 'character', 'action', 'emotion', 'object', 'dialogue', 'conflict', 'resolution'];
+            let selectedType;
+            let attempts = 0;
+            do {
+                selectedType = types[Math.floor(Math.random() * types.length)];
+                attempts++;
+                // Prevent selecting the same category twice in a row
+                if (selectedType !== lastPromptCategory) break;
+            } while (attempts < 10);
+            return selectedType;
         }
 
         function showGamePrompt(category) {
@@ -417,6 +471,20 @@
             }
             setCardColor(getCategoryColor(category));
             showTypingAnimation(prompt);
+            lastPromptCategory = category;
+        }
+
+        function showStoryRhythmPrompt() {
+            const prompt = getUniquePrompt('storyRhythm');
+            if (!prompt) {
+                cardTextElement.innerHTML = "<b>No more Story Rhythm prompts available. Press 'N' for a new game.</b>";
+                clearInterval(timerInterval);
+                timerBarElement.style.display = 'none';
+                return;
+            }
+            setCardColor(getCategoryColor('storyRhythm'));
+            showTypingAnimation(prompt);
+            lastPromptCategory = 'storyRhythm';
         }
 
         function showNumberCardPrompt() {
@@ -427,7 +495,8 @@
             // Replace all placeholders with spans
             prompt = replacePlaceholders(prompt);
             setCardColor('#ADD8E6'); // Light blue color for number cards
-            cardTextElement.innerHTML = prompt;
+            showTypingAnimation(prompt);
+            lastPromptCategory = 'numberCard';
         }
 
         function showWildcardPrompt() {
@@ -438,12 +507,14 @@
             }
             setCardColor('#F5A9A9'); // Desaturated pink-orange color
             showTypingAnimation(prompt);
+            lastPromptCategory = 'wildcard';
         }
 
         function showOpenStoryDriver() {
             const prompt = getRandomPrompt('openStoryDriver');
             setCardColor('#D3D3D3'); // Light grey color for open story drivers
             showTypingAnimation(prompt);
+            lastPromptCategory = 'openStoryDriver';
         }
 
         function getRandomPrompt(category) {
@@ -452,10 +523,31 @@
         }
 
         function getUniquePrompt(category) {
-            if (category === 'numberCard' || category === 'openStoryDriver') {
-                // Number cards and open story drivers can repeat
+            if (category === 'wildcard') {
+                // Wildcards can repeat as needed
                 return getRandomPrompt(category);
             }
+            if (category === 'storyRhythm') {
+                // Story Rhythm prompts should not repeat within the game session
+                const availablePrompts = prompts[category].filter(p => !usedPrompts[category].includes(p));
+                if (availablePrompts.length === 0) {
+                    return null;
+                }
+                const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
+                usedPrompts[category].push(prompt);
+                return replacePlaceholders(prompt);
+            }
+            if (category === 'numberCard') {
+                // Number cards can repeat as needed
+                let prompt = getRandomPrompt(category);
+                const num = getRandomNumber(1, 6);
+                let plural = num === 1 ? '' : 's';
+                prompt = prompt.replace('[x]', num).replace('[s]', plural);
+                // Replace all placeholders with spans
+                prompt = replacePlaceholders(prompt);
+                return prompt;
+            }
+            // For other categories, ensure prompts do not repeat
             const availablePrompts = prompts[category].filter(p => !usedPrompts[category].includes(p));
             if (availablePrompts.length === 0) {
                 return null;
@@ -482,7 +574,8 @@
                 "resolution": "#E6E6FA", // Lavender
                 "wildcard": "#F5A9A9", // Desaturated pink-orange
                 "openStoryDriver": "#D3D3D3", // Light grey
-                "numberCard": "#ADD8E6" // Light blue
+                "numberCard": "#ADD8E6", // Light blue
+                "storyRhythm": "#FFB6C1" // Light Pink for Story Rhythm
             };
             return colors[category] || "#FFFFFF";
         }
@@ -564,30 +657,7 @@
             timerBarElement.style.display = 'none';
             // Keep the game in the 'active' state to allow the player to continue
             cardState = 'active';
-        }
-
-        // Update category in flipCard function
-        function flipCard() {
-            if (isPaused) return; // Do nothing if the game is paused
-
-            // Hide card content briefly to simulate flip
-            cardTextElement.style.opacity = '0';
-            setTimeout(() => {
-                const cardType = getRandomCardType();
-                if (cardType === 'numberCard') {
-                    currentCategory = 'numberCard';
-                    showNumberCardPrompt();
-                } else if (cardType === 'openStoryDriver') {
-                    currentCategory = 'openStoryDriver';
-                    showOpenStoryDriver();
-                } else {
-                    currentCategory = cardType;
-                    showGamePrompt(cardType);
-                }
-                // Start the timer after showing the prompt
-                startTimer();
-                cardTextElement.style.opacity = '1';
-            }, 300);
+            lastPromptCategory = null; // Reset last prompt category to allow any category next
         }
 
         // Pause and Resume Functions
@@ -598,7 +668,7 @@
                 // Pause the game
                 isPaused = true;
                 clearInterval(timerInterval);
-                cardTextElement.innerHTML += "<br><b>Game Paused. Press Spacebar to resume.</b>";
+                pausedOverlay.style.display = 'flex';
                 cardState = 'paused';
             } else {
                 // Resume the game
@@ -610,9 +680,8 @@
             if (!isPaused) return;
 
             isPaused = false;
-            cardTextElement.innerHTML += "";
-            // Restart the timer with remaining time (not implemented for simplicity)
-            // For now, restart the timer
+            pausedOverlay.style.display = 'none';
+            // Restart the timer
             startTimer();
             cardState = 'active';
         }
