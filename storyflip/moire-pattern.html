@@ -4,129 +4,128 @@
   <style>
     body {
       margin: 0;
-      overflow: hidden;
       background: black;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .container {
-      width: 100vw;
-      height: 100vh;
+      width: 80vmin;
+      height: 80vmin;
       position: relative;
+      cursor: pointer;
+      overflow: hidden;
     }
 
-    .moire {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100vmin;
-      height: 100vmin;
-      transform: translate(-50%, -50%);
-      background: 
-        repeating-linear-gradient(
-          calc(var(--angle1, 45) * 1deg),
-          transparent,
-          transparent 2px,
-          white 2px,
-          white 4px
-        ),
-        repeating-linear-gradient(
-          calc(var(--angle2, -45) * 1deg),
-          transparent,
-          transparent 2px,
-          white 2px,
-          white 4px
-        );
-      animation: rotateMoire 20s linear infinite;
-    }
-
-    .kaleidoscope {
+    .mirror-container {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transform-origin: center;
-      animation: rotateKaleidoscope 30s linear infinite;
     }
 
-    .mirror {
+    .quadrant {
       position: absolute;
+      top: -0.5%;  /* Adjusted to slightly overlap and prevent hairline */
+      left: -0.5%;  /* Adjusted to slightly overlap and prevent hairline */
+      width: 50.5%; /* Slight overlap to cover any gaps */
+      height: 50.5%; /* Slight overlap to cover any gaps */
+      mix-blend-mode: screen;
+      overflow: hidden; /* Prevents accidental overflow issues */
+    }
+
+    .quadrant-pattern {
       width: 100%;
       height: 100%;
-      opacity: 0.5;
-      mix-blend-mode: difference;
-      animation: pulsate 15s ease-in-out infinite;
+      position: relative;
     }
 
-    @keyframes rotateMoire {
-      0% {
-        --angle1: 45;
-        --angle2: -45;
-      }
-      100% {
-        --angle1: 405;
-        --angle2: 315;
-      }
-    }
-
-    @keyframes rotateKaleidoscope {
-      0% { transform: rotate(0deg) scale(1); }
-      50% { transform: rotate(180deg) scale(1.5); }
-      100% { transform: rotate(360deg) scale(1); }
-    }
-
-    @keyframes pulsate {
-      0% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.2); opacity: 0.7; }
-      100% { transform: scale(1); opacity: 0.5; }
+    .random-axis {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="moire"></div>
-    <div class="kaleidoscope">
-      <div class="mirror"></div>
-      <div class="mirror" style="transform: rotate(60deg)"></div>
-      <div class="mirror" style="transform: rotate(120deg)"></div>
-      <div class="mirror" style="transform: rotate(180deg)"></div>
-      <div class="mirror" style="transform: rotate(240deg)"></div>
-      <div class="mirror" style="transform: rotate(300deg)"></div>
+  <div class="container" id="patternContainer">
+    <div class="mirror-container" id="mirrorContainer">
+      <!-- We'll create four quadrants with mirrored patterns -->
     </div>
   </div>
 
   <script>
-    function randomizePattern() {
-      const moire = document.querySelector('.moire');
-      const kaleidoscope = document.querySelector('.kaleidoscope');
-      
-      // Randomize initial angles
-      const angle1 = Math.random() * 360;
-      const angle2 = Math.random() * 360;
-      
-      moire.style.setProperty('--angle1', angle1);
-      moire.style.setProperty('--angle2', angle2);
-      
-      // Randomize animation durations
-      const animations = document.styleSheets[0].cssRules;
-      for(let rule of animations) {
-        if(rule.type === CSSRule.KEYFRAMES_RULE) {
-          const duration = 10 + Math.random() * 20;
-          const elements = document.querySelectorAll(`*[style*="animation: ${rule.name}"]`);
-          elements.forEach(el => {
-            el.style.animationDuration = `${duration}s`;
-          });
-        }
-      }
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
     }
 
-    // Initial randomization
-    randomizePattern();
-    // Randomize every 10 seconds
-    setInterval(randomizePattern, 10000);
+    function generatePattern() {
+      const mirrorContainer = document.getElementById('mirrorContainer');
+      mirrorContainer.innerHTML = '';
+
+      // Create just one base pattern - keeping it simple
+      const lineThickness = random(1.5, 2.5);
+      const spacing = random(30, 40); // Much sparser
+      const angle = random(-30, 30);
+
+      // Base pattern CSS
+      const patternStyle = `
+        repeating-linear-gradient(
+          ${angle}deg,
+          transparent,
+          transparent ${lineThickness}px,
+          rgba(255,255,255,0.5) ${lineThickness}px,
+          rgba(255,255,255,0.5) ${lineThickness + spacing}px
+        )
+      `;
+
+      // Create four quadrants with proper mirroring
+      const positions = [
+        { transform: 'translate(0, 0)' },
+        { transform: 'translate(100%, 0) scaleX(-1)' },
+        { transform: 'translate(0, 100%) scaleY(-1)' },
+        { transform: 'translate(100%, 100%) scale(-1, -1)' }
+      ];
+
+      positions.forEach((pos, i) => {
+        const quadrant = document.createElement('div');
+        quadrant.className = 'quadrant';
+        quadrant.style.transform = pos.transform;
+        
+        const pattern = document.createElement('div');
+        pattern.className = 'quadrant-pattern';
+        pattern.style.background = patternStyle;
+        
+        // Optionally add a random diagonal axis to one of the quadrants
+        if (i === Math.floor(random(0, 4))) {
+          const randomAxis = document.createElement('div');
+          randomAxis.className = 'random-axis';
+          const axisAngle = random(0, 360);
+          randomAxis.style.background = `
+            repeating-linear-gradient(
+              ${axisAngle}deg,
+              transparent,
+              transparent 2px,
+              rgba(255, 255, 255, 0.7) 2px,
+              rgba(255, 255, 255, 0.7) 6px
+            )
+          `;
+          pattern.appendChild(randomAxis);
+        }
+
+        quadrant.appendChild(pattern);
+        mirrorContainer.appendChild(quadrant);
+      });
+    }
+
+    // Generate pattern on load and click
+    generatePattern();
+    document.getElementById('patternContainer').addEventListener('click', generatePattern);
   </script>
 </body>
 </html>
