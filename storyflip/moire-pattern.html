@@ -41,9 +41,11 @@
       width: 100%;
       height: 100%;
       position: relative;
-      background: radial-gradient(circle at -150% -150%, transparent, transparent 60%, rgba(255, 255, 255, 0.7) 70%, transparent 80%),
-                  radial-gradient(circle at 150% 150%, transparent, transparent 60%, rgba(255, 255, 255, 0.7) 70%, transparent 80%);
+      background: 
+        radial-gradient(circle at -150% -150%, transparent, transparent 98%, rgba(255, 255, 255, 1) 100%), /* Sharp line from outside top-left */
+        radial-gradient(circle at 250% 250%, transparent, transparent 98%, rgba(255, 255, 255, 1) 100%); /* Sharp line from outside bottom-right */
       background-size: 200% 200%;
+      background-repeat: no-repeat;
     }
   </style>
 </head>
@@ -75,9 +77,20 @@
         const quadrant = document.createElement('div');
         quadrant.className = 'quadrant';
         quadrant.style.transform = pos.transform;
-        
+
         const pattern = document.createElement('div');
         pattern.className = 'quadrant-pattern';
+        
+        // Randomize each quadrant to add dynamic visual complexity
+        const offsetX = random(-200, 200);
+        const offsetY = random(-200, 200);
+        pattern.style.background = `
+          radial-gradient(circle at ${offsetX}% ${offsetY}%, transparent, transparent 98%, rgba(255, 255, 255, 1) 100%),
+          radial-gradient(circle at ${-offsetX}% ${-offsetY}%, transparent, transparent 98%, rgba(255, 255, 255, 1) 100%)
+        `;
+        
+        pattern.style.backgroundSize = '200% 200%';
+        pattern.style.backgroundRepeat = 'no-repeat';
 
         quadrant.appendChild(pattern);
         mirrorContainer.appendChild(quadrant);
