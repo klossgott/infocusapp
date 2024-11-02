@@ -59,7 +59,7 @@
         }
         /* Resting state styling with large 'S' */
         #widget-card.resting #card-text {
-            font-size: 3em;
+            font-size: 12em; /* Increased size to 4x */
             font-weight: bold;
             color: #FFA500; /* Bright orange 'S' */
             margin: 0; /* Remove margin to center 'S' */
@@ -83,6 +83,12 @@
         @keyframes typing {
             from { width: 0; }
             to { width: 100%; }
+        }
+        /* Placeholder Highlight */
+        .placeholder {
+            background-color: rgba(255, 255, 255, 0.15); /* White highlight at 15% opacity */
+            padding: 2px 4px;
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -118,6 +124,25 @@
                 "<b><i>Add a dramatic moment!</i></b>",
                 "What if...",
                 "Meanwhile...",
+                "Further along, ...",
+                "Thereafter, ...",
+                "Again, ...",
+                "Surprisingly, ...",
+                "Wow!",
+                "Incredible!",
+                "Sadly, ...",
+                "Unbelievable, but true, ...",
+                "How strange!",
+                "Yes, it was true.",
+                "It was time.",
+                "This was the place.",
+                "That's how it had to be done.",
+                "It had to happen that way.",
+                "There was nothing else to do now.",
+                "Yes!",
+                "No!",
+                "Maybe.",
+                "Actually, ...",
                 "Embrace an opposite.",
                 "Pick a fight.",
                 "Lose the best asset.",
@@ -142,76 +167,80 @@
                 "Change everything in just [x] word[s].",
                 "Continue the sentence adding [x] word[s].",
                 "Expand the scene adding [x] word[s].",
-                "Tell us about what <u>NAME</u> is doing.",
+                "Tell us about what NAME is doing.",
                 "Start a new challenge using [x] word[s].",
-                "<u>NAME</u> feels [x] word[s]."
+                "NAME feels [x] word[s].",
+                "Change the setting in [x] word[s].",
+                "Describe an emotion in [x] word[s].",
+                "Introduce a new character using [x] word[s].",
+                "Create a conflict in [x] word[s]."
             ],
             "wildcard": [
                 "<i>Then, something unexpected happened...</i>",
-                "At this moment, <u>NAME</u> felt <u>EMOTION</u>...",
+                "At this moment, NAME felt EMOTION...",
                 "<i>Suddenly, a new element joined the scene.</i>",
                 "What happens if something goes wrong?",
                 "Describe a noise they heard nearby.",
                 "Out of nowhere, something happened that no one could have predicted...",
                 "A decision had to be made immediately, and the stakes were...",
-                "Without warning, <u>NAME</u> was presented with an option that could..."
+                "Without warning, NAME was presented with an option that could..."
             ],
             // Additional categories and prompts
             "setting": [
-                "It felt cold because <u>ACTION</u>.",
-                "The place was unlike anything they'd seen before, with <u>DESCRIPTION</u>.",
-                "The noise in the background was growing louder, and <u>ACTION</u>.",
-                "The sky above was <u>DESCRIPTION</u>.",
-                "They noticed something unusual in the surroundings: a <u>OBJECT</u>."
+                "It felt cold because ACTION.",
+                "The place was unlike anything they'd seen before, with DESCRIPTION.",
+                "The noise in the background was growing louder, and ACTION.",
+                "The sky above was DESCRIPTION.",
+                "They noticed something unusual in the surroundings: a OBJECT."
             ],
             "character": [
-                "The person looked at <u>NAME</u> with eyes that seemed <u>DESCRIPTION</u>.",
-                "This was <u>NAME</u> known for their ability to <u>ACTION</u>.",
-                "No one could figure out why <u>NAME</u> was so protective of <u>OBJECT</u>.",
-                "A stranger appeared, holding a <u>OBJECT</u>.",
-                "<u>NAME</u> smiled, but it didn’t quite reach their eyes. It was because <u>EMOTION</u>."
+                "The person looked at NAME with eyes that seemed DESCRIPTION.",
+                "This was NAME known for their ability to ACTION.",
+                "No one could figure out why NAME was so protective of OBJECT.",
+                "A stranger appeared, holding a OBJECT.",
+                "NAME smiled, but it didn’t quite reach their eyes. It was because EMOTION."
             ],
             "action": [
-                "Suddenly, <u>NAME</u> decided to <u>ACTION</u>.",
-                "There was no time to waste, <u>NAME</u> had to <u>ACTION</u>.",
-                "The next thing <u>NAME</u> did was <u>ACTION</u>.",
-                "<u>NAME</u> took a deep breath and chose to <u>ACTION</u>.",
-                "The group collectively decided that the only way forward was to <u>ACTION</u>."
+                "Suddenly, NAME decided to ACTION.",
+                "There was no time to waste, NAME had to ACTION.",
+                "The next thing NAME did was ACTION.",
+                "NAME took a deep breath and chose to ACTION.",
+                "The group collectively decided that the only way forward was to ACTION."
             ],
             "emotion": [
-                "A chill of fear ran through <u>NAME</u> as they thought about <u>ACTION</u>.",
-                "A feeling of hope surged in <u>NAME</u> when they saw <u>DESCRIPTION</u>.",
-                "Anger bubbled beneath the surface, triggered by <u>ACTION</u>.",
-                "<u>NAME</u> couldn’t hide their excitement because <u>ACTION</u>.",
-                "The tension in the air shifted when <u>NAME</u> felt a sudden wave of <u>EMOTION</u>."
+                "A chill of fear ran through NAME as they thought about ACTION.",
+                "A feeling of hope surged in NAME when they saw DESCRIPTION.",
+                "Anger bubbled beneath the surface, triggered by ACTION.",
+                "NAME couldn’t hide their excitement because ACTION.",
+                "The tension in the air shifted when NAME felt a sudden wave of EMOTION."
             ],
             "object": [
-                "<u>NAME</u> stumbled upon an object—it was <u>DESCRIPTION</u>.",
-                "Something small but significant caught <u>NAME</u>'s eye—a <u>OBJECT</u>.",
-                "<u>NAME</u> held a mysterious item that seemed to <u>ACTION</u>.",
-                "The item was ordinary to most people, but to <u>NAME</u>, it meant <u>PURPOSE</u>.",
-                "<u>NAME</u> carefully placed the object on the ground, knowing it would <u>ACTION</u>."
+                "NAME stumbled upon an object—it was DESCRIPTION.",
+                "Something small but significant caught NAME's eye—a OBJECT.",
+                "NAME held a mysterious item that seemed to ACTION.",
+                "The item was ordinary to most people, but to NAME, it meant PURPOSE.",
+                "NAME carefully placed the object on the ground, knowing it would ACTION."
             ],
             "dialogue": [
-                "<u>NAME</u> whispered, 'I think it's time we talk about <u>PURPOSE</u>.'",
-                "'Are you sure we should be doing this?' <u>NAME</u> asked.",
-                "'There’s something I need to tell you,' <u>NAME</u> said, with hesitation.",
-                "'If you go now, there’s no coming back,' was the warning given by <u>NAME</u>.",
-                "'I have a plan, but you’re not going to like it,' <u>NAME</u> stated plainly."
+                "NAME whispered, 'I think it's time we talk about PURPOSE.'",
+                "'Are you sure we should be doing this?' NAME asked.",
+                "'There’s something I need to tell you,' NAME said, with hesitation.",
+                "'If you go now, there’s no coming back,' was the warning given by NAME.",
+                "'I have a plan, but you’re not going to like it,' NAME stated plainly."
             ],
             "conflict": [
-                "Something suddenly stood in <u>NAME</u>'s way—something that <u>ACTION</u>.",
-                "<u>NAME</u> realized there was a critical piece missing that could <u>ACTION</u>.",
-                "A disagreement broke out over <u>PURPOSE</u>.",
-                "The group had to deal with a sudden change that threw everything into <u>CONFLICT</u>.",
-                "<u>NAME</u> decided to break the rules, which led to <u>CONFLICT</u>."
+                "Something suddenly stood in NAME's way—something that ACTION.",
+                "NAME realized there was a critical piece missing that could ACTION.",
+                "A disagreement broke out over PURPOSE.",
+                "The group had to deal with a sudden change that threw everything into CONFLICT.",
+                "NAME decided to break the rules, which led to CONFLICT."
             ],
             "resolution": [
-                "After a long pause, <u>NAME</u> finally chose to <u>ACTION</u>.",
-                "Things were resolved when <u>NAME</u> decided to <u>ACTION</u>.",
-                "It wasn’t what <u>NAME</u> expected, but they accepted it and moved on because <u>PURPOSE</u>.",
-                "<u>NAME</u> reached a quiet understanding that meant <u>RESOLUTION</u>.",
-                "With a final effort, <u>NAME</u> managed to <u>ACTION</u>."
+                "After a long pause, NAME finally chose to ACTION.",
+                "Things were resolved when NAME decided to ACTION.",
+                "It wasn’t what NAME expected, but they accepted it and moved on because PURPOSE.",
+                "NAME reached a quiet understanding that meant RESOLUTION.",
+                "With a final effort, NAME managed to ACTION."
             ],
             "openStoryDriver": [
                 "What's next?",
@@ -302,6 +331,10 @@
             if (e.key.toLowerCase() === 'w' && cardState === 'active') {
                 showWildcardPrompt();
             }
+            if (e.code === 'Space') { // Spacebar for "pause and tell"
+                e.preventDefault(); // Prevent default spacebar scrolling
+                togglePause();
+            }
         });
 
         function showExitOptions() {
@@ -316,11 +349,12 @@
             card.classList.remove('active');
             card.classList.add('resting');
             cardTextElement.innerHTML = 'S'; // Display 'S' again
-            cardTextElement.style.fontSize = '3em';
+            cardTextElement.style.fontSize = '12em'; // 4x size
             timerBarElement.style.width = '0%'; // Clear timer bar
             timerBarElement.style.display = 'none'; // Hide timer bar
             clearInterval(timerInterval); // Clear any running timer
             tryAgainCount = 0; // Reset try again counter
+            resumePause(); // Ensure game is not paused
         }
 
         function expandCard() {
@@ -353,10 +387,13 @@
             setTimeout(() => {
                 const cardType = getRandomCardType();
                 if (cardType === 'numberCard') {
+                    currentCategory = 'numberCard';
                     showNumberCardPrompt();
                 } else if (cardType === 'openStoryDriver') {
+                    currentCategory = 'openStoryDriver';
                     showOpenStoryDriver();
                 } else {
+                    currentCategory = cardType;
                     showGamePrompt(cardType);
                 }
                 // Start the timer after showing the prompt
@@ -387,8 +424,8 @@
             const num = getRandomNumber(1, 6);
             let plural = num === 1 ? '' : 's';
             prompt = prompt.replace('[x]', num).replace('[s]', plural);
-            prompt = prompt.replace(/NAME/g, '<u>NAME</u>');
-            prompt = prompt.replace(/EMOTION/g, '<u>EMOTION</u>');
+            // Replace all placeholders with spans
+            prompt = replacePlaceholders(prompt);
             setCardColor('#ADD8E6'); // Light blue color for number cards
             cardTextElement.innerHTML = prompt;
         }
@@ -425,7 +462,7 @@
             }
             const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
             usedPrompts[category].push(prompt);
-            return prompt.replace(/NAME/g, '<u>NAME</u>').replace(/EMOTION/g, '<u>EMOTION</u>');
+            return replacePlaceholders(prompt);
         }
 
         function setCardColor(color) {
@@ -448,6 +485,16 @@
                 "numberCard": "#ADD8E6" // Light blue
             };
             return colors[category] || "#FFFFFF";
+        }
+
+        function replacePlaceholders(text) {
+            // List of placeholders
+            const placeholders = ['NAME', 'PLACE', 'TIME', 'PURPOSE', 'EMOTION', 'OBJECT', 'ACTION', 'DESCRIPTION', 'CONFLICT', 'RESOLUTION'];
+            placeholders.forEach(placeholder => {
+                const regex = new RegExp(`\\b${placeholder}\\b`, 'g');
+                text = text.replace(regex, `<span class="placeholder">${placeholder}</span>`);
+            });
+            return text;
         }
 
         function showTypingAnimation(text) {
@@ -502,6 +549,7 @@
         }
 
         let currentCategory = ''; // To keep track of current prompt category
+        let isPaused = false; // To track pause state
 
         function handleTimerEnd() {
             tryAgainCount++;
@@ -520,6 +568,8 @@
 
         // Update category in flipCard function
         function flipCard() {
+            if (isPaused) return; // Do nothing if the game is paused
+
             // Hide card content briefly to simulate flip
             cardTextElement.style.opacity = '0';
             setTimeout(() => {
@@ -539,6 +589,34 @@
                 cardTextElement.style.opacity = '1';
             }, 300);
         }
+
+        // Pause and Resume Functions
+        function togglePause() {
+            if (cardState !== 'active') return; // Only allow pausing during active state
+
+            if (!isPaused) {
+                // Pause the game
+                isPaused = true;
+                clearInterval(timerInterval);
+                cardTextElement.innerHTML += "<br><b>Game Paused. Press Spacebar to resume.</b>";
+                cardState = 'paused';
+            } else {
+                // Resume the game
+                resumePause();
+            }
+        }
+
+        function resumePause() {
+            if (!isPaused) return;
+
+            isPaused = false;
+            cardTextElement.innerHTML += "";
+            // Restart the timer with remaining time (not implemented for simplicity)
+            // For now, restart the timer
+            startTimer();
+            cardState = 'active';
+        }
+
     });
 </script>
 
