@@ -1,123 +1,374 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const prompts = [
-        "What's the weirdest movie you've ever seen?",
-        "Is there a pizza topping that most people hate but you secretly love?",
-        "Window seat or aisle seat?",
-        // ... rest of your prompts ...
-    ];
+Here's the updated code with your changes applied:
 
-    const widgetImage = document.getElementById('widget-image');
-    const icebreakerCard = document.getElementById('icebreaker-card');
-    const icebreakerText = document.getElementById('icebreaker-text');
-    const iceSound = document.getElementById('ice-sound');
-    const coverOverlay = document.getElementById('cover-overlay');
-
-    let isExpanded = false;
-    let lastClickTime = 0;
-    const doubleClickDelay = 300; // milliseconds
-
-    // Handle clicks on cover overlay
-    coverOverlay.addEventListener('click', (e) => {
-        const currentTime = new Date().getTime();
-        const timeDiff = currentTime - lastClickTime;
-
-        if (timeDiff < doubleClickDelay && isExpanded) {
-            // Double click detected while expanded - return to resting state
-            coverOverlay.classList.remove('expanded');
-            coverOverlay.classList.add('resting');
-            isExpanded = false;
-        } else if (isExpanded) {
-            // Single click while expanded - start the game
-            startGame();
-        } else {
-            // Single click while resting - expand
-            coverOverlay.classList.remove('resting');
-            coverOverlay.classList.add('expanded');
-            isExpanded = true;
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Icebreaker Widget</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
         }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        #widget-container {
+            position: relative;
+            width: 320px;
+            height: 180px;
+            background: transparent;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        #widget-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: auto;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: filter 0.3s;
+            transform-origin: center center;
+            display: none;
+        }
+        #widget-image:hover {
+            filter: brightness(1.2);
+        }
+        .explode {
+            animation: explodeAndFade 0.3s forwards;
+        }
+        @keyframes explodeAndFade {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+        #icebreaker-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 180px;
+            background-color: #F8F0E3;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+            overflow: hidden;
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
+            backface-visibility: hidden;
+        }
+        #icebreaker-text {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1em;
+            color: #333;
+            line-height: 1.5;
+            font-weight: normal;
+            letter-spacing: 0.05em;
+            margin: 0;
+            background: transparent;
+        }
+        #cover-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 180px;
+            background-color: #3B1C0A;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            z-index: 10;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 15px;
+            transform: translate(-50%, -50%) scale(0.3);
+            transform-origin: center center;
+            backface-visibility: hidden;
+            transition: transform 0.5s ease;
+        }
+        #cover-overlay.resting {
+            transform: translate(-50%, -50%) scale(0.3);
+        }
+        #cover-overlay.expanded {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #cover-text {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1.2em;
+            font-weight: bold;
+            line-height: 1.4;
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+        #cover-text span {
+            font-weight: normal;
+        }
+        @keyframes coverFadeOutFlip {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotateY(90deg);
+            }
+        }
+        @keyframes fadeInFlip {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotateY(-90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
+        }
+        @keyframes fadeOutFlip {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotateY(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
 
-        lastClickTime = currentTime;
-    });
+<div id="widget-container">
+    <div id="cover-overlay" class="resting">
+        <div id="cover-text">
+            Fun Ice Breaker<br>
+            Questions<br><br>
+            <span>Click to expand<br>Double-click to minimize</span>
+        </div>
+    </div>
+    <img id="widget-image" src="ice-cubes.png" alt="Ice Cubes">
+    <div id="icebreaker-card">
+        <div id="icebreaker-text"></div>
+    </div>
+</div>
 
-    function startGame() {
-        coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
-        coverOverlay.addEventListener('animationend', () => {
-            coverOverlay.style.display = 'none';
-            widgetImage.style.display = 'block';
-            widgetImage.src = 'ice-cubes.png';
-        }, { once: true });
-    }
+<audio id="ice-sound" src="ice-10-104149.mp3" preload="auto"></audio>
 
-    // Handle widget image click
-    widgetImage.addEventListener('click', () => {
-        playRandomIceSound();
-        widgetImage.src = 'broken-ice.png';
-        widgetImage.classList.add('explode');
-        widgetImage.addEventListener('animationend', onExplodeAnimationEnd, { once: true });
-    });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const prompts = [
+            "What's the weirdest movie you've ever seen?",
+            "Is there a pizza topping that most people hate but you secretly love?",
+            "Window seat or aisle seat?",
+            // ... rest of your prompts ...
+        ];
 
-    function onExplodeAnimationEnd() {
-        widgetImage.style.display = 'none';
-        widgetImage.classList.remove('explode');
-        widgetImage.style.transform = 'translate(-50%, -50%)';
-        widgetImage.style.width = '50%';
-        showIcebreaker();
-    }
+        const widgetImage = document.getElementById('widget-image');
+        const icebreakerCard = document.getElementById('icebreaker-card');
+        const icebreakerText = document.getElementById('icebreaker-text');
+        const iceSound = document.getElementById('ice-sound');
+        const coverOverlay = document.getElementById('cover-overlay');
 
-    function showIcebreaker() {
-        icebreakerText.textContent = getRandomPrompt();
-        const baseColor = '#F8F0E3';
-        const hsl = hexToHsl(baseColor);
-        const lightnessAdjustment = (Math.random() * 20) - 10;
-        const newL = Math.min(100, Math.max(0, hsl.l + lightnessAdjustment));
-        const newColor = hslToHex(hsl.h, hsl.s, newL);
-        icebreakerCard.style.backgroundColor = newColor;
-        icebreakerCard.style.display = 'flex';
-        icebreakerCard.style.animationName = 'fadeInFlip';
-    }
+        let isExpanded = false;
+        let lastClickTime = 0;
+        const doubleClickDelay = 300; // milliseconds
 
-    // Reset to initial state when card is clicked
-    icebreakerCard.addEventListener('click', () => {
-        icebreakerCard.style.animationName = 'fadeOutFlip';
-        icebreakerCard.addEventListener('animationend', () => {
-            icebreakerCard.style.display = 'none';
-            coverOverlay.style.display = 'flex';
-            coverOverlay.style.animation = '';
-            coverOverlay.classList.remove('expanded');
-            coverOverlay.classList.add('resting');
-            isExpanded = false;
-        }, { once: true });
-    });
+        // Handle clicks on cover overlay
+        coverOverlay.addEventListener('click', (e) => {
+            const currentTime = new Date().getTime();
+            const timeDiff = currentTime - lastClickTime;
 
-    function getRandomPrompt() {
-        return prompts[Math.floor(Math.random() * prompts.length)];
-    }
+            if (timeDiff < doubleClickDelay && isExpanded) {
+                // Double click detected while expanded - return to resting state
+                coverOverlay.classList.remove('expanded');
+                coverOverlay.classList.add('resting');
+                isExpanded = false;
+            } else if (isExpanded) {
+                // Single click while expanded - start the game
+                startGame();
+            } else {
+                // Single click while resting - expand
+                coverOverlay.classList.remove('resting');
+                coverOverlay.classList.add('expanded');
+                isExpanded = true;
+            }
 
-    function playRandomIceSound() {
-        const duration = 0.5; // Duration in seconds
-        
-        if (iceSound.readyState >= 2) {
-            // Calculate a random start time, ensuring we don't exceed the audio duration
-            const totalDuration = iceSound.duration;
-            const maxStartTime = Math.max(0, totalDuration - duration);
-            const randomStartTime = Math.random() * maxStartTime;
-            
-            // Set the start time and play
-            iceSound.currentTime = randomStartTime;
-            iceSound.play();
-            
-            // Stop after the specified duration
-            setTimeout(() => {
-                iceSound.pause();
-                iceSound.currentTime = 0;
-            }, duration * 1000);
-        } else {
-            // If audio isn't loaded yet, wait for it
-            iceSound.addEventListener('loadedmetadata', () => {
-                playRandomIceSound();
+            lastClickTime = currentTime;
+        });
+
+        function startGame() {
+            coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
+            coverOverlay.addEventListener('animationend', () => {
+                coverOverlay.style.display = 'none';
+                widgetImage.style.display = 'block';
+                widgetImage.src = 'ice-cubes.png';
             }, { once: true });
         }
-    }
 
-    // Keep your existing hexToHsl and hslToHex functions...
-});
+        // Handle widget image click
+        widgetImage.addEventListener('click', () => {
+            playRandomIceSound();
+            widgetImage.src = 'broken-ice.png';
+            widgetImage.classList.add('explode');
+            widgetImage.addEventListener('animationend', onExplodeAnimationEnd, { once: true });
+        });
+
+        function onExplodeAnimationEnd() {
+            widgetImage.style.display = 'none';
+            widgetImage.classList.remove('explode');
+            widgetImage.style.transform = 'translate(-50%, -50%)';
+            widgetImage.style.width = '50%';
+            showIcebreaker();
+        }
+
+        function showIcebreaker() {
+            icebreakerText.textContent = getRandomPrompt();
+            const baseColor = '#F8F0E3';
+            const hsl = hexToHsl(baseColor);
+            const lightnessAdjustment = (Math.random() * 20) - 10;
+            const newL = Math.min(100, Math.max(0, hsl.l + lightnessAdjustment));
+            const newColor = hslToHex(hsl.h, hsl.s, newL);
+            icebreakerCard.style.backgroundColor = newColor;
+            icebreakerCard.style.display = 'flex';
+            icebreakerCard.style.animationName = 'fadeInFlip';
+        }
+
+        // Reset to initial state when card is clicked
+        icebreakerCard.addEventListener('click', () => {
+            icebreakerCard.style.animationName = 'fadeOutFlip';
+            icebreakerCard.addEventListener('animationend', () => {
+                icebreakerCard.style.display = 'none';
+                coverOverlay.style.display = 'flex';
+                coverOverlay.style.animation = '';
+                coverOverlay.classList.remove('expanded');
+                coverOverlay.classList.add('resting');
+                isExpanded = false;
+            }, { once: true });
+        });
+
+        function getRandomPrompt() {
+            return prompts[Math.floor(Math.random() * prompts.length)];
+        }
+
+        function playRandomIceSound() {
+            const duration = 0.5; // Duration in seconds
+
+            if (iceSound.readyState >= 2) {
+                // Calculate a random start time, ensuring we don't exceed the audio duration
+                const totalDuration = iceSound.duration;
+                const maxStartTime = Math.max(0, totalDuration - duration);
+                const randomStartTime = Math.random() * maxStartTime;
+
+                // Set the start time and play
+                iceSound.currentTime = randomStartTime;
+                iceSound.play();
+
+                // Stop after the specified duration
+                setTimeout(() => {
+                    iceSound.pause();
+                    iceSound.currentTime = 0;
+                }, duration * 1000);
+            } else {
+                // If audio isn't loaded yet, wait for it
+                iceSound.addEventListener('loadedmetadata', () => {
+                    playRandomIceSound();
+                }, { once: true });
+            }
+        }
+
+        // Hex to HSL conversion
+        function hexToHsl(hex) {
+            let r = 0, g = 0, b = 0;
+            if (hex.length === 4) {
+                r = parseInt(hex[1] + hex[1], 16);
+                g = parseInt(hex[2] + hex[2], 16);
+                b = parseInt(hex[3] + hex[3], 16);
+            } else if (hex.length === 7) {
+                r = parseInt(hex[1] + hex[2], 16);
+                g = parseInt(hex[3] + hex[4], 16);
+                b = parseInt(hex[5] + hex[6], 16);
+            }
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const cmin = Math.min(r, g, b);
+            const cmax = Math.max(r, g, b);
+            const delta = cmax - cmin;
+            let h = 0, s = 0, l = 0;
+
+            if (delta === 0) h = 0;
+            else if (cmax === r) h = ((g - b) / delta) % 6;
+            else if (cmax === g) h = (b - r) / delta + 2;
+            else h = (r - g) / delta + 4;
+
+            h = Math.round(h * 60);
+            if (h < 0) h += 360;
+
+            l = (cmax + cmin) / 2;
+            s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+            s = +(s * 100).toFixed(1);
+            l = +(l * 100).toFixed(1);
+
+            return { h, s, l };
+        }
+
+        // HSL to Hex conversion
+        function hslToHex(h, s, l) {
+            s /= 100;
+            l /= 100;
+            const c = (1 - Math.abs(2 * l - 1)) * s;
+            const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            const m = l - c / 2;
+            let r = 0, g = 0, b = 0;
+
+            if (0 <= h && h < 60) {
+                r = c; g = x; b = 0;
+            } else if (60 <= h && h < 120) {
+                r = x; g = c; b = 0;
+            } else if (120 <= h && h < 180) {
+                r = 0; g = c; b = x;
+            } else if (180 <= h && h < 240) {
+                r = 0; g = x; b = c;
+            } else if (240 <= h && h < 300) {
+                r = x; g = 0; b = c;
+            } else if (300 <= h && h < 360) {
+                r = c; g = 0; b = x;
+            }
+
+            r = Math.round((r + m) * 255);
+            g = Math.round((g + m) * 255);
+            b = Math.round((b + m) * 255);
+
+            const rHex = ("0" + r.toString(16)).slice(-2);
+            const gHex = ("0" + g.toString(16)).slice(-2);
+            const bHex = ("0" + b.toString(16)).slice(-2);
+
+            return "#" + rHex + gHex + bHex;
+        }
+    });
+</script>
+
+</body>
+</html>
+```
