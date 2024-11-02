@@ -35,7 +35,7 @@
             box-sizing: border-box;
             transform: translate(-50%, -50%);
             cursor: pointer;
-            transition: background-color 1s ease, transform 0.5s ease; /* Smooth color and scaling */
+            transition: background-color 0.5s ease; /* Only color should transition smoothly */
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
@@ -72,7 +72,7 @@
             bottom: 0;
             left: 0;
             height: 5px; /* Height of the progress bar */
-            background-color: #333; /* Progress bar color */
+            background-color: rgba(51, 51, 51, 0.5); /* Progress bar color with 50% transparency */
             transition: width 1s linear; /* Smooth shrinking for the countdown */
         }
         @keyframes typing {
@@ -82,6 +82,12 @@
         @keyframes blink {
             from, to { border-right-color: transparent; }
             50% { border-right-color: black; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(calc(-50% + 4px), calc(-50% + 4px)); }
+            50% { transform: translate(calc(-50% - 4px), calc(-50% - 4px)); }
+            75% { transform: translate(calc(-50% + 4px), calc(-50% - 4px)); }
         }
         #widget-card-back {
             display: none;
@@ -167,6 +173,12 @@
             } else if (cardState === 'active') {
                 flipCard();
             }
+
+            // Add shake effect when card is clicked
+            cardElement.style.animation = 'shake 0.3s';
+            cardElement.addEventListener('animationend', () => {
+                cardElement.style.animation = ''; // Reset animation after shake
+            }, { once: true });
         });
 
         // Close game when clicking outside card
