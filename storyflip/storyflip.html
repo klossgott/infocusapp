@@ -314,4 +314,49 @@
             const lineThickness = random(0.5, 1.5);
             const spacing = random(20, 40);
             const angle1 = random(0, 180);
-            const angle2 = angl
+            const angle2 = angle1 + 90;
+
+            const patternStyle = `
+                repeating-linear-gradient(
+                    ${angle1}deg,
+                    transparent,
+                    transparent ${lineThickness}px,
+                    rgba(255, 255, 255, 1) ${lineThickness}px,
+                    rgba(255, 255, 255, 1) ${lineThickness + spacing}px
+                ),
+                repeating-linear-gradient(
+                    ${angle2}deg,
+                    transparent,
+                    transparent ${lineThickness}px,
+                    rgba(255, 255, 255, 0.8) ${lineThickness}px,
+                    rgba(255, 255, 255, 0.8) ${lineThickness + spacing}px
+                )
+            `;
+
+            const positions = [
+                { transform: 'translate(0, 0)' },
+                { transform: 'translate(100%, 0) scaleX(-1)' },
+                { transform: 'translate(0, 100%) scaleY(-1)' },
+                { transform: 'translate(100%, 100%) scale(-1, -1)' }
+            ];
+
+            positions.forEach((pos) => {
+                const quadrant = document.createElement('div');
+                quadrant.className = 'quadrant';
+                quadrant.style.transform = pos.transform;
+
+                const pattern = document.createElement('div');
+                pattern.className = 'quadrant-pattern';
+                pattern.style.background = patternStyle;
+                pattern.style.backgroundSize = `${spacing * 2}px ${spacing * 2}px`;
+                pattern.style.backgroundRepeat = 'repeat';
+
+                quadrant.appendChild(pattern);
+                mirrorContainer.appendChild(quadrant);
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
