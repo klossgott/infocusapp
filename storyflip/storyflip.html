@@ -84,7 +84,7 @@
         }
         /* Placeholder Highlight */
         .placeholder {
-            background-color: rgba(255, 255, 255, 0.15); /* White highlight at 15% opacity */
+            background-color: rgba(255, 255, 255, 0.3); /* Increased opacity to 30% */
             padding: 2px 4px;
             border-radius: 3px;
         }
@@ -105,15 +105,6 @@
             display: none; /* Hidden by default */
             z-index: 10;
         }
-        /* Scrolling Instructions */
-        #card-text.instructions {
-            animation: scrollUp 20s linear infinite;
-            white-space: pre-wrap;
-        }
-        @keyframes scrollUp {
-            0% { transform: translateY(100%); }
-            100% { transform: translateY(-100%); }
-        }
     </style>
 </head>
 <body>
@@ -133,14 +124,18 @@
         const prompts = {
             "title": "Story Flip",
             "instructions": [
-                "Welcome, Storytellers",
-                "Decide how long you want to play and set a timer.",
-                "The aim is to listen carefully, pick up on what you hear, and keep the story going.",
-                "What happens next? Take turns to tell each other, or type in the chat. You have 20 seconds.",
-                "Click the card to flip, get inspired, and start telling!",
-                "'W' for a Wildcard, if you're stuck.",
-                "'N' for a new game, 'X' to exit.",
-                "'Space Bar' to 'Pause-and-tell'."
+                [
+                    "Welcome, Storytellers",
+                    "Set a timer for how long you want to play.",
+                    "Listen carefully, pick up on developments, and keep the story going.",
+                    "What happens next? Take turns to tell each other, or type in the chat. You have 20 seconds."
+                ],
+                [
+                    "'W' for a Wildcard, if you're stuck.",
+                    "'Space Bar' to 'Pause-and-tell'.",
+                    "'N' for a new game, 'X' to exit.",
+                    "Click the card to flip, get inspired, and start telling!"
+                ]
             ],
             "gameMaster": [
                 "Add a sentence that expands on what has happened so far.",
@@ -345,6 +340,7 @@
         let tryAgainCount = 0; // Counter for "Time's up! Try again"
         let turnCount = 0; // To track the number of turns
         let lastCategories = []; // To track the last two categories
+        let instructionIndex = 0; // To track which instruction screen is being shown
 
         // Initial minimized state with 'S' on the card
         card.classList.add('resting');
@@ -359,7 +355,12 @@
             } else if (cardState === 'title') {
                 showInstructions();
             } else if (cardState === 'instructions') {
-                startGame();
+                if (instructionIndex < prompts.instructions.length - 1) {
+                    instructionIndex++;
+                    displayInstructions();
+                } else {
+                    startGame();
+                }
             } else if (cardState === 'active' || cardState === 'exitOptions') {
                 flipCard();
             }
@@ -408,6 +409,7 @@
             tryAgainCount = 0; // Reset try again counter
             turnCount = 0; // Reset turn count
             lastCategories = []; // Reset last categories
+            instructionIndex = 0; // Reset instruction index
             resumePause(); // Ensure game is not paused
         }
 
@@ -426,10 +428,25 @@
 
         function showInstructions() {
             cardState = 'instructions';
-            // Combine instructions with line breaks and enable scrolling
-            cardTextElement.classList.add('instructions');
-            cardTextElement.innerHTML = prompts.instructions.join("<br><br>");
+            instructionIndex = 0;
+            displayInstructions();
             setCardColor('#FFE4B5'); // Light warm color
+        }
+
+        function displayInstructions() {
+            const currentInstructions = prompts.instructions[instructionIndex];
+            if (instructionIndex === 0) {
+                // Use typing animation for "Welcome, Storytellers" only
+                const firstLine = currentInstructions[0];
+                const remainingLines = currentInstructions.slice(1).join("<br><br>");
+                cardTextElement.innerHTML = ''; // Clear existing content
+                showTypingAnimation(firstLine, () => {
+                    cardTextElement.innerHTML += "<br><br>" + remainingLines;
+                });
+            } else {
+                // Display remaining instructions without typing animation
+                cardTextElement.innerHTML = currentInstructions.join("<br><br>");
+            }
         }
 
         function startGame() {
@@ -484,8 +501,8 @@
                 return;
             }
             setCardColor(getCategoryColor(category));
-            if (category === 'numberCard') {
-                // Typewriter animation for numberCard
+            if (category === 'numberCard' || category === 'storyRhythm') {
+                // Typewriter animation for numberCard and storyRhythm
                 showTypingAnimation(prompt);
             } else {
                 // Direct rendering for prompts with placeholders
@@ -593,7 +610,7 @@
             return text;
         }
 
-        function showTypingAnimation(text) {
+        function showTypingAnimation(text, callback) {
             cardTextElement.innerHTML = '';
             let index = 0;
             const speed = 30; // milliseconds per character
@@ -607,6 +624,8 @@
                     }
                     index++;
                     setTimeout(type, speed);
+                } else {
+                    if (callback) callback();
                 }
             }
 
