@@ -33,6 +33,7 @@
             cursor: pointer;
             transition: filter 0.3s;
             transform-origin: center center;
+            display: none;
         }
         #widget-image:hover {
             filter: brightness(1.2);
@@ -90,7 +91,7 @@
             height: 180px;
             background-color: #3B1C0A;
             color: white;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
@@ -99,7 +100,7 @@
             padding: 10px;
             box-sizing: border-box;
             border-radius: 15px;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.3);
             transform-origin: center center;
             backface-visibility: hidden;
             transition: transform 0.5s ease;
@@ -120,16 +121,6 @@
         }
         #cover-text span {
             font-weight: normal;
-        }
-        @keyframes coverFadeIn {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.3);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(0.3);
-            }
         }
         @keyframes coverFadeOutFlip {
             0% {
@@ -166,7 +157,6 @@
 <body>
 
 <div id="widget-container">
-    <!-- Cover Overlay -->
     <div id="cover-overlay" class="resting">
         <div id="cover-text">
             Fun Ice Breaker<br>
@@ -174,9 +164,7 @@
             <span>Click to expand<br>Double-click to minimize</span>
         </div>
     </div>
-    <!-- Ice Cubes Image -->
     <img id="widget-image" src="ice-cubes.png" alt="Ice Cubes">
-    <!-- Icebreaker Card -->
     <div id="icebreaker-card">
         <div id="icebreaker-text"></div>
     </div>
@@ -187,7 +175,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const prompts = [
-            // ... your existing prompts array ...
+            "What's the weirdest movie you've ever seen?",
+            "Is there a pizza topping that most people hate but you secretly love?",
+            "Window seat or aisle seat?",
+            // ... rest of your prompts ...
         ];
 
         const widgetImage = document.getElementById('widget-image');
@@ -196,47 +187,42 @@
         const iceSound = document.getElementById('ice-sound');
         const coverOverlay = document.getElementById('cover-overlay');
 
-        // Initial state
-        coverOverlay.style.display = 'flex';
-        
         let isExpanded = false;
+        let clickTimeout = null;
 
-        // Handle single click to expand
+        // Handle clicks on cover overlay
         coverOverlay.addEventListener('click', (e) => {
-            if (!isExpanded) {
-                coverOverlay.classList.remove('resting');
-                coverOverlay.classList.add('expanded');
-                isExpanded = true;
-            } else if (!e.detail || e.detail === 1) { // Single click when expanded
-                coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
-                coverOverlay.addEventListener('animationend', () => {
-                    coverOverlay.style.display = 'none';
-                    widgetImage.style.display = 'block';
-                }, { once: true });
+            if (clickTimeout !== null) {
+                // Double click detected
+                clearTimeout(clickTimeout);
+                clickTimeout = null;
+                if (isExpanded) {
+                    coverOverlay.classList.remove('expanded');
+                    coverOverlay.classList.add('resting');
+                    isExpanded = false;
+                }
+            } else {
+                // Set timeout for single click
+                clickTimeout = setTimeout(() => {
+                    clickTimeout = null;
+                    if (!isExpanded) {
+                        coverOverlay.classList.remove('resting');
+                        coverOverlay.classList.add('expanded');
+                        isExpanded = true;
+                    } else {
+                        // Start the game
+                        coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
+                        coverOverlay.addEventListener('animationend', () => {
+                            coverOverlay.style.display = 'none';
+                            widgetImage.style.display = 'block';
+                            widgetImage.src = 'ice-cubes.png';
+                        }, { once: true });
+                    }
+                }, 250); // Adjust this value to fine-tune double-click sensitivity
             }
         });
 
-        // Handle double click to minimize
-        coverOverlay.addEventListener('dblclick', () => {
-            if (isExpanded) {
-                coverOverlay.classList.remove('expanded');
-                coverOverlay.classList.add('resting');
-                isExpanded = false;
-            }
-        });
-
-        // Reset to resting state
-        function resetToResting() {
-            coverOverlay.style.display = 'flex';
-            coverOverlay.style.animation = '';
-            coverOverlay.classList.remove('expanded');
-            coverOverlay.classList.add('resting');
-            isExpanded = false;
-            widgetImage.style.display = 'none';
-            icebreakerCard.style.display = 'none';
-        }
-
-        // Your existing widget image click handler
+        // Handle widget image click
         widgetImage.addEventListener('click', () => {
             playRandomIceSound();
             widgetImage.src = 'broken-ice.png';
@@ -264,11 +250,16 @@
             icebreakerCard.style.animationName = 'fadeInFlip';
         }
 
-        // Modified card click handler to return to resting state
+        // Reset to initial state when card is clicked
         icebreakerCard.addEventListener('click', () => {
             icebreakerCard.style.animationName = 'fadeOutFlip';
             icebreakerCard.addEventListener('animationend', () => {
-                resetToResting();
+                icebreakerCard.style.display = 'none';
+                coverOverlay.style.display = 'flex';
+                coverOverlay.style.animation = '';
+                coverOverlay.classList.remove('expanded');
+                coverOverlay.classList.add('resting');
+                isExpanded = false;
             }, { once: true });
         });
 
@@ -295,13 +286,72 @@
             }
         }
 
-        // Your existing color conversion functions
         function hexToHsl(hex) {
-            // ... your existing hexToHsl function ...
+            let r = 0, g = 0, b = 0;
+            if (hex.length === 4) {
+                r = parseInt(hex[1] + hex[1], 16);
+                g = parseInt(hex[2] + hex[2], 16);
+                b = parseInt(hex[3] + hex[3], 16);
+            } else if (hex.length === 7) {
+                r = parseInt(hex[1] + hex[2], 16);
+                g = parseInt(hex[3] + hex[4], 16);
+                b = parseInt(hex[5] + hex[6], 16);
+            }
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const cmin = Math.min(r, g, b);
+            const cmax = Math.max(r, g, b);
+            const delta = cmax - cmin;
+            let h = 0, s = 0, l = 0;
+
+            if (delta === 0) h = 0;
+            else if (cmax === r) h = ((g - b) / delta) % 6;
+            else if (cmax === g) h = (b - r) / delta + 2;
+            else h = (r - g) / delta + 4;
+
+            h = Math.round(h * 60);
+            if (h < 0) h += 360;
+
+            l = (cmax + cmin) / 2;
+            s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+            s = +(s * 100).toFixed(1);
+            l = +(l * 100).toFixed(1);
+
+            return { h, s, l };
         }
 
         function hslToHex(h, s, l) {
-            // ... your existing hslToHex function ...
+            s /= 100;
+            l /= 100;
+            const c = (1 - Math.abs(2 * l - 1)) * s;
+            const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            const m = l - c / 2;
+            let r = 0, g = 0, b = 0;
+
+            if (0 <= h && h < 60) {
+                r = c; g = x; b = 0;
+            } else if (60 <= h && h < 120) {
+                r = x; g = c; b = 0;
+            } else if (120 <= h && h < 180) {
+                r = 0; g = c; b = x;
+            } else if (180 <= h && h < 240) {
+                r = 0; g = x; b = c;
+            } else if (240 <= h && h < 300) {
+                r = x; g = 0; b = c;
+            } else if (300 <= h && h < 360) {
+                r = c; g = 0; b = x;
+            }
+
+            r = Math.round((r + m) * 255);
+            g = Math.round((g + m) * 255);
+            b = Math.round((b + m) * 255);
+
+            const rHex = ("0" + r.toString(16)).slice(-2);
+            const gHex = ("0" + g.toString(16)).slice(-2);
+            const bHex = ("0" + b.toString(16)).slice(-2);
+
+            return "#" + rHex + gHex + bHex;
         }
     });
 </script>
