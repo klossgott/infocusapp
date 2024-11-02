@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Story Flip</title>
+    <!-- Include Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+        }
+        #widget-container {
+            position: relative;
+            width: 320px;
+            height: 480px;
+            background: transparent;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        #widget-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: #B0E0E6;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
+            cursor: pointer;
+            transition: transform 0.5s ease, background-color 0.3s ease;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        #widget-card.resting {
+            transform: translate(-50%, -50%) scale(0.7);
+        }
+        #widget-card.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #card-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            color: #333;
+            line-height: 1.5;
+            font-weight: normal;
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+        .typing-animation {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(30, end), blink 0.5s step-end infinite alternate;
+        }
+        #timer {
+            position: absolute;
+            bottom: 10px;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1em;
+            color: #333;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink {
+            from, to { border-right-color: transparent; }
+            50% { border-right-color: black; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="widget-container">
+    <div id="widget-card" class="resting">
+        <div id="card-text"></div>
+        <div id="timer"></div> <!-- Timer element -->
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const prompts = {
+            "gameMaster": [
+                "A new character enters the story.",
+                "Suddenly...",
+                "The [place] was ... [describe].",
+                "Describe the weather in this scene.",
+                "Add a dramatic moment!"
+            ],
+            "numberCard": [
+                "Add [x] words to describe what happens next.",
+                "Add [x] words explaining how [Character] reacts.",
+                "Add [x] words to set up a new challenge.",
+                "Add [x] words describing the setting.",
+                "Add [x] words to build tension."
+            ],
+            "stuck": [
+                "Then, something unexpected happened...",
+                "At this moment, [Character] felt [emotion]...",
+                "Suddenly, [...] joined the scene.",
+                "What happens if something goes wrong?",
+                "Describe a noise they heard nearby."
+            ]
+        };
+
+        const cardElement = document.getElementById('widget-card');
+        const cardTextElement = document.getElementById('card-text');
+        const timerElement = document.getElementById('timer');
+
+        let isExpanded = false;
+        let cardState = 'resting'; // resting, active
+        let timerInterval;
+
+        // Handle card clicks
+        cardElement.addEventListener('click', () => {
+            if (cardState === 'resting') {
+                expandCard();
+            } else if (cardState === 'active') {
+                flipCard();
+            }
+        });
+
+        // Function to expand the card
+        function expandCard() {
+            cardElement.classList.remove('resting');
+            cardElement.classList.add('active');
+            cardState = 'active';
+        }
+
+        // Function to flip the card and show a prompt
+        function flipCard() {
+            const cardType = getRandomCardType();
+            if (cardType === 'gameMaster') {
+                showGameMasterPrompt();
+            } else if (cardType === 'numberCard') {
+                showNumberCardPrompt();
+            } else if (cardType === 'stuck') {
+                showStuckPrompt();
+            }
+            startTimer(); // Start the timer when a card is flipped
+        }
+
+        // Randomly get a card type
+        function getRandomCardType() {
+            const types = ['gameMaster', 'numberCard', 'stuck'];
+            return types[Math.floor(Math.random() * types.length)];
+        }
+
+        // Show Game Master prompt
+        function showGameMasterPrompt() {
+            const prompt = getRandomPrompt('gameMaster');
+            setCardColor('#FFA500'); // Warm yellow-orange color
+            showTypingAnimation(prompt);
+        }
+
+        // Show Number Card prompt
+        function showNumberCardPrompt() {
+            const prompt = getRandomPrompt('numberCard').replace('[x]', getRandomNumber(1, 6));
+            setCardColor('#ADD8E6'); // Light blue color for number cards
+            cardTextElement.textContent = prompt;
+        }
+
+        // Show Stuck Card prompt
+        function showStuckPrompt() {
+            const prompt = getRandomPrompt('stuck');
+            setCardColor('#A0B0C0'); // Desaturated blue-green
+            showTypingAnimation(prompt);
+        }
+
+        // Helper to get a random prompt from a specific category
+        function getRandomPrompt(category) {
+            return prompts[category][Math.floor(Math.random() * prompts[category].length)];
+        }
+
+        // Set the card color
+        function setCardColor(color) {
+            cardElement.style.backgroundColor = color;
+        }
+
+        // Show typing animation for game master or stuck cards
+        function showTypingAnimation(text) {
+            cardTextElement.innerHTML = `<span class="typing-animation">${text}</span>`;
+        }
+
+        // Get random number between min and max
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Start the timer when a card is flipped
+        function startTimer() {
+            let timeLeft = 30; // 30-second timer
+            timerElement.textContent = `Time left: ${timeLeft}s`;
+            clearInterval(timerInterval); // Clear any previous timer interval
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `Time left: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = ''; // Clear timer text when finished
+                }
+            }, 1000);
+        }
+    });
+</script>
+
+</body>
+</html>
