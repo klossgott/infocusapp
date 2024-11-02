@@ -90,7 +90,6 @@
             75% { transform: translate(calc(-50% + 4px), calc(-50% - 4px)); }
         }
         #widget-card-back {
-            display: none;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -102,6 +101,15 @@
             backface-visibility: hidden;
             z-index: 0; /* Ensures it's behind the front card */
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow around the card back */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white; /* White text for contrast */
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            padding: 20px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -109,7 +117,7 @@
 
 <div id="widget-container">
     <!-- Card Back -->
-    <div id="widget-card-back"></div>
+    <div id="widget-card-back">Time's up! Press 'N' to start a new story.</div>
     <!-- Card Front -->
     <div id="widget-card" class="resting">
         <div id="card-text"></div>
@@ -221,7 +229,7 @@
         function flipCard() {
             // Show the back of the card during transition
             cardElement.style.display = 'none';
-            cardBackElement.style.display = 'block';
+            cardBackElement.style.display = 'none'; // Ensure card back is not shown unexpectedly
 
             setTimeout(() => {
                 cardBackElement.style.display = 'none';
@@ -235,7 +243,7 @@
                 } else if (cardType === 'stuck') {
                     showStuckPrompt();
                 }
-            }, 500); // Half-second delay to simulate a smooth transition
+            }, 300); // 0.3-second delay to simulate a smooth transition
 
             startTimer(); // Start the timer when a card is flipped
         }
@@ -318,10 +326,8 @@
         // End game when the timer reaches 0
         function endGameDueToTimer() {
             cardElement.style.display = 'none';
-            cardBackElement.style.display = 'block'; // Show card back when time runs out
-            cardTextElement.innerHTML = "Time's up! Press 'N' to start a new story.";
-            setCardColor('#3B1C0A'); // Color reset for the back
-            timerBarElement.style.width = '0%'; // Clear timer bar
+            cardBackElement.style.display = 'flex'; // Show card back with the time's up message
+            cardState = 'ended'; // Set the state to ended
 
             // Listen for 'N' key to restart the game
             document.addEventListener('keydown', (e) => {
@@ -333,7 +339,7 @@
 
         // End game function when clicking outside the card
         function endGame() {
-            cardState = 'resting';
+            cardState = 'ended';
             cardElement.classList.remove('active');
             cardElement.classList.add('resting');
             cardTextElement.innerHTML = "The game has ended. Press 'N' to start a new story.";
