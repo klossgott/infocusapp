@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- Include the font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -124,6 +128,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+
+        // Define the random(min, max) function
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
         const cardBack = document.getElementById("widget-card-back");
         const cardFront = document.getElementById("widget-card");
         const cardTextElement = document.getElementById("card-text");
@@ -235,7 +245,7 @@
                     "The <b>[place]</b> was ... [describe]."
                 ],
                 "numberCard": [
-                    "Add [x] word describing what happens next."
+                    "Add [x] words describing what happens next."
                 ],
                 "stuck": [
                     "<i>Then, something unexpected happened...</i>"
