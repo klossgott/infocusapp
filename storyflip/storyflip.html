@@ -43,6 +43,7 @@
             text-align: center;
             padding: 20px; /* Padding to prevent text from touching borders */
             box-sizing: border-box;
+            overflow: hidden; /* Ensure content doesn't overflow */
         }
         #widget-card.active {
             transform: translate(-50%, -50%) scale(1);
@@ -56,6 +57,8 @@
             letter-spacing: 0.05em;
             word-wrap: break-word;
             white-space: normal;
+            max-height: 100%; /* Ensure content fits within the card */
+            overflow: hidden;
         }
         /* Resting state styling with large 'S' */
         #widget-card.resting #card-text {
@@ -101,6 +104,15 @@
             border-radius: 10px;
             display: none; /* Hidden by default */
             z-index: 10;
+        }
+        /* Scrolling Instructions */
+        #card-text.instructions {
+            animation: scrollUp 20s linear infinite;
+            white-space: pre-wrap;
+        }
+        @keyframes scrollUp {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
         }
     </style>
 </head>
@@ -332,7 +344,7 @@
         let timerInterval;
         let tryAgainCount = 0; // Counter for "Time's up! Try again"
         let turnCount = 0; // To track the number of turns
-        let lastPromptCategory = null; // To prevent same category twice in a row
+        let lastCategories = []; // To track the last two categories
 
         // Initial minimized state with 'S' on the card
         card.classList.add('resting');
@@ -395,7 +407,7 @@
             clearInterval(timerInterval); // Clear any running timer
             tryAgainCount = 0; // Reset try again counter
             turnCount = 0; // Reset turn count
-            lastPromptCategory = null; // Reset last prompt category
+            lastCategories = []; // Reset last categories
             resumePause(); // Ensure game is not paused
         }
 
@@ -414,7 +426,8 @@
 
         function showInstructions() {
             cardState = 'instructions';
-            // Combine instructions with line breaks
+            // Combine instructions with line breaks and enable scrolling
+            cardTextElement.classList.add('instructions');
             cardTextElement.innerHTML = prompts.instructions.join("<br><br>");
             setCardColor('#FFE4B5'); // Light warm color
         }
@@ -455,8 +468,9 @@
             do {
                 selectedType = types[Math.floor(Math.random() * types.length)];
                 attempts++;
-                // Prevent selecting the same category twice in a row
-                if (selectedType !== lastPromptCategory) break;
+                // Prevent selecting the same category more than twice in a row
+                const occurrence = lastCategories.filter(cat => cat === selectedType).length;
+                if (occurrence < 2) break;
             } while (attempts < 10);
             return selectedType;
         }
@@ -470,8 +484,14 @@
                 return;
             }
             setCardColor(getCategoryColor(category));
-            showTypingAnimation(prompt);
-            lastPromptCategory = category;
+            if (category === 'numberCard') {
+                // Typewriter animation for numberCard
+                showTypingAnimation(prompt);
+            } else {
+                // Direct rendering for prompts with placeholders
+                cardTextElement.innerHTML = prompt;
+            }
+            updateLastCategories(category);
         }
 
         function showStoryRhythmPrompt() {
@@ -483,20 +503,9 @@
                 return;
             }
             setCardColor(getCategoryColor('storyRhythm'));
+            // Typewriter animation for storyRhythm
             showTypingAnimation(prompt);
-            lastPromptCategory = 'storyRhythm';
-        }
-
-        function showNumberCardPrompt() {
-            let prompt = getRandomPrompt('numberCard');
-            const num = getRandomNumber(1, 6);
-            let plural = num === 1 ? '' : 's';
-            prompt = prompt.replace('[x]', num).replace('[s]', plural);
-            // Replace all placeholders with spans
-            prompt = replacePlaceholders(prompt);
-            setCardColor('#ADD8E6'); // Light blue color for number cards
-            showTypingAnimation(prompt);
-            lastPromptCategory = 'numberCard';
+            updateLastCategories('storyRhythm');
         }
 
         function showWildcardPrompt() {
@@ -505,16 +514,10 @@
                 cardTextElement.innerHTML = "<b>No more wildcards available.</b>";
                 return;
             }
-            setCardColor('#F5A9A9'); // Desaturated pink-orange color
-            showTypingAnimation(prompt);
-            lastPromptCategory = 'wildcard';
-        }
-
-        function showOpenStoryDriver() {
-            const prompt = getRandomPrompt('openStoryDriver');
-            setCardColor('#D3D3D3'); // Light grey color for open story drivers
-            showTypingAnimation(prompt);
-            lastPromptCategory = 'openStoryDriver';
+            setCardColor(getCategoryColor('wildcard'));
+            // Wildcards have placeholders, so render directly
+            cardTextElement.innerHTML = prompt;
+            updateLastCategories('wildcard');
         }
 
         function getRandomPrompt(category) {
@@ -523,19 +526,19 @@
         }
 
         function getUniquePrompt(category) {
-            if (category === 'wildcard') {
-                // Wildcards can repeat as needed
-                return getRandomPrompt(category);
-            }
-            if (category === 'storyRhythm') {
-                // Story Rhythm prompts should not repeat within the game session
-                const availablePrompts = prompts[category].filter(p => !usedPrompts[category].includes(p));
-                if (availablePrompts.length === 0) {
-                    return null;
+            if (category === 'wildcard' || category === 'storyRhythm') {
+                // Wildcards and Story Rhythm can repeat as needed
+                let prompt = getRandomPrompt(category);
+                if (category === 'storyRhythm') {
+                    const num = getRandomNumber(1, 6);
+                    let plural = num === 1 ? '' : 's';
+                    prompt = prompt.replace('[x]', num).replace('[s]', plural);
                 }
-                const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
-                usedPrompts[category].push(prompt);
-                return replacePlaceholders(prompt);
+                // Replace placeholders if any
+                if (category !== 'storyRhythm') {
+                    prompt = replacePlaceholders(prompt);
+                }
+                return prompt;
             }
             if (category === 'numberCard') {
                 // Number cards can repeat as needed
@@ -657,7 +660,7 @@
             timerBarElement.style.display = 'none';
             // Keep the game in the 'active' state to allow the player to continue
             cardState = 'active';
-            lastPromptCategory = null; // Reset last prompt category to allow any category next
+            lastCategories = []; // Reset last categories to allow any category next
         }
 
         // Pause and Resume Functions
@@ -684,6 +687,14 @@
             // Restart the timer
             startTimer();
             cardState = 'active';
+        }
+
+        // Update lastCategories array to track the last two categories
+        function updateLastCategories(category) {
+            lastCategories.push(category);
+            if (lastCategories.length > 2) {
+                lastCategories.shift(); // Keep only the last two
+            }
         }
 
     });
