@@ -11,6 +11,7 @@
             height: 100%;
             margin: 0;
             background: transparent; /* Transparent background */
+            font-family: 'EB Garamond', serif;
         }
         body {
             display: flex;
@@ -19,24 +20,22 @@
         }
         #widget-container {
             position: relative;
-            width: 340px;
-            height: 500px;
+            width: 100%;
+            height: 100%;
+            max-width: 500px; /* Max width for larger screens */
+            max-height: 700px; /* Max height for larger screens */
             background: transparent;
-            overflow: hidden; /* Prevent overflow */
+            box-sizing: border-box;
+            padding: 10px; /* Padding for drop shadow */
         }
         #widget-card {
-            position: absolute;
-            top: 50%;
-            left: 50%;
             width: 100%;
             height: 100%;
             background-color: #FFD700; /* Yellow for resting state */
             border-radius: 10px;
-            transform: translate(-50%, -50%) scale(0.15);
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
             cursor: pointer;
-            transition: transform 0.5s ease, background-color 0.5s ease;
-            backface-visibility: hidden;
+            transition: background-color 0.5s ease;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -44,25 +43,22 @@
             padding: 20px; /* Padding to prevent text from touching borders */
             box-sizing: border-box;
             overflow: hidden; /* Ensure content doesn't overflow */
-        }
-        #widget-card.active {
-            transform: translate(-50%, -50%) scale(1);
+            position: relative;
         }
         #card-text {
-            font-family: 'EB Garamond', serif;
-            font-size: 1.4em;
+            font-size: 2.5vh; /* Responsive font size */
             color: #333;
             line-height: 1.5;
             font-weight: 400;
             letter-spacing: 0.05em;
             word-wrap: break-word;
             white-space: normal;
-            max-height: 100%; /* Ensure content fits within the card */
+            max-height: 90%; /* Ensure content fits within the card */
             overflow: hidden;
         }
         /* Resting state styling with large 'S' */
         #widget-card.resting #card-text {
-            font-size: 12em; /* Increased size to 4x */
+            font-size: 12vh; /* Increased size for visibility */
             font-weight: bold;
             color: #FFA500; /* Bright orange 'S' */
             margin: 0; /* Remove margin to center 'S' */
@@ -81,6 +77,7 @@
             background-color: rgba(51, 51, 51, 0.5);
             transition: width 1s linear;
             display: none;
+            width: 100%;
         }
         /* Placeholder Highlight */
         .placeholder {
@@ -100,10 +97,26 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.5em;
+            font-size: 3vh;
             border-radius: 10px;
             display: none; /* Hidden by default */
             z-index: 10;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            #widget-container {
+                max-width: 100%;
+                max-height: 100%;
+            }
+            #card-text {
+                font-size: 3vh;
+            }
+            #widget-card.resting #card-text {
+                font-size: 12vh;
+            }
+            #paused-overlay {
+                font-size: 4vh;
+            }
         }
     </style>
 </head>
@@ -196,7 +209,6 @@
                 ]
             },
             "numberCard": [
-                // Regular NumberCard Prompts
                 "Change everything in just [x] word[s].",
                 "Continue the sentence adding [x] word[s].",
                 "Expand the scene adding [x] word[s].",
@@ -206,8 +218,9 @@
                 "Change the setting in [x] word[s].",
                 "Describe an emotion in [x] word[s].",
                 "Introduce a new character using [x] word[s].",
-                "Create a conflict in [x] word[s].",
-                // Story Rhythm Prompts
+                "Create a conflict in [x] word[s]."
+            ],
+            "storyRhythm": [
                 "Repeatedly remind us of the weather for the next [x] turn[s].",
                 "For the next [x] turn[s], emphasise the same point.",
                 "For the next [x] turn[s], take the opposite view.",
@@ -281,6 +294,7 @@
             },
             "wildcard": [],
             "numberCard": [],
+            "storyRhythm": [],
             "openStoryDriver": []
         };
 
@@ -293,8 +307,7 @@
         let timerInterval;
         let tryAgainCount = 0; // Counter for "Time's up! Try again"
         let turnCount = 0; // To track the number of turns
-        let lastMainCategories = []; // To track the last two main categories
-        let lastStoryElementsCategories = []; // To track the last two storyElements subcategories
+        let lastCategories = []; // To track the last two categories
         let instructionIndex = 0; // To track which instruction screen is being shown
 
         // Initial minimized state with 'S' on the card
@@ -357,14 +370,13 @@
             card.classList.remove('active');
             card.classList.add('resting');
             cardTextElement.innerHTML = 'S'; // Display 'S' again
-            cardTextElement.style.fontSize = '12em'; // 4x size
+            cardTextElement.style.fontSize = '12vh'; // Responsive large size
             timerBarElement.style.width = '0%'; // Clear timer bar
             timerBarElement.style.display = 'none'; // Hide timer bar
             clearInterval(timerInterval); // Clear any running timer
             tryAgainCount = 0; // Reset try again counter
             turnCount = 0; // Reset turn count
-            lastMainCategories = []; // Reset last main categories
-            lastStoryElementsCategories = []; // Reset last storyElements subcategories
+            lastCategories = []; // Reset last categories
             instructionIndex = 0; // Reset instruction index
             resumePause(); // Ensure game is not paused
         }
@@ -446,8 +458,8 @@
             do {
                 selectedType = types[Math.floor(Math.random() * types.length)];
                 attempts++;
-                // Prevent selecting the same main category more than twice in a row
-                const occurrence = lastMainCategories.filter(cat => cat === selectedType).length;
+                // Prevent selecting the same category more than twice in a row
+                const occurrence = lastCategories.filter(cat => cat === selectedType).length;
                 if (occurrence < 2) break;
             } while (attempts < 10);
             return selectedType;
@@ -463,10 +475,10 @@
                     selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
                     attempts++;
                     // Prevent selecting the same subcategory more than twice in a row
-                    const occurrence = lastStoryElementsCategories.filter(cat => cat === selectedSubcategory).length;
+                    const occurrence = lastCategories.filter(cat => cat === selectedSubcategory).length;
                     if (occurrence < 2) break;
                 } while (attempts < 10);
-
+                currentSubcategory = selectedSubcategory;
                 const prompt = getUniquePrompt('storyElements', selectedSubcategory);
                 if (!prompt) {
                     // If no prompts left in this subcategory, select another subcategory
@@ -475,19 +487,19 @@
                 }
                 setCardColor(getCategoryColor('storyElements'));
                 cardTextElement.innerHTML = prompt;
-                updateLastCategories('storyElements', selectedSubcategory);
+                updateLastCategories(selectedSubcategory);
             } else if (category === 'numberCard') {
                 // Typewriter animation for numberCard
                 const prompt = getUniquePrompt('numberCard');
                 setCardColor(getCategoryColor('numberCard'));
                 showTypingAnimation(prompt);
-                updateLastCategories('numberCard', null);
+                updateLastCategories('numberCard');
             } else if (category === 'wildcard') {
                 // Wildcard prompts have placeholders, render directly
                 const prompt = getUniquePrompt('wildcard');
                 setCardColor(getCategoryColor('wildcard'));
                 cardTextElement.innerHTML = prompt;
-                updateLastCategories('wildcard', null);
+                updateLastCategories('wildcard');
             }
         }
 
@@ -495,21 +507,22 @@
             const prompt = getUniquePrompt('openStoryDriver');
             setCardColor(getCategoryColor('openStoryDriver'));
             cardTextElement.innerHTML = prompt;
-            updateLastCategories('openStoryDriver', null);
+            updateLastCategories('openStoryDriver');
         }
 
         function showAlternateStoryElementsPrompt() {
-            let subcategories = Object.keys(prompts.storyElements).filter(sub => !lastStoryElementsCategories.includes(sub));
+            const subcategories = Object.keys(prompts.storyElements).filter(sub => !lastCategories.includes(sub));
             if (subcategories.length === 0) {
-                // If all subcategories have been used recently, reset lastStoryElementsCategories
-                lastStoryElementsCategories = [];
-                subcategories = Object.keys(prompts.storyElements);
+                // If all subcategories have been used recently, reset lastCategories
+                lastCategories = [];
+                selectedSubcategory = Object.keys(prompts.storyElements)[Math.floor(Math.random() * Object.keys(prompts.storyElements).length)];
+            } else {
+                const selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
+                const prompt = getUniquePrompt('storyElements', selectedSubcategory);
+                setCardColor(getCategoryColor('storyElements'));
+                cardTextElement.innerHTML = prompt;
+                updateLastCategories(selectedSubcategory);
             }
-            const selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
-            const prompt = getUniquePrompt('storyElements', selectedSubcategory);
-            setCardColor(getCategoryColor('storyElements'));
-            cardTextElement.innerHTML = prompt;
-            updateLastCategories('storyElements', selectedSubcategory);
         }
 
         function showWildcardPrompt() {
@@ -520,7 +533,7 @@
             }
             setCardColor(getCategoryColor('wildcard'));
             cardTextElement.innerHTML = prompt;
-            updateLastCategories('wildcard', null);
+            updateLastCategories('wildcard');
         }
 
         function getUniquePrompt(category, subcategory = null) {
@@ -570,6 +583,7 @@
             const colors = {
                 "storyElements": "#FFD700", // Gold
                 "numberCard": "#ADD8E6", // Light blue
+                "storyRhythm": "#FFB6C1", // Light Pink for Story Rhythm
                 "wildcard": "#F5A9A9", // Desaturated pink-orange
                 "openStoryDriver": "#D3D3D3" // Light grey
             };
@@ -626,8 +640,8 @@
                 timerBarElement.style.width = timerWidth + '%';
 
                 if (timeLeft <= 3) {
-                    // Flash white towards the end
-                    card.style.backgroundColor = timeLeft % 2 === 0 ? 'white' : getCategoryColor(currentCategory);
+                    // Flash yellow towards the end
+                    card.style.backgroundColor = timeLeft % 2 === 0 ? '#FFD700' : getCategoryColor(currentCategory);
                 }
 
                 if (timeLeft <= 0) {
@@ -650,13 +664,12 @@
             } else {
                 cardTextElement.innerHTML = "<b style='color: white;'>Time's up!<br>Take a deep breath and try again.</b>";
             }
-            setCardColor('openStoryDriver'); // Medium grey
+            setCardColor('storyElements'); // Reset to default color
             // Hide timer bar
             timerBarElement.style.display = 'none';
             // Keep the game in the 'active' state to allow the player to continue
             cardState = 'active';
-            lastMainCategories = []; // Reset last main categories to allow any category next
-            lastStoryElementsCategories = []; // Reset last storyElements subcategories
+            lastCategories = []; // Reset last categories to allow any category next
         }
 
         // Pause and Resume Functions
@@ -685,18 +698,11 @@
             cardState = 'active';
         }
 
-        // Update lastCategories arrays to track the last two main categories and storyElements subcategories
-        function updateLastCategories(category, subcategory = null) {
-            if (category === 'storyElements' && subcategory) {
-                lastStoryElementsCategories.push(subcategory);
-                if (lastStoryElementsCategories.length > 2) {
-                    lastStoryElementsCategories.shift(); // Keep only the last two subcategories
-                }
-            } else {
-                lastMainCategories.push(category);
-                if (lastMainCategories.length > 2) {
-                    lastMainCategories.shift(); // Keep only the last two main categories
-                }
+        // Update lastCategories array to track the last two categories
+        function updateLastCategories(category) {
+            lastCategories.push(category);
+            if (lastCategories.length > 2) {
+                lastCategories.shift(); // Keep only the last two
             }
         }
 
