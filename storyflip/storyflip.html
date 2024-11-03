@@ -1,15 +1,725 @@
-function minimizeCard() {
-    cardState = 'resting';
-    card.classList.remove('active', 'title', 'instructions', 'exitOptions');
-    card.classList.add('resting');
-    cardTextElement.innerHTML = 'S'; // Display 'S' again
-    // No need to set font size here as CSS handles it
-    timerBarElement.style.width = '0%'; // Clear timer bar
-    timerBarElement.style.display = 'none'; // Hide timer bar
-    clearInterval(timerInterval); // Clear any running timer
-    tryAgainCount = 0; // Reset try again counter
-    turnCount = 0; // Reset turn count
-    lastCategories = []; // Reset last categories
-    instructionIndex = 0; // Reset instruction index
-    resumePause(); // Ensure game is not paused
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Story Flip</title>
+    <!-- Include Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&display=swap">
+    <style>
+        /* Base Styles */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: transparent; /* Transparent background */
+            font-family: 'EB Garamond', serif;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #widget-container {
+            position: relative;
+            width: 90vw; /* Responsive width */
+            height: 90vh; /* Responsive height */
+            max-width: 500px; /* Max width for larger screens */
+            max-height: 700px; /* Max height for larger screens */
+            background: transparent;
+            box-sizing: border-box;
+            padding: 10px; /* Padding for drop shadow */
+        }
+        #widget-card {
+            width: 100%;
+            height: 100%;
+            background-color: #FFD700; /* Yellow for resting state */
+            border-radius: 10px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: background-color 0.5s ease, transform 0.5s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px; /* Padding to prevent text from touching borders */
+            box-sizing: border-box;
+            overflow: hidden; /* Ensure content doesn't overflow */
+            position: relative;
+        }
+        #card-text {
+            font-size: 2.5vh; /* Responsive font size */
+            color: #333;
+            line-height: 1.5;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            word-wrap: break-word;
+            white-space: normal;
+            max-height: 90%; /* Ensure content fits within the card */
+            overflow: hidden;
+        }
+        /* Resting state styling with large 'S' */
+        #widget-card.resting #card-text {
+            font-size: 12vh; /* Large font size for 'S' */
+            font-weight: bold;
+            color: #FFA500; /* Bright orange 'S' */
+            margin: 0; /* Remove margin to center 'S' */
+        }
+        /* Typing Animation */
+        .typing-animation {
+            display: inline-block;
+            overflow: hidden;
+            white-space: pre-wrap; /* Allow wrapping */
+            word-wrap: break-word;
+        }
+        /* Timer Bar */
+        #timer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: rgba(51, 51, 51, 0.5);
+            transition: width 1s linear;
+            display: none;
+            width: 100%;
+        }
+        /* Placeholder Highlight */
+        .placeholder {
+            background-color: rgba(255, 255, 255, 0.3); /* 30% opacity */
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        /* Paused State Overlay */
+        #paused-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3vh;
+            border-radius: 10px;
+            display: none; /* Hidden by default */
+            z-index: 10;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            #widget-container {
+                width: 95vw;
+                height: 95vh;
+                padding: 5px;
+            }
+            #card-text {
+                font-size: 3vh;
+            }
+            #widget-card.resting #card-text {
+                font-size: 12vh;
+            }
+            #paused-overlay {
+                font-size: 4vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="widget-container">
+    <!-- Card Front -->
+    <div id="widget-card" class="resting">
+        <div id="card-text">S</div>
+        <div id="timer-bar"></div> <!-- Timer bar element -->
+        <div id="paused-overlay">Game Paused. Press Spacebar to resume.</div>
+    </div>
+</div>
+
+<script>
+    // Inline JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        const prompts = {
+            "title": "Story Flip",
+            "instructions": [
+                [
+                    "Welcome, Storytellers",
+                    "Set a timer for how long you want to play.",
+                    "Listen carefully, pick up on developments, and keep the story going.",
+                    "What happens next? Take turns to tell each other, or type in the chat. You have 20 seconds."
+                ],
+                [
+                    "'W' for a Wildcard, if you're stuck.",
+                    "'Space Bar' to 'Pause-and-tell'.",
+                    "'N' for a new game, 'X' to exit.",
+                    "Click the card to flip, get inspired, and start telling!"
+                ]
+            ],
+            "storyElements": {
+                "setting": [
+                    "It felt cold because ACTION.",
+                    "The place was unlike anything they'd seen before, with DESCRIPTION.",
+                    "The noise in the background was growing louder, and ACTION.",
+                    "The sky above was DESCRIPTION.",
+                    "They noticed something unusual in the surroundings: a OBJECT."
+                ],
+                "character": [
+                    "The person looked at NAME with eyes that seemed DESCRIPTION.",
+                    "This was NAME known for their ability to ACTION.",
+                    "No one could figure out why NAME was so protective of OBJECT.",
+                    "A stranger appeared, holding a OBJECT.",
+                    "NAME smiled, but it didn’t quite reach their eyes. It was because EMOTION."
+                ],
+                "action": [
+                    "Suddenly, NAME decided to ACTION.",
+                    "There was no time to waste, NAME had to ACTION.",
+                    "The next thing NAME did was ACTION.",
+                    "NAME took a deep breath and chose to ACTION.",
+                    "The group collectively decided that the only way forward was to ACTION."
+                ],
+                "emotion": [
+                    "A chill of fear ran through NAME as they thought about ACTION.",
+                    "A feeling of hope surged in NAME when they saw DESCRIPTION.",
+                    "Anger bubbled beneath the surface, triggered by ACTION.",
+                    "NAME couldn’t hide their excitement because ACTION.",
+                    "The tension in the air shifted when NAME felt a sudden wave of EMOTION."
+                ],
+                "object": [
+                    "NAME stumbled upon an object—it was DESCRIPTION.",
+                    "Something small but significant caught NAME's eye—a OBJECT.",
+                    "NAME held a mysterious item that seemed to ACTION.",
+                    "The item was ordinary to most people, but to NAME, it meant PURPOSE.",
+                    "NAME carefully placed the object on the ground, knowing it would ACTION."
+                ],
+                "dialogue": [
+                    "NAME whispered, 'I think it's time we talk about PURPOSE.'",
+                    "'Are you sure we should be doing this?' NAME asked.",
+                    "'There’s something I need to tell you,' NAME said, with hesitation.",
+                    "'If you go now, there’s no coming back,' was the warning given by NAME.",
+                    "'I have a plan, but you’re not going to like it,' NAME stated plainly."
+                ],
+                "conflict": [
+                    "Something suddenly stood in NAME's way—something that ACTION.",
+                    "NAME realized there was a critical piece missing that could ACTION.",
+                    "A disagreement broke out over PURPOSE.",
+                    "The group had to deal with a sudden change that threw everything into CONFLICT.",
+                    "NAME decided to break the rules, which led to CONFLICT."
+                ],
+                "resolution": [
+                    "After a long pause, NAME finally chose to ACTION.",
+                    "Things were resolved when NAME decided to ACTION.",
+                    "It wasn’t what NAME expected, but they accepted it and moved on because PURPOSE.",
+                    "NAME reached a quiet understanding that meant RESOLUTION.",
+                    "With a final effort, NAME managed to ACTION."
+                ]
+            },
+            "numberCard": [
+                "Change everything in just [x] word[s].",
+                "Continue the sentence adding [x] word[s].",
+                "Expand the scene adding [x] word[s].",
+                "Tell us about what NAME is doing.",
+                "Start a new challenge using [x] word[s].",
+                "NAME feels [x] word[s].",
+                "Change the setting in [x] word[s].",
+                "Describe an emotion in [x] word[s].",
+                "Introduce a new character using [x] word[s].",
+                "Create a conflict in [x] word[s]."
+            ],
+            "storyRhythm": [
+                "Repeatedly remind us of the weather for the next [x] turn[s].",
+                "For the next [x] turn[s], emphasise the same point.",
+                "For the next [x] turn[s], take the opposite view.",
+                "For the next [x] turn[s], create contrast.",
+                "Repeatedly remind us of the beginning for the next [x] turn[s].",
+                "Bring back the past for the next [x] turn[s].",
+                "For the next [x] turn[s], add a strange comparison.",
+                "Think of the future for the next [x] turn[s].",
+                "For the next [x] turn[s], repeat the moral of the story.",
+                "Be enthusiastic for the next [x] turn[s].",
+                "Add the same wise phrase for the next [x] turn[s]."
+            ],
+            "wildcard": [
+                "Then, something unexpected happened...",
+                "At this moment, NAME felt EMOTION...",
+                "Suddenly, a new element joined the scene.",
+                "What happens if something goes wrong?",
+                "Describe a noise they heard nearby.",
+                "Out of nowhere, something happened that no one could have predicted...",
+                "A decision had to be made immediately, and the stakes were...",
+                "Without warning, NAME was presented with an option that could..."
+            ],
+            "openStoryDriver": [
+                "What's next?",
+                "What now?",
+                "And then?",
+                "What if...",
+                "Meanwhile...",
+                "After that...",
+                "Suddenly...",
+                "Then...",
+                "Further along, ...",
+                "Thereafter, ...",
+                "Again, ...",
+                "Surprisingly, ...",
+                "Wow!",
+                "Incredible!",
+                "Sadly, ...",
+                "Unbelievable, but true, ...",
+                "How strange!",
+                "Yes, it was true.",
+                "It was time.",
+                "This was the place.",
+                "That's how it had to be done.",
+                "It had to happen that way.",
+                "There was nothing else to do now.",
+                "Yes!",
+                "No!",
+                "Maybe.",
+                "Actually, ...",
+                "Shortly thereafter, ...",
+                "Unexpectedly, ...",
+                "Once more, ...",
+                "Immediately, ...",
+                "Gradually, ...",
+                "Instantly, ...",
+                "Eventually, ..."
+            ]
+        };
+
+        const usedPrompts = {
+            "storyElements": {
+                "setting": [],
+                "character": [],
+                "action": [],
+                "emotion": [],
+                "object": [],
+                "dialogue": [],
+                "conflict": [],
+                "resolution": []
+            },
+            "wildcard": [],
+            "numberCard": [],
+            "storyRhythm": [],
+            "openStoryDriver": []
+        };
+
+        const card = document.getElementById("widget-card");
+        const cardTextElement = document.getElementById("card-text");
+        const timerBarElement = document.getElementById("timer-bar");
+        const pausedOverlay = document.getElementById("paused-overlay");
+
+        let cardState = 'resting'; // resting, title, instructions, active, exitOptions, paused
+        let timerInterval;
+        let tryAgainCount = 0; // Counter for "Time's up! Try again"
+        let turnCount = 0; // To track the number of turns
+        let lastCategories = []; // To track the last two categories
+        let instructionIndex = 0; // To track which instruction screen is being shown
+
+        // Initial minimized state with 'S' on the card
+        card.classList.add('resting');
+        cardState = 'resting';
+
+        // Handle card clicks
+        card.addEventListener('click', (event) => {
+            event.stopPropagation();
+            if (cardState === 'resting') {
+                expandCard();
+                showTitlePage();
+            } else if (cardState === 'title') {
+                showInstructions();
+            } else if (cardState === 'instructions') {
+                if (instructionIndex < prompts.instructions.length - 1) {
+                    instructionIndex++;
+                    displayInstructions();
+                } else {
+                    startGame();
+                }
+            } else if (cardState === 'active' || cardState === 'exitOptions') {
+                flipCard();
+            }
+        });
+
+        // Handle clicks outside the card
+        document.addEventListener('click', (e) => {
+            if (!card.contains(e.target)) {
+                showExitOptions();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'x') {
+                minimizeCard();
+            }
+            if (e.key.toLowerCase() === 'n') {
+                window.location.reload();
+            }
+            if (e.key.toLowerCase() === 'w' && cardState === 'active') {
+                showWildcardPrompt();
+            }
+            if (e.code === 'Space') { // Spacebar for "pause and tell"
+                e.preventDefault(); // Prevent default spacebar scrolling
+                togglePause();
+            }
+        });
+
+        function showExitOptions() {
+            cardTextElement.innerHTML = "<b>Press 'X' to minimize the card or click to continue playing.</b>";
+            cardState = 'exitOptions';
+            clearInterval(timerInterval);
+            timerBarElement.style.display = 'none';
+        }
+
+        function minimizeCard() {
+            cardState = 'resting';
+            card.classList.remove('active', 'title', 'instructions', 'exitOptions');
+            card.classList.add('resting');
+            cardTextElement.innerHTML = 'S'; // Display 'S' again
+            // No need to set font size here as CSS handles it
+            timerBarElement.style.width = '0%'; // Clear timer bar
+            timerBarElement.style.display = 'none'; // Hide timer bar
+            clearInterval(timerInterval); // Clear any running timer
+            tryAgainCount = 0; // Reset try again counter
+            turnCount = 0; // Reset turn count
+            lastCategories = []; // Reset last categories
+            instructionIndex = 0; // Reset instruction index
+            resumePause(); // Ensure game is not paused
+        }
+
+        function expandCard() {
+            card.classList.remove('resting');
+            card.classList.add('active');
+            cardTextElement.style.fontSize = ''; // Reset font size
+            cardTextElement.style.color = '#333'; // Reset text color
+        }
+
+        function showTitlePage() {
+            cardState = 'title';
+            cardTextElement.innerHTML = `<b>Story Flip</b>`;
+            setCardColor('storyElements'); // Golden color for title page
+        }
+
+        function showInstructions() {
+            cardState = 'instructions';
+            instructionIndex = 0;
+            displayInstructions();
+            setCardColor('storyElements'); // Light warm color
+        }
+
+        function displayInstructions() {
+            const currentInstructions = prompts.instructions[instructionIndex];
+            if (instructionIndex === 0) {
+                // Use typing animation for "Welcome, Storytellers" only
+                const firstLine = currentInstructions[0];
+                const remainingLines = currentInstructions.slice(1).join("<br><br>");
+                cardTextElement.innerHTML = ''; // Clear existing content
+                showTypingAnimation(firstLine, () => {
+                    // Pause for 3 seconds after typing animation
+                    setTimeout(() => {
+                        cardTextElement.innerHTML += "<br><br>" + remainingLines;
+                    }, 3000);
+                });
+            } else {
+                // Display remaining instructions without typing animation
+                cardTextElement.innerHTML = currentInstructions.join("<br><br>");
+            }
+        }
+
+        function startGame() {
+            cardState = 'active';
+            flipCard();
+        }
+
+        function flipCard() {
+            if (cardState === 'paused') return; // Do nothing if paused
+
+            // Hide card content briefly to simulate flip
+            cardTextElement.style.opacity = '0';
+            setTimeout(() => {
+                turnCount++; // Increment turn count
+
+                // Determine if an openStoryDriver prompt should appear
+                let isOpenStoryDriverTurn = (turnCount % 5 === 0);
+
+                if (isOpenStoryDriverTurn) {
+                    currentCategory = 'openStoryDriver';
+                    showOpenStoryDriverPrompt();
+                } else {
+                    const cardType = getRandomCardType();
+                    currentCategory = cardType;
+                    showGamePrompt(cardType);
+                }
+
+                // Start the timer after showing the prompt
+                startTimer();
+                cardTextElement.style.opacity = '1';
+            }, 300);
+        }
+
+        function getRandomCardType() {
+            const types = ['storyElements', 'wildcard', 'numberCard'];
+            let selectedType;
+            let attempts = 0;
+            do {
+                selectedType = types[Math.floor(Math.random() * types.length)];
+                attempts++;
+                // Prevent selecting the same category more than twice in a row
+                const occurrence = lastCategories.filter(cat => cat === selectedType).length;
+                if (occurrence < 2) break;
+            } while (attempts < 10);
+            return selectedType;
+        }
+
+        function showGamePrompt(category) {
+            if (category === 'storyElements') {
+                // Select a subcategory within storyElements
+                const subcategories = Object.keys(prompts.storyElements);
+                let selectedSubcategory;
+                let attempts = 0;
+                do {
+                    selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
+                    attempts++;
+                    // Prevent selecting the same subcategory more than twice in a row
+                    const occurrence = lastCategories.filter(cat => cat === selectedSubcategory).length;
+                    if (occurrence < 2) break;
+                } while (attempts < 10);
+                currentSubcategory = selectedSubcategory;
+                const prompt = getUniquePrompt('storyElements', selectedSubcategory);
+                if (!prompt) {
+                    // If no prompts left in this subcategory, select another subcategory
+                    showAlternateStoryElementsPrompt();
+                    return;
+                }
+                setCardColor('storyElements');
+                cardTextElement.innerHTML = prompt;
+                updateLastCategories(selectedSubcategory);
+            } else if (category === 'numberCard') {
+                // Typewriter animation for numberCard
+                const prompt = getUniquePrompt('numberCard');
+                if (!prompt) {
+                    console.error('No numberCard prompts available.');
+                    return;
+                }
+                setCardColor('numberCard');
+                showTypingAnimation(prompt);
+                updateLastCategories('numberCard');
+            } else if (category === 'wildcard') {
+                // Wildcard prompts have placeholders, render directly
+                const prompt = getUniquePrompt('wildcard');
+                if (!prompt) {
+                    console.error('No wildcard prompts available.');
+                    return;
+                }
+                setCardColor('wildcard');
+                cardTextElement.innerHTML = prompt;
+                updateLastCategories('wildcard');
+            }
+        }
+
+        function showOpenStoryDriverPrompt() {
+            const prompt = getUniquePrompt('openStoryDriver');
+            setCardColor('openStoryDriver');
+            cardTextElement.innerHTML = prompt;
+            updateLastCategories('openStoryDriver');
+        }
+
+        function showAlternateStoryElementsPrompt() {
+            const subcategories = Object.keys(prompts.storyElements).filter(sub => !lastCategories.includes(sub));
+            let selectedSubcategory;
+            if (subcategories.length === 0) {
+                // If all subcategories have been used recently, reset lastCategories
+                lastCategories = [];
+                selectedSubcategory = Object.keys(prompts.storyElements)[Math.floor(Math.random() * Object.keys(prompts.storyElements).length)];
+            } else {
+                selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
+            }
+            const prompt = getUniquePrompt('storyElements', selectedSubcategory);
+            setCardColor('storyElements');
+            cardTextElement.innerHTML = prompt;
+            updateLastCategories(selectedSubcategory);
+        }
+
+        function showWildcardPrompt() {
+            const prompt = getUniquePrompt('wildcard');
+            if (!prompt) {
+                // If no wildcards left, do nothing or provide a default action
+                return;
+            }
+            setCardColor('wildcard');
+            cardTextElement.innerHTML = prompt;
+            updateLastCategories('wildcard');
+        }
+
+        function getUniquePrompt(category, subcategory = null) {
+            if (category === 'storyElements' && subcategory) {
+                const availablePrompts = prompts.storyElements[subcategory].filter(p => !usedPrompts.storyElements[subcategory].includes(p));
+                if (availablePrompts.length === 0) {
+                    return null;
+                }
+                const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
+                usedPrompts.storyElements[subcategory].push(prompt);
+                return replacePlaceholders(prompt);
+            } else if (category === 'numberCard') {
+                let prompt = prompts.numberCard[Math.floor(Math.random() * prompts.numberCard.length)];
+                const num = getRandomNumber(1, 6);
+                let plural = num === 1 ? '' : 's';
+                prompt = prompt.replace('[x]', num).replace('[s]', plural);
+                // Replace all placeholders with spans
+                prompt = replacePlaceholders(prompt);
+                return prompt;
+            } else if (category === 'wildcard') {
+                const availablePrompts = prompts.wildcard.filter(p => !usedPrompts.wildcard.includes(p));
+                if (availablePrompts.length === 0) {
+                    // Reset wildcard prompts if all have been used
+                    usedPrompts.wildcard.length = 0;
+                }
+                const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)] || prompts.wildcard[Math.floor(Math.random() * prompts.wildcard.length)];
+                usedPrompts.wildcard.push(prompt);
+                return replacePlaceholders(prompt);
+            } else if (category === 'openStoryDriver') {
+                const availablePrompts = prompts.openStoryDriver.filter(p => !usedPrompts.openStoryDriver.includes(p));
+                if (availablePrompts.length === 0) {
+                    // Reset openStoryDriver prompts if all have been used
+                    usedPrompts.openStoryDriver.length = 0;
+                }
+                const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)] || prompts.openStoryDriver[Math.floor(Math.random() * prompts.openStoryDriver.length)];
+                usedPrompts.openStoryDriver.push(prompt);
+                return prompt; // openStoryDriver prompts don't have placeholders
+            }
+            return null;
+        }
+
+        function setCardColor(category) {
+            card.style.backgroundColor = getCategoryColor(category);
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                "storyElements": "#FFD700", // Gold
+                "numberCard": "#ADD8E6", // Light blue
+                "storyRhythm": "#FFB6C1", // Light Pink for Story Rhythm
+                "wildcard": "#F5A9A9", // Desaturated pink-orange
+                "openStoryDriver": "#D3D3D3" // Light grey
+            };
+            return colors[category] || "#FFFFFF";
+        }
+
+        function replacePlaceholders(text) {
+            // List of placeholders
+            const placeholders = ['NAME', 'PLACE', 'TIME', 'PURPOSE', 'EMOTION', 'OBJECT', 'ACTION', 'DESCRIPTION', 'CONFLICT', 'RESOLUTION'];
+            placeholders.forEach(placeholder => {
+                const regex = new RegExp(`\\b${placeholder}\\b`, 'g');
+                text = text.replace(regex, `<span class="placeholder">${placeholder}</span>`);
+            });
+            return text;
+        }
+
+        function showTypingAnimation(text, callback) {
+            cardTextElement.innerHTML = '';
+            let index = 0;
+            const speed = 30; // milliseconds per character
+
+            function type() {
+                if (index < text.length) {
+                    if (text.charAt(index) === '\n') {
+                        cardTextElement.innerHTML += '<br>';
+                    } else {
+                        cardTextElement.innerHTML += text.charAt(index);
+                    }
+                    index++;
+                    setTimeout(type, speed);
+                } else {
+                    if (callback) callback();
+                }
+            }
+
+            type();
+        }
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function startTimer() {
+            let timeLeft = 20; // 20-second timer
+            let timerWidth = 100;
+
+            clearInterval(timerInterval); // Clear any previous timer
+            timerBarElement.style.width = timerWidth + '%';
+            timerBarElement.style.display = 'block';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerWidth -= 5; // Reduce width over 20 seconds
+                timerBarElement.style.width = timerWidth + '%';
+
+                if (timeLeft <= 3) {
+                    // Flash yellow towards the end
+                    card.style.backgroundColor = timeLeft % 2 === 0 ? '#FFD700' : getCategoryColor(currentCategory);
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerBarElement.style.width = '0%';
+                    timerBarElement.style.display = 'none';
+                    handleTimerEnd();
+                }
+            }, 1000);
+        }
+
+        let currentCategory = ''; // To keep track of current prompt category
+        let isPaused = false; // To track pause state
+
+        function handleTimerEnd() {
+            tryAgainCount++;
+            if (tryAgainCount > 1) {
+                // Display reminder to use Wildcards
+                cardTextElement.innerHTML = "<b style='color: white;'>Time's up!<br>Take a deep breath and try again.<br>Try pressing 'W' for Wildcards!</b>";
+            } else {
+                cardTextElement.innerHTML = "<b style='color: white;'>Time's up!<br>Take a deep breath and try again.</b>";
+            }
+            setCardColor('storyElements'); // Reset to default color
+            // Hide timer bar
+            timerBarElement.style.display = 'none';
+            // Keep the game in the 'active' state to allow the player to continue
+            cardState = 'active';
+            lastCategories = []; // Reset last categories to allow any category next
+        }
+
+        // Pause and Resume Functions
+        function togglePause() {
+            if (cardState !== 'active') return; // Only allow pausing during active state
+
+            if (!isPaused) {
+                // Pause the game
+                isPaused = true;
+                clearInterval(timerInterval);
+                pausedOverlay.style.display = 'flex';
+                cardState = 'paused';
+            } else {
+                // Resume the game
+                resumePause();
+            }
+        }
+
+        function resumePause() {
+            if (!isPaused) return;
+
+            isPaused = false;
+            pausedOverlay.style.display = 'none';
+            // Restart the timer
+            startTimer();
+            cardState = 'active';
+        }
+
+        // Update lastCategories array to track the last two categories
+        function updateLastCategories(category) {
+            lastCategories.push(category);
+            if (lastCategories.length > 2) {
+                lastCategories.shift(); // Keep only the last two
+            }
+        }
+
+    });
+</script>
+
+</body>
+</html>
