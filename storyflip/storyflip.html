@@ -21,9 +21,8 @@
         #widget-container {
             position: relative;
             width: 50vw; /* 50% of viewport width */
-            height: 50vh; /* 50% of viewport height */
+            height: auto; /* Height adjusts based on content */
             max-width: 500px; /* Max width for larger screens */
-            max-height: 700px; /* Max height for larger screens */
             background: transparent;
             box-sizing: border-box;
             padding: 10px; /* Padding for drop shadow */
@@ -58,7 +57,7 @@
         }
         /* Resting state styling with large 'S' */
         #widget-card.resting #card-text {
-            font-size: 12vh; /* Large font size for 'S' */
+            font-size: 14vh; /* Increased font size for 'S' */
             font-weight: bold;
             color: #FFA500; /* Bright orange 'S' */
             margin: 0; /* Remove margin to center 'S' */
@@ -108,14 +107,13 @@
         @media (max-width: 600px) {
             #widget-container {
                 width: 90vw; /* Increase width for smaller screens */
-                height: 90vh; /* Increase height for smaller screens */
                 padding: 5px;
             }
             #card-text {
                 font-size: 4vh;
             }
             #widget-card.resting #card-text {
-                font-size: 14vh;
+                font-size: 16vh; /* Further increase for better visibility */
             }
             #paused-overlay {
                 font-size: 4vh;
