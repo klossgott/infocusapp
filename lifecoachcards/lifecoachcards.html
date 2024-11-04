@@ -6,69 +6,274 @@
     <title>Life-changing Questions for Coaches</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* The same CSS styles as before */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        #widget-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            background-color: white;
+        }
+        
+        #cover-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            height: 90%;
+            background-color: #4A90E2;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            z-index: 10;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 20px;
+            transform: translate(-50%, -50%) scale(1);
+            transition: all 0.3s ease;
+        }
+        
+        #cover-overlay.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+            pointer-events: none;
+        }
+        
+        #cover-text {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        #instruction-text {
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        
+        #lifecoach-questions-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            height: 90%;
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        #lifecoach-questions-card.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        #lifecoach-questions-text {
+            font-size: 1.2em;
+            color: #333333;
+            line-height: 1.6;
+            font-weight: 500;
+            margin: 0;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+        
+        @media (max-width: 400px) {
+            #widget-container {
+                width: 90vw;
+                height: 90vw;
+            }
+            
+            #cover-text {
+                font-size: 1.5em;
+            }
+            
+            #instruction-text {
+                font-size: 0.9em;
+            }
+            
+            #lifecoach-questions-text {
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="widget-container">
-        <div id="dormant-overlay" tabindex="0" role="button" aria-label="Click to start life coach questions">
-            <div id="dormant-text">Click to start life coach questions</div>
-        </div>
         <div id="cover-overlay" tabindex="0" role="button" aria-label="Life Coach Questions. Click to start.">
             <div id="cover-text">Life Coach Questions</div>
             <div id="instruction-text">
-                Begin your coaching session by clicking here to receive a powerful question that can transform your client's perspective.
+                Begin your coaching session with a powerful question that can transform your client's perspective. <BR> CLick here.
             </div>
         </div>
         <div id="lifecoach-questions-card" tabindex="0" role="button" aria-label="Life Coach Question">
             <div id="lifecoach-questions-text"></div>
         </div>
-        <div id="confirmation-overlay" tabindex="0" role="button" aria-label="Confirm ending life coach questions">
-            <div id="confirmation-text">Are you sure you want to end the life coach questions?</div>
-            <div class="confirmation-buttons">
-                <button id="confirmation-yes">Yes</button>
-                <button id="confirmation-no">No</button>
-            </div>
-        </div>
     </div>
 
     <script>
         const prompts = [
-            "What will make this conversation amazing?",
-            "What life-changing decision can I help you make today that's going to forever shape your destiny in the most positive way possible?",
-            // ... rest of the prompts array remains the same
+   "1. What will make this conversation amazing?",
+                "2. What life-changing decision can I help you make today that's going to forever shape your destiny in the most positive way possible?",
+                "3. Are you ready to get started? What are you ready for?",
+                "4. What would make this an extraordinary conversation? And what would make this even more extraordinary than that?",
+                "5. What do you want? And what else?",
+                "6. What would you like to create? What's in the way of you creating that right now? (Steve Chandler's favorite two questions.)",
+                "7. If you were to call me in 3 years and you're looking back on this conversation, what did we discuss that changed everything?",
+                "8. What's new and what's good in your world?",
+                "9. What legacy do you want to leave behind?",
+                "10. Are you working on leaving a legacy or are you living a legacy right now?",
+                "11. How do you want to grow as a human being?",
+                "12. In what way do you want to contribute to the world?",
+                "13. What is it that you need to change in your life to get what you want today?",
+                "14. What do you think is possible as an outcome from this call? (Then say) I want to open up you to the possibility that what you think is possible is nowhere near what's possible. What's possible is so much more.",
+                "15. What would be really helpful to work on? What could we do today that would make the biggest impact in your life and move you to where you want to be?",
+                "16. What are you afraid of? What do you believe is causing the fear? Is it valid? What would you do if you had no fear?",
+                "17. How can you slow down to speed up?",
+                "18. What energizes you? What drains you of energy? (Life-changing exercise you can do with clients)",
+                "19. What do you really, really want? What's your secret dream?",
+                "20. Imagine that I create miracles, what miracle would you want me to help you create today? Why haven't you created it already?",
+                "21. What do you want to create? Why do you want it? What's in the way of you creating that right now? What kind of person do you need to be to create it?",
+                "22. What kind of breakthrough would you like to have today?",
+                "23. How can you leave this conversation with more insight?",
+                "24. If I can help you change one thing today, what would that be?",
+                "25. Put your right hand on your heart and take a slow, deep breath. Now tell me, what do you really want?",
+                "26. What's working? What's not working? What's missing? What's next?",
+                "27. What do you want to create?",
+                "28. What do you need to do to feel unstoppable as a powerful creator?",
+                "29. Given this situation, what do you want to create?",
+                "30. As your coach, my job is to find out the answer to these questions. Can you look yourself straight in the face and say you're playing full-out? What's stopping you from playing full-out, no matter the outcome? What does playing full-out mean to you?",
+                "31. How can I serve you so powerfully that you will never forget this first call for the rest of your life?",
+                "32. A really great point of discussion is the truth that what got you to this level of success is exactly what will keep you from reaching the next level of success. What is that?",
+                "33. If you could be absolutely honest and release something, a secret you've been holding on to for too long, what would that be?",
+                "34. What's missing in your life, and how do you keep it out?",
+                "35. What is it that stands in the way of you and your future?",
+                "36. Can you name all the things you love? (Notice how long before they name themselves.)",
+                "37. I'd like you to imagine that it's three years from now and you call me up on the phone and say, 'Holy shit, coach. My life is amazing.' Now tell me all about your amazing life.",
+                "38. Where are you making a contribution to something bigger than yourself?",
+                "39. Where are you out of integrity? Where have you made a commitment that you are not really committed to?",
+                "40. How's your family?",
+                "41. How's business?",
+                "42. What is the thing that when you are doing it, you totally forget about time?",
+                "43. What does your heart long for?",
+                "44. When was the time in your life that you felt most alive? What were you doing?",
+                "45. What is the problem you wake up to every morning?",
+                "46. What is your biggest gift?",
+                "47. When you leave a room, what do people miss most about you?",
+                "48. What's going well for you?",
+                "49. What are you ignoring?",
+                "50. What is boring you?",
+                "51. What drives you crazy?",
+                "52. What makes you lazy?",
+                "53. What gets you excited?",
+                "54. What can't you know enough about?",
+                "55. What are you waiting for to go away before you act?",
+                "56. What would you do if you had more time?",
+                "57. What would you do if you had less time?",
+                "58. What would you do if you had more money?",
+                "59. What would you do if you had less money?",
+                "60. What would you do if you had more information?",
+                "61. What would you do if you had less information?",
+                "62. What would you do if you knew more people?",
+                "63. What would you do if you knew less people?",
+                "64. What do you take on that you should leave to others?",
+                "65. What do you leave to others that you should be doing?",
+                "66. Do you know someone who is getting the results you wish to get? Who is that person being that you are not?",
+                "67. What type of people can't you stand?",
+                "68. What type of people do you fall for too easily?",
+                "69. If someone held a gun to the head of a loved one and they'd die if you didn't take immediate action, what's the first tiny step you'd take?",
+                "70. If you'd earn a million dollars by taking one small step right now, what would you do?",
+                "71. What are you really committed to and what are you going to do about it?",
+                "72. If you were only allowed to focus on one goal on your list, which goal would would be most likely to ensure that every other goal was accomplished anyway—even if you were not allowed to work on them?",
+                "73. What's the best thing about your life right now?",
+                "74. What's the growing edge for you as a leader these days?",
+                "75. Can you name one great joy and one great sorrow you experienced this year?",
+                "76. Can you name 2 or 3 of your best strengths? What are you really good at?",
+                "77. What do you want these days? What are you passionately pursuing or longing for?",
+                "78. If one burden could be removed today, what would that be?",
+                "79. What dreams do you have for the future of your organization?",
+                "80. What's one thing you need to move your team to the next level that you don't currently have?",
+                "81. How does your job bring the best out in you? The worst?",
+                "82. What are the top 3 challenges you're facing right now? The top 3 opportunities?",
+                "83. What are you passionate about pursuing, and what are you eager to leave behind?",
+                "84. Where would you like to start?",
+                "85. If you could only achieve one goal per year over the next 5 years, what would you start with?",
+                "86. If your life were a comeback story, what would the next chapter look like?",
+                "87. What does your heart truly desire?",
+                "88. What do you want in each area of your life? Be specific.",
+                "89. What are you tolerating?",
+                "90. What do you love and what does that look like?",
+                "91. When was the last time you felt genuinely happy? Please elaborate.",
+                "92. If you could change your life by taking one action today, what would that be?",
+                "93. What are you not willing to admit to yourself?"
         ];
 
         const lifecoachCard = document.getElementById('lifecoach-questions-card');
         const lifecoachText = document.getElementById('lifecoach-questions-text');
         const coverOverlay = document.getElementById('cover-overlay');
-        const dormantOverlay = document.getElementById('dormant-overlay');
-        const confirmationOverlay = document.getElementById('confirmation-overlay');
-        const confirmationYes = document.getElementById('confirmation-yes');
-        const confirmationNo = document.getElementById('confirmation-no');
         let shuffledPrompts = [];
         let currentIndex = 0;
 
         function shuffle(array) {
-            // The same shuffle function as before
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
         }
 
         function showLifecoachQuestion() {
-            // The same showLifecoachQuestion function as before
+            if (currentIndex >= shuffledPrompts.length) {
+                shuffledPrompts = shuffle(prompts);
+                currentIndex = 0;
+            }
+            
+            const prompt = shuffledPrompts[currentIndex++];
+            lifecoachText.textContent = prompt;
+            lifecoachCard.style.backgroundColor = getRandomBackgroundColor();
+            lifecoachCard.classList.add('show');
         }
 
         function getRandomBackgroundColor() {
-            // The same getRandomBackgroundColor function as before
+            const colors = ['#FFFFFF', '#E3F2FD', '#E8F5E9', '#FFF3E0', '#F3E5F5'];
+            return colors[Math.floor(Math.random() * colors.length)];
         }
 
         function init() {
             shuffledPrompts = shuffle(prompts);
-
-            dormantOverlay.addEventListener('click', () => {
-                dormantOverlay.style.display = 'none';
-                coverOverlay.classList.remove('hidden');
-            });
-
+            
             coverOverlay.addEventListener('click', () => {
                 coverOverlay.classList.add('hidden');
                 showLifecoachQuestion();
@@ -76,28 +281,25 @@
 
             lifecoachCard.addEventListener('click', () => {
                 lifecoachCard.classList.remove('show');
-                confirmationOverlay.style.display = 'flex';
-            });
-
-            confirmationYes.addEventListener('click', () => {
-                confirmationOverlay.style.display = 'none';
-                dormantOverlay.style.display = 'flex';
-            });
-
-            confirmationNo.addEventListener('click', () => {
-                confirmationOverlay.style.display = 'none';
-                lifecoachCard.classList.add('show');
+                setTimeout(() => {
+                    coverOverlay.classList.remove('hidden');
+                }, 300);
             });
 
             // Keyboard accessibility
-            dormantOverlay.addEventListener('keydown', (e) => {
+            coverOverlay.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    dormantOverlay.click();
+                    coverOverlay.click();
                 }
             });
 
-            // The same event listeners for coverOverlay and lifecoachCard as before
+            lifecoachCard.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    lifecoachCard.click();
+                }
+            });
         }
 
         // Initialize when DOM is ready
