@@ -297,16 +297,6 @@
             lifecoachCard.style.display = 'flex';
         }
 
-        // Get next prompt ensuring no repeats until all used
-        function getNextPrompt() {
-            if (currentIndex >= shuffledPrompts.length) {
-                // Reshuffle and reset index if all prompts have been used
-                shuffledPrompts = shuffle([...prompts]);
-                currentIndex = 0;
-            }
-            return shuffledPrompts[currentIndex++];
-        }
-
         // Generate a random light background color based on design strategy
         function getRandomBackgroundColor() {
             const colors = ['#FFFFFF', '#E3F2FD', '#E8F5E9', '#FFF3E0', '#F3E5F5']; // Soft pastels
