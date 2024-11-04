@@ -2,86 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Life-changing questions for Coaches</title>
+    <title>Life-changing Questions for Coaches</title>
     <!-- Include Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet">
     <style>
+        /* Reset and Base Styles */
         html, body {
             height: 100%;
             margin: 0;
+            font-family: 'Open Sans', Arial, sans-serif;
+            background-color: #F5F5DC; /* Warm Beige */
         }
         body {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: transparent;
+            background: #F5F5DC;
         }
         #widget-container {
             position: relative;
-            width: 320px;
-            height: 180px;
+            width: 350px;
+            height: 350px;
             background: transparent;
             overflow: hidden;
             perspective: 1000px;
         }
-        #widget-image {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 50%;
-            height: 50%;
-            background-color: #B0E0E6;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            transition: filter 0.3s;
-            transform-origin: center center;
-            display: none;
-            border-radius: 10px;
-        }
-        #widget-image:hover {
-            filter: brightness(1.2);
-        }
-        /* Removed explode animation */
-        #lifecoach-questions-card {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 320px;
-            height: 180px;
-            background-color: #F8F0E3;
-            border-radius: 15px;
-            padding: 20px;
-            box-sizing: border-box;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            animation-duration: 0.5s;
-            animation-fill-mode: forwards;
-            overflow: hidden;
-            transform: translate(-50%, -50%);
-            transform-origin: center center;
-            backface-visibility: hidden;
-            cursor: pointer;
-        }
-        #lifecoach-questions-text {
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 1em;
-            color: #333;
-            line-height: 1.5;
-            font-weight: normal;
-            letter-spacing: 0.05em;
-            margin: 0;
-            background: transparent;
-        }
+        /* Cover Overlay */
         #cover-overlay {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 320px;
-            height: 180px;
-            background-color: #3B1C0A;
+            width: 350px;
+            height: 350px;
+            background-color: #3B1C0A; /* Deep Charcoal */
             color: white;
             display: flex;
             align-items: center;
@@ -89,31 +42,93 @@
             text-align: center;
             cursor: pointer;
             z-index: 10;
-            padding: 10px;
+            padding: 20px;
             box-sizing: border-box;
-            border-radius: 15px;
+            border-radius: 20px;
             transform: translate(-50%, -50%) scale(0.3);
             transform-origin: center center;
             backface-visibility: hidden;
-            transition: transform 0.5s ease;
+            transition: transform 0.5s ease, background-color 0.3s ease;
         }
         #cover-overlay.resting {
             transform: translate(-50%, -50%) scale(0.3);
+            background-color: #3B1C0A;
         }
         #cover-overlay.expanded {
             transform: translate(-50%, -50%) scale(1);
+            background-color: #6C9BCF; /* Soft Blue */
         }
         #cover-text {
             font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 1.2em;
-            font-weight: bold;
+            font-size: 1.4em;
+            font-weight: 700;
             line-height: 1.4;
             letter-spacing: 0.05em;
             margin: 0;
         }
         #cover-text span {
-            font-weight: normal;
+            font-weight: 400;
+            font-size: 0.9em;
         }
+        /* Widget Image Placeholder */
+        #widget-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 60%;
+            background-color: #88B04B; /* Muted Green */
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: filter 0.3s, transform 0.3s;
+            transform-origin: center center;
+            display: none;
+            border-radius: 20px;
+        }
+        #widget-image:hover {
+            filter: brightness(1.2);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        /* Life Coach Questions Card */
+        #lifecoach-questions-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 350px;
+            height: 350px;
+            background-color: #FFFFFF; /* White */
+            border-radius: 20px;
+            padding: 30px;
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation-duration: 0.6s;
+            animation-fill-mode: forwards;
+            overflow: hidden;
+            transform: translate(-50%, -50%) rotateY(-90deg);
+            transform-origin: center center;
+            backface-visibility: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+        #lifecoach-questions-card.show {
+            display: flex;
+            animation-name: fadeInFlip;
+        }
+        #lifecoach-questions-text {
+            font-family: 'Open Sans', Arial, sans-serif;
+            font-size: 1.1em;
+            color: #333333; /* Deep Charcoal */
+            line-height: 1.6;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            margin: 0;
+        }
+        /* Animations */
         @keyframes coverFadeOutFlip {
             0% {
                 opacity: 1;
@@ -152,8 +167,7 @@
     <!-- Cover Overlay -->
     <div id="cover-overlay" class="resting">
         <div id="cover-text">
-            Life Coach Questions<br>
-            <br>
+            <span>Life Coach Questions</span><br><br>
             <span>Click to expand<br>Double-click to minimize</span>
         </div>
     </div>
@@ -167,225 +181,231 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const prompts = [
-            "1. What will make this conversation amazing?",
-            "2. What life-changing decision can I help you make today that's going to forever shape your destiny in the most positive way possible?",
-            "3. Are you ready to get started? What are you ready for?",
-            "4. What would make this an extraordinary conversation? And what would make this even more extraordinary than that?",
-            "5. What do you want? And what else?",
-            "6. What would you like to create? What's in the way of you creating that right now? (Steve Chandler's favorite two questions.)",
-            "7. If you were to call me in 3 years and you're looking back on this conversation, what did we discuss that changed everything?",
-            "8. What's new and what's good in your world?",
-            "9. What legacy do you want to leave behind?",
-            "10. Are you working on leaving a legacy or are you living a legacy right now?",
-            "11. How do you want to grow as a human being?",
-            "12. In what way do you want to contribute to the world?",
-            "13. What is it that you need to change in your life to get what you want today?",
-            "14. What do you think is possible as an outcome from this call? (Then say) I want to open up you to the possibility that what you think is possible is nowhere near what's possible. What's possible is so much more.",
-            "15. What would be really helpful to work on? What could we do today that would make the biggest impact in your life and move you to where you want to be?",
-            "16. What are you afraid of? What do you believe is causing the fear? Is it valid? What would you do if you had no fear?",
-            "17. How can you slow down to speed up?",
-            "18. What energizes you? What drains you of energy? (Life-changing exercise you can do with clients)",
-            "19. What do you really, really want? What's your secret dream?",
-            "20. Imagine that I create miracles, what miracle would you want me to help you create today? Why haven't you created it already?",
-            "21. What do you want to create? Why do you want it? What's in the way of you creating that right now? What kind of person do you need to be to create it?",
-            "22. What kind of breakthrough would you like to have today?",
-            "23. How can you leave this conversation with more insight?",
-            "24. If I can help you change one thing today, what would that be?",
-            "25. Put your right hand on your heart and take a slow, deep breath. Now tell me, what do you really want?",
-            "26. What's working? What's not working? What's missing? What's next?",
-            "27. What do you want to create?",
-            "28. What do you need to do to feel unstoppable as a powerful creator?",
-            "29. Given this situation, what do you want to create?",
-            "30. As your coach, my job is to find out the answer to these questions. Can you look yourself straight in the face and say you're playing full-out? What's stopping you from playing full-out, no matter the outcome? What does playing full-out mean to you?",
-            "31. How can I serve you so powerfully that you will never forget this first call for the rest of your life?",
-            "32. A really great point of discussion is the truth that what got you to this level of success is exactly what will keep you from reaching the next level of success. What is that?",
-            "33. If you could be absolutely honest and release something, a secret you've been holding on to for too long, what would that be?",
-            "34. What's missing in your life, and how do you keep it out?",
-            "35. What is it that stands in the way of you and your future?",
-            "36. Can you name all the things you love? (Notice how long before they name themselves.)",
-            "37. I'd like you to imagine that it's three years from now and you call me up on the phone and say, 'Holy shit, coach. My life is amazing.' Now tell me all about your amazing life.",
-            "38. Where are you making a contribution to something bigger than yourself?",
-            "39. Where are you out of integrity? Where have you made a commitment that you are not really committed to?",
-            "40. How's your family?",
-            "41. How's business?",
-            "42. What is the thing that when you are doing it, you totally forget about time?",
-            "43. What does your heart long for?",
-            "44. When was the time in your life that you felt most alive? What were you doing?",
-            "45. What is the problem you wake up to every morning?",
-            "46. What is your biggest gift?",
-            "47. When you leave a room, what do people miss most about you?",
-            "48. What's going well for you?",
-            "49. What are you ignoring?",
-            "50. What is boring you?",
-            "51. What drives you crazy?",
-            "52. What makes you lazy?",
-            "53. What gets you excited?",
-            "54. What can't you know enough about?",
-            "55. What are you waiting for to go away before you act?",
-            "56. What would you do if you had more time?",
-            "57. What would you do if you had less time?",
-            "58. What would you do if you had more money?",
-            "59. What would you do if you had less money?",
-            "60. What would you do if you had more information?",
-            "61. What would you do if you had less information?",
-            "62. What would you do if you knew more people?",
-            "63. What would you do if you knew less people?",
-            "64. What do you take on that you should leave to others?",
-            "65. What do you leave to others that you should be doing?",
-            "66. Do you know someone who is getting the results you wish to get? Who is that person being that you are not?",
-            "67. What type of people can't you stand?",
-            "68. What type of people do you fall for too easily?",
-            "69. If someone held a gun to the head of a loved one and they'd die if you didn't take immediate action, what's the first tiny step you'd take?",
-            "70. If you'd earn a million dollars by taking one small step right now, what would you do?",
-            "71. What are you really committed to and what are you going to do about it?",
-            "72. If you were only allowed to focus on one goal on your list, which goal would would be most likely to ensure that every other goal was accomplished anyway—even if you were not allowed to work on them?",
-            "73. What's the best thing about your life right now?",
-            "74. What's the growing edge for you as a leader these days?",
-            "75. Can you name one great joy and one great sorrow you experienced this year?",
-            "76. Can you name 2 or 3 of your best strengths? What are you really good at?",
-            "77. What do you want these days? What are you passionately pursuing or longing for?",
-            "78. If one burden could be removed today, what would that be?",
-            "79. What dreams do you have for the future of your organization?",
-            "80. What's one thing you need to move your team to the next level that you don't currently have?",
-            "81. How does your job bring the best out in you? The worst?",
-            "82. What are the top 3 challenges you're facing right now? The top 3 opportunities?",
-            "83. What are you passionate about pursuing, and what are you eager to leave behind?",
-            "84. Where would you like to start?",
-            "85. If you could only achieve one goal per year over the next 5 years, what would you start with?",
-            "86. If your life were a comeback story, what would the next chapter look like?",
-            "87. What does your heart truly desire?",
-            "88. What do you want in each area of your life? Be specific.",
-            "89. What are you tolerating?",
-            "90. What do you love and what does that look like?",
-            "91. When was the last time you felt genuinely happy? Please elaborate.",
-            "92. If you could change your life by taking one action today, what would that be?",
-            "93. What are you not willing to admit to yourself?",
-            "94. A spiritual truth is that the right time to take action is when you feel the same level of fear as excitement. What action could you take that would make you feel both scared and excited?",
-            "95. Why don't you have what you want?",
-            "96. Why do you want what you want?",
-            "97. Could your wanting what you want actually be a lower level desire for something else? And if so, what would that be?",
-            "98. What's keeping you from taking action toward your goal?",
-            "99. What do you keep telling yourself that keeps you from taking action?",
-            "100. What are you getting out of this so far?",
-            "101. Is that true? Can you know absolutely that it's true? How do you react when you believe that thought? Who would you be without that judgment? What's the opposite thought? How can you live into that new thought?",
-            "102. When you hit your goal, how do you think that will make you feel?",
-            "103. What are you willing to give up to go up?",
-            "104. How are you lying to yourself?",
-            "105. What's the worst that could happen?",
-            "106. If you did not have any fear, what would you do?",
-            "107. What's the first tiny step you'd take?",
-            "108. What is it that makes you the most powerful you?",
-            "109. How can we make this call more fun?",
-            "110. What do you love?",
-            "111. What do you need to do to have more fun in life?",
-            "112. Let's take a moment to check in. What direction would you like to go now?",
-            "113. What's your biggest success this week? Is there something else you can do to be even more successful?",
-            "114. What will make your success inevitable?",
-            "115. Why now?",
-            "116. Now that we have identified where you are and where you want to be, how do we get there?",
-            "117. Can you commit to this today?",
-            "118. Is that true? What are the facts?",
-            "119. Can you tell me more?",
-            "120. What do you mean by that?",
-            "121. If you can't see this right now, can you trust that it's happening?",
-            "122. What version of you knows you can (fill in blank)?",
-            "123. What is stopping you?",
-            "124. How is that impacting your life right now?",
-            "125. Why is it important?",
-            "126. What would happen if you fixed that right now?",
-            "127. The reality of money is that we don't experience it—we experience what money can do for us. Rather than me asking you the amount of money you intend to create, I want to ask you a different question. In considering what money can do for you, what experiences do you want to have over the next 3 months, 6 months, or a year?",
-            "128. (When your client's mind is spiraling to a place of negativity or they're having a serious problem, ask) Does this mean anything in the long-term or in the big picture of your life? Will this moment define you, or will it educate you? What can you learn from this situation? How can you turn this problem into a project?",
-            "129. What are you telling yourself that is keeping you from doing what you want to do? What's your racket (story)?",
-            "130. How is this a good thing? How is this working for you, rather than to you?",
-            "131. How can you make this more fun? How can you bring more joy to... ?",
-            "132. Now that we have identified where you are and where you want to be, how do we get there?",
-            "133. Is there something else you can do to be even more successful?",
-            "134. What will make your success inevitable?",
-            "135. Who do you need to be to get that done?",
-            "136. What have you not said so far?",
-            "137. When you hit your goal, how do you think that will make you feel? How can you feel that way now?",
-            "138. What action can we take right now in this moment on this call to get started?",
-            "139. And what else? And what else? And what else? And what else? (Take them deeper and deeper)",
-            "140. What's that thought that's keeping you from being comfortable?",
-            "141. How are you creating this?",
-            "142. What old habit are you going to let go of in order to be successful?",
-            "143. What are you willing to give up to go up?",
-            "144. What are you not saying that needs to be said right now?",
-            "145. If you're not successful with something, what would that look like?",
-            "146. It's all about who you're being. What can you do to have the best energy, the most attractive energy?",
-            "147. During times in your life when you did something really well you showed up like you never had before—why was that? Let's draw that out of you so that you can access it at all times.",
-            "148. Who in the world are you most responsible for?",
-            "149. What would it mean about you if you got what you want?",
-            "150. What would you want if it wouldn't mean anything about you?",
-            "151. What would be the worst thing for you about getting what you want?",
-            "152. What would you want if you knew it would be okay if you got it?",
-            "153. What are the goals you have that you don't want to do anything to make them happen but if they did, that would be awesome?",
-            "154. What would you want if you could be guaranteed that you didn't have to lose it?",
-            "155. What would you want if you were guaranteed that you were going to get it?",
-            "156. What would you want if you knew you couldn't fail?",
-            "157. What would you want if you knew that it was okay to fail?",
-            "158. What experience would you like to have by achieving that?",
-            "159. What would having that accomplish for you?",
-            "160. What would you change?",
-            "161. Is there anything else you would like me to know about this?",
-            "162. Is there anything else you don't want me to know about this?",
-            "163. What point are you trying to make?",
-            "164. What comes up for you when I say that?",
-            "165. What would life be like if you responded differently?",
-            "166. What are you thinking right now?",
-            "167. What stops you?",
-            "168. How is that working for you?",
-            "169. Where do you hold back?",
-            "170. What's the upside of keeping the problem?",
-            "171. What's the downside of getting rid of the problem?",
-            "172. Why would you continue to remain in a situation that is so stressful?",
-            "173. What would it look like to you if the situation was resolved?",
-            "174. What's the real issue here?",
-            "175. What is your game plan?",
-            "176. What do you make of all of this?",
-            "177. What's your best idea on how to solve this?",
-            "178. What is occurring that tells you that?",
-            "179. What did you decide that meant?",
-            "180. What else?",
-            "181. What basic habit do you return to when faced with a difficult problem?",
-            "182. What if that wasn't true?",
-            "183. If you did know, what would you do?",
-            "184. What do you get by not being able to decide?",
-            "185. Where do we go from here?",
-            "186. How long are you gonna keep living as if you're never going to die?",
-            "187. If you could find time, where would you find it?",
-            "188. What 20% of sources are creating 80% of your problems or unhappiness?",
-            "189. What 20% of sources are resulting in 80% of your desired outcomes or happiness?",
-            "190. If you could only work 2 hours per day, what would you focus on?",
-            "191. If you could only work 2 hours per week, what would you focus on?",
-            "192. What are the top 3 activities you use to fill time to feel as though you've been productive?",
-            "193. When do you feel starved for time? What commitments, thoughts, and people can you eliminate to fix this problem?",
-            "194. Think about some times in your life where your effort was disproportionate to your results—either you put in a ton of work to no avail or you felt like you barely did anything and the results came pouring in. What do you make of that discrepancy? Were they random flukes or could there be a larger principle at work?",
-            "195. How is your experience of work different when you are fully engaged versus when you are distracted? How could you cultivate the experience of full engagement?",
-            "196. If your productivity were the result of making higher quality decisions (i.e., one good decision a day), how might you design your day differently? What states of mind would be of higher value to you? How can you cultivate those higher quality states of mind? If you could find time, where would you find it?",
-            "197. What's the single biggest insight from our conversation?",
-            "198. What did you get out of what I just said?",
-            "199. What does this insight mean for you now?",
-            "200. How does this insight change everything?",
-            "201. What assumptions are you making?",
-            "202. What are you learning about yourself?",
-            "203. What is the benefit behind (insert belief or disempowering behavior)?",
-            "204. What do you make that mean?",
-            "205. What's behind those tears?",
-            "206. What would it take for you to start making changes to your life?",
-            "207. (After a long pause) What was going on with your mind during that space?",
-            "208. How are you getting in your own way?",
-            "209. What if you did know the answer?",
-            "210. Is this good enough for you?",
-            "211. What is that costing you?",
-            "212. If you did know, what do you think the answer would be?",
-            "213. What is your heart saying?",
-            "214. What's the best question I could ask you right now?",
-            "215. Is that helpful and how so?",
-            "216. What are you hearing there?"
-        ];
+        // Categorized Prompts
+        const prompts = {
+            "How to Start a Coaching Call": [
+                "1. What will make this conversation amazing?",
+                "2. What life-changing decision can I help you make today that's going to forever shape your destiny in the most positive way possible?",
+                "3. Are you ready to get started? What are you ready for?",
+                "4. What would make this an extraordinary conversation? And what would make this even more extraordinary than that?",
+                "5. What do you want? And what else?",
+                "6. What would you like to create? What's in the way of you creating that right now? (Steve Chandler's favorite two questions.)",
+                "7. If you were to call me in 3 years and you're looking back on this conversation, what did we discuss that changed everything?",
+                "8. What's new and what's good in your world?",
+                "9. What legacy do you want to leave behind?",
+                "10. Are you working on leaving a legacy or are you living a legacy right now?",
+                "11. How do you want to grow as a human being?",
+                "12. In what way do you want to contribute to the world?",
+                "13. What is it that you need to change in your life to get what you want today?",
+                "14. What do you think is possible as an outcome from this call? (Then say) I want to open up you to the possibility that what you think is possible is nowhere near what's possible. What's possible is so much more.",
+                "15. What would be really helpful to work on? What could we do today that would make the biggest impact in your life and move you to where you want to be?",
+                "16. What are you afraid of? What do you believe is causing the fear? Is it valid? What would you do if you had no fear?",
+                "17. How can you slow down to speed up?",
+                "18. What energizes you? What drains you of energy? (Life-changing exercise you can do with clients)",
+                "19. What do you really, really want? What's your secret dream?",
+                "20. Imagine that I create miracles, what miracle would you want me to help you create today? Why haven't you created it already?",
+                "21. What do you want to create? Why do you want it? What's in the way of you creating that right now? What kind of person do you need to be to create it?",
+                "22. What kind of breakthrough would you like to have today?",
+                "23. How can you leave this conversation with more insight?",
+                "24. If I can help you change one thing today, what would that be?",
+                "25. Put your right hand on your heart and take a slow, deep breath. Now tell me, what do you really want?",
+                "26. What's working? What's not working? What's missing? What's next?",
+                "27. What do you want to create?",
+                "28. What do you need to do to feel unstoppable as a powerful creator?",
+                "29. Given this situation, what do you want to create?",
+                "30. As your coach, my job is to find out the answer to these questions. Can you look yourself straight in the face and say you're playing full-out? What's stopping you from playing full-out, no matter the outcome? What does playing full-out mean to you?",
+                "31. How can I serve you so powerfully that you will never forget this first call for the rest of your life?",
+                "32. A really great point of discussion is the truth that what got you to this level of success is exactly what will keep you from reaching the next level of success. What is that?",
+                "33. If you could be absolutely honest and release something, a secret you've been holding on to for too long, what would that be?",
+                "34. What's missing in your life, and how do you keep it out?",
+                "35. What is it that stands in the way of you and your future?",
+                "36. Can you name all the things you love? (Notice how long before they name themselves.)",
+                "37. I'd like you to imagine that it's three years from now and you call me up on the phone and say, 'Holy shit, coach. My life is amazing.' Now tell me all about your amazing life.",
+                "38. Where are you making a contribution to something bigger than yourself?",
+                "39. Where are you out of integrity? Where have you made a commitment that you are not really committed to?",
+                "40. How's your family?",
+                "41. How's business?",
+                "42. What is the thing that when you are doing it, you totally forget about time?",
+                "43. What does your heart long for?",
+                "44. When was the time in your life that you felt most alive? What were you doing?",
+                "45. What is the problem you wake up to every morning?",
+                "46. What is your biggest gift?",
+                "47. When you leave a room, what do people miss most about you?",
+                "48. What's going well for you?",
+                "49. What are you ignoring?",
+                "50. What is boring you?",
+                "51. What drives you crazy?",
+                "52. What makes you lazy?",
+                "53. What gets you excited?",
+                "54. What can't you know enough about?",
+                "55. What are you waiting for to go away before you act?",
+                "56. What would you do if you had more time?",
+                "57. What would you do if you had less time?",
+                "58. What would you do if you had more money?",
+                "59. What would you do if you had less money?",
+                "60. What would you do if you had more information?",
+                "61. What would you do if you had less information?",
+                "62. What would you do if you knew more people?",
+                "63. What would you do if you knew less people?",
+                "64. What do you take on that you should leave to others?",
+                "65. What do you leave to others that you should be doing?",
+                "66. Do you know someone who is getting the results you wish to get? Who is that person being that you are not?",
+                "67. What type of people can't you stand?",
+                "68. What type of people do you fall for too easily?",
+                "69. If someone held a gun to the head of a loved one and they'd die if you didn't take immediate action, what's the first tiny step you'd take?",
+                "70. If you'd earn a million dollars by taking one small step right now, what would you do?",
+                "71. What are you really committed to and what are you going to do about it?",
+                "72. If you were only allowed to focus on one goal on your list, which goal would would be most likely to ensure that every other goal was accomplished anyway—even if you were not allowed to work on them?",
+                "73. What's the best thing about your life right now?",
+                "74. What's the growing edge for you as a leader these days?",
+                "75. Can you name one great joy and one great sorrow you experienced this year?",
+                "76. Can you name 2 or 3 of your best strengths? What are you really good at?",
+                "77. What do you want these days? What are you passionately pursuing or longing for?",
+                "78. If one burden could be removed today, what would that be?",
+                "79. What dreams do you have for the future of your organization?",
+                "80. What's one thing you need to move your team to the next level that you don't currently have?",
+                "81. How does your job bring the best out in you? The worst?",
+                "82. What are the top 3 challenges you're facing right now? The top 3 opportunities?",
+                "83. What are you passionate about pursuing, and what are you eager to leave behind?",
+                "84. Where would you like to start?",
+                "85. If you could only achieve one goal per year over the next 5 years, what would you start with?",
+                "86. If your life were a comeback story, what would the next chapter look like?",
+                "87. What does your heart truly desire?",
+                "88. What do you want in each area of your life? Be specific.",
+                "89. What are you tolerating?",
+                "90. What do you love and what does that look like?",
+                "91. When was the last time you felt genuinely happy? Please elaborate.",
+                "92. If you could change your life by taking one action today, what would that be?",
+                "93. What are you not willing to admit to yourself?"
+            ],
+            "During a Coaching Call": [
+                "94. A spiritual truth is that the right time to take action is when you feel the same level of fear as excitement. What action could you take that would make you feel both scared and excited?",
+                "95. Why don't you have what you want?",
+                "96. Why do you want what you want?",
+                "97. Could your wanting what you want actually be a lower level desire for something else? And if so, what would that be?",
+                "98. What's keeping you from taking action toward your goal?",
+                "99. What do you keep telling yourself that keeps you from taking action?",
+                "100. What are you getting out of this so far?",
+                "101. Is that true? Can you know absolutely that it's true? How do you react when you believe that thought? Who would you be without that judgment? What's the opposite thought? How can you live into that new thought?",
+                "102. When you hit your goal, how do you think that will make you feel?",
+                "103. What are you willing to give up to go up?",
+                "104. How are you lying to yourself?",
+                "105. What's the worst that could happen?",
+                "106. If you did not have any fear, what would you do?",
+                "107. What's the first tiny step you'd take?",
+                "108. What is it that makes you the most powerful you?",
+                "109. How can we make this call more fun?",
+                "110. What do you love?",
+                "111. What do you need to do to have more fun in life?",
+                "112. Let's take a moment to check in. What direction would you like to go now?",
+                "113. What's your biggest success this week? Is there something else you can do to be even more successful?",
+                "114. What will make your success inevitable?",
+                "115. Why now?",
+                "116. Now that we have identified where you are and where you want to be, how do we get there?",
+                "117. Can you commit to this today?",
+                "118. Is that true? What are the facts?",
+                "119. Can you tell me more?",
+                "120. What do you mean by that?",
+                "121. If you can't see this right now, can you trust that it's happening?",
+                "122. What version of you knows you can (fill in blank)?",
+                "123. What is stopping you?",
+                "124. How is that impacting your life right now?",
+                "125. Why is it important?",
+                "126. What would happen if you fixed that right now?",
+                "127. The reality of money is that we don't experience it—we experience what money can do for us. Rather than me asking you the amount of money you intend to create, I want to ask you a different question. In considering what money can do for you, what experiences do you want to have over the next 3 months, 6 months, or a year?",
+                "128. (When your client's mind is spiraling to a place of negativity or they're having a serious problem, ask) Does this mean anything in the long-term or in the big picture of your life? Will this moment define you, or will it educate you? What can you learn from this situation? How can you turn this problem into a project?",
+                "129. What are you telling yourself that is keeping you from doing what you want to do? What's your racket (story)?",
+                "130. How is this a good thing? How is this working for you, rather than to you?",
+                "131. How can you make this more fun? How can you bring more joy to... ?",
+                "132. Now that we have identified where you are and where you want to be, how do we get there?",
+                "133. Is there something else you can do to be even more successful?",
+                "134. What will make your success inevitable?",
+                "135. Who do you need to be to get that done?",
+                "136. What have you not said so far?",
+                "137. When you hit your goal, how do you think that will make you feel? How can you feel that way now?",
+                "138. What action can we take right now in this moment on this call to get started?",
+                "139. And what else? And what else? And what else? And what else? (Take them deeper and deeper)",
+                "140. What's that thought that's keeping you from being comfortable?",
+                "141. How are you creating this?",
+                "142. What old habit are you going to let go of in order to be successful?",
+                "143. What are you willing to give up to go up?",
+                "144. What are you not saying that needs to be said right now?",
+                "145. If you're not successful with something, what would that look like?",
+                "146. It's all about who you're being. What can you do to have the best energy, the most attractive energy?",
+                "147. During times in your life when you did something really well you showed up like you never had before—why was that? Let's draw that out of you so that you can access it at all times.",
+                "148. Who in the world are you most responsible for?",
+                "149. What would it mean about you if you got what you want?",
+                "150. What would you want if it wouldn't mean anything about you?",
+                "151. What would be the worst thing for you about getting what you want?",
+                "152. What would you want if you knew it would be okay if you got it?",
+                "153. What are the goals you have that you don't want to do anything to make them happen but if they did, that would be awesome?",
+                "154. What would you want if you could be guaranteed that you didn't have to lose it?",
+                "155. What would you want if you were guaranteed that you were going to get it?",
+                "156. What would you want if you knew you couldn't fail?",
+                "157. What would you want if you knew that it was okay to fail?",
+                "158. What experience would you like to have by achieving that?",
+                "159. What would having that accomplish for you?",
+                "160. What would you change?",
+                "161. Is there anything else you would like me to know about this?",
+                "162. Is there anything else you don't want me to know about this?",
+                "163. What point are you trying to make?",
+                "164. What comes up for you when I say that?",
+                "165. What would life be like if you responded differently?",
+                "166. What are you thinking right now?",
+                "167. What stops you?",
+                "168. How is that working for you?",
+                "169. Where do you hold back?",
+                "170. What's the upside of keeping the problem?",
+                "171. What's the downside of getting rid of the problem?",
+                "172. Why would you continue to remain in a situation that is so stressful?",
+                "173. What would it look like to you if the situation was resolved?",
+                "174. What's the real issue here?",
+                "175. What is your game plan?",
+                "176. What do you make of all of this?",
+                "177. What's your best idea on how to solve this?",
+                "178. What is occurring that tells you that?",
+                "179. What did you decide that meant?",
+                "180. What else?",
+                "181. What basic habit do you return to when faced with a difficult problem?",
+                "182. What if that wasn't true?",
+                "183. If you did know, what would you do?",
+                "184. What do you get by not being able to decide?",
+                "185. Where do we go from here?",
+                "186. How long are you gonna keep living as if you're never going to die?",
+                "187. If you could find time, where would you find it?",
+                "188. What 20% of sources are creating 80% of your problems or unhappiness?",
+                "189. What 20% of sources are resulting in 80% of your desired outcomes or happiness?",
+                "190. If you could only work 2 hours per day, what would you focus on?",
+                "191. If you could only work 2 hours per week, what would you focus on?",
+                "192. What are the top 3 activities you use to fill time to feel as though you've been productive?",
+                "193. When do you feel starved for time? What commitments, thoughts, and people can you eliminate to fix this problem?",
+                "194. Think about some times in your life where your effort was disproportionate to your results—either you put in a ton of work to no avail or you felt like you barely did anything and the results came pouring in. What do you make of that discrepancy? Were they random flukes or could there be a larger principle at work?",
+                "195. How is your experience of work different when you are fully engaged versus when you are distracted? How could you cultivate the experience of full engagement?",
+                "196. If your productivity were the result of making higher quality decisions (i.e., one good decision a day), how might you design your day differently? What states of mind would be of higher value to you? How can you cultivate those higher quality states of mind? If you could find time, where would you find it?",
+                "197. What's the single biggest insight from our conversation?",
+                "198. What did you get out of what I just said?",
+                "199. What does this insight mean for you now?",
+                "200. How does this insight change everything?",
+                "201. What assumptions are you making?",
+                "202. What are you learning about yourself?",
+                "203. What is the benefit behind (insert belief or disempowering behavior)?",
+                "204. What do you make that mean?",
+                "205. What's behind those tears?",
+                "206. What would it take for you to start making changes to your life?",
+                "207. (After a long pause) What was going on with your mind during that space?",
+                "208. How are you getting in your own way?",
+                "209. What if you did know the answer?",
+                "210. Is this good enough for you?",
+                "211. What is that costing you?",
+                "212. If you did know, what do you think the answer would be?",
+                "213. What is your heart saying?",
+                "214. What's the best question I could ask you right now?",
+                "215. Is that helpful and how so?",
+                "216. What are you hearing there?"
+            ]
+        };
 
+        // Initialize State
         const widgetImage = document.getElementById('widget-image');
         const lifecoachCard = document.getElementById('lifecoach-questions-card');
         const lifecoachText = document.getElementById('lifecoach-questions-text');
@@ -394,6 +414,35 @@
         let isExpanded = false;
         let lastClickTime = 0;
         const doubleClickDelay = 300; // milliseconds
+
+        // Shuffle Array Utility
+        function shuffle(array) {
+            let currentIndex = array.length, temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }
+
+        // Prepare Shuffled Queues for Each Category
+        let shuffledPrompts = {};
+        for (let category in prompts) {
+            shuffledPrompts[category] = shuffle([...prompts[category]]);
+        }
+
+        // Current Category and Index
+        let currentCategory = "How to Start a Coaching Call"; // Default category
+        let currentIndex = 0;
 
         // Handle clicks on cover overlay
         coverOverlay.addEventListener('click', (e) => {
@@ -406,8 +455,8 @@
                 coverOverlay.classList.add('resting');
                 isExpanded = false;
             } else if (isExpanded) {
-                // Single click while expanded - start the game
-                startGame();
+                // Single click while expanded - expand category selection
+                expandCategorySelection();
             } else {
                 // Single click while resting - expand
                 coverOverlay.classList.remove('resting');
@@ -418,125 +467,24 @@
             lastClickTime = currentTime;
         });
 
-        function startGame() {
-            coverOverlay.style.animation = 'coverFadeOutFlip 0.5s forwards';
-            coverOverlay.addEventListener('animationend', () => {
-                coverOverlay.style.display = 'none';
-                widgetImage.style.display = 'block';
-            }, { once: true });
-        }
-
-        // Handle widget image click
-        widgetImage.addEventListener('click', () => {
-            widgetImage.style.display = 'none';
-            showLifecoachQuestion();
-        });
-
-        function showLifecoachQuestion() {
-            lifecoachText.textContent = getRandomPrompt();
-            const baseColor = '#F8F0E3';
-            const hsl = hexToHsl(baseColor);
-            const lightnessAdjustment = (Math.random() * 20) - 10;
-            const newL = Math.min(100, Math.max(0, hsl.l + lightnessAdjustment));
-            const newColor = hslToHex(hsl.h, hsl.s, newL);
-            lifecoachCard.style.backgroundColor = newColor;
+        // Expand to select category
+        function expandCategorySelection() {
+            lifecoachText.innerHTML = `<strong>Select a Category:</strong><br><br>
+                <button id="category-start" style="padding:10px 20px; margin:10px; border:none; border-radius:10px; background-color:#6C9BCF; color:white; cursor:pointer; font-family:'Montserrat', sans-serif;">How to Start a Coaching Call</button>
+                <button id="category-during" style="padding:10px 20px; margin:10px; border:none; border-radius:10px; background-color:#88B04B; color:white; cursor:pointer; font-family:'Montserrat', sans-serif;">During a Coaching Call</button>`;
             lifecoachCard.style.display = 'flex';
             lifecoachCard.style.animationName = 'fadeInFlip';
+
+            // Add event listeners to category buttons
+            document.getElementById('category-start').addEventListener('click', () => {
+                currentCategory = "How to Start a Coaching Call";
+                startGame();
+            });
+            document.getElementById('category-during').addEventListener('click', () => {
+                currentCategory = "During a Coaching Call";
+                startGame();
+            });
         }
 
-        // Reset to initial state when card is clicked
-        lifecoachCard.addEventListener('click', () => {
-            lifecoachCard.style.animationName = 'fadeOutFlip';
-            lifecoachCard.addEventListener('animationend', () => {
-                lifecoachCard.style.display = 'none';
-                coverOverlay.style.display = 'flex';
-                coverOverlay.style.animation = '';
-                coverOverlay.classList.remove('expanded');
-                coverOverlay.classList.add('resting');
-                isExpanded = false;
-            }, { once: true });
-        });
-
-        function getRandomPrompt() {
-            return prompts[Math.floor(Math.random() * prompts.length)];
-        }
-
-        // Convert hex color to HSL
-        function hexToHsl(hex) {
-            let r = 0, g = 0, b = 0;
-            if (hex.length === 4) {
-                r = parseInt(hex[1] + hex[1], 16);
-                g = parseInt(hex[2] + hex[2], 16);
-                b = parseInt(hex[3] + hex[3], 16);
-            } else if (hex.length === 7) {
-                r = parseInt(hex[1] + hex[2], 16);
-                g = parseInt(hex[3] + hex[4], 16);
-                b = parseInt(hex[5] + hex[6], 16);
-            }
-            r /= 255;
-            g /= 255;
-            b /= 255;
-            const cmin = Math.min(r, g, b);
-            const cmax = Math.max(r, g, b);
-            const delta = cmax - cmin;
-            let h = 0, s = 0, l = 0;
-
-            if (delta === 0) {
-                h = 0;
-            } else if (cmax === r) {
-                h = ((g - b) / delta) % 6;
-            } else if (cmax === g) {
-                h = (b - r) / delta + 2;
-            } else {
-                h = (r - g) / delta + 4;
-            }
-            h = Math.round(h * 60);
-            if (h < 0) h += 360;
-
-            l = (cmax + cmin) / 2;
-
-            s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-            s = +(s * 100).toFixed(1);
-            l = +(l * 100).toFixed(1);
-
-            return { h, s, l };
-        }
-
-        // Convert HSL color to hex
-        function hslToHex(h, s, l) {
-            s /= 100;
-            l /= 100;
-            const c = (1 - Math.abs(2 * l - 1)) * s;
-            const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-            const m = l - c / 2;
-            let r = 0, g = 0, b = 0;
-
-            if (0 <= h && h < 60) {
-                r = c; g = x; b = 0;
-            } else if (60 <= h && h < 120) {
-                r = x; g = c; b = 0;
-            } else if (120 <= h && h < 180) {
-                r = 0; g = c; b = x;
-            } else if (180 <= h && h < 240) {
-                r = 0; g = x; b = c;
-            } else if (240 <= h && h < 300) {
-                r = x; g = 0; b = c;
-            } else if (300 <= h && h < 360) {
-                r = c; g = 0; b = x;
-            }
-
-            r = Math.round((r + m) * 255);
-            g = Math.round((g + m) * 255);
-            b = Math.round((b + m) * 255);
-
-            const rHex = ("0" + r.toString(16)).slice(-2);
-            const gHex = ("0" + g.toString(16)).slice(-2);
-            const bHex = ("0" + b.toString(16)).slice(-2);
-
-            return "#" + rHex + gHex + bHex;
-        }
-    });
-</script>
-
-</body>
-</html>
+        function startGame() {
+            coverOverlay.style.animation = 'coverFadeOutFl
