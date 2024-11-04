@@ -487,4 +487,58 @@
         }
 
         function startGame() {
-            coverOverlay.style.animation = 'coverFadeOutFl
+            coverOverlay.style.animation = 'coverFadeOutFlip 0.6s forwards';
+            coverOverlay.addEventListener('animationend', () => {
+                coverOverlay.style.display = 'none';
+                widgetImage.style.display = 'block';
+            }, { once: true });
+        }
+
+        // Handle widget image click
+        widgetImage.addEventListener('click', () => {
+            widgetImage.style.display = 'none';
+            showLifecoachQuestion();
+        });
+
+        function showLifecoachQuestion() {
+            let prompt = getNextPrompt();
+            lifecoachText.textContent = prompt;
+            lifecoachCard.style.backgroundColor = getRandomBackgroundColor();
+            lifecoachCard.style.display = 'flex';
+            lifecoachCard.style.animationName = 'fadeInFlip';
+        }
+
+        // Get next prompt ensuring no repeats until all used
+        function getNextPrompt() {
+            if (currentIndex >= shuffledPrompts[currentCategory].length) {
+                // Reshuffle and reset index if all prompts have been used
+                shuffledPrompts[currentCategory] = shuffle([...prompts[currentCategory]]);
+                currentIndex = 0;
+            }
+            return shuffledPrompts[currentCategory][currentIndex++];
+        }
+
+        // Generate a random light background color based on design strategy
+        function getRandomBackgroundColor() {
+            const colors = ['#FFFFFF', '#F0F8FF', '#FAFAD2', '#E6FFE6', '#FFF5EE']; // White and soft pastels
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Reset to initial state when card is clicked
+        lifecoachCard.addEventListener('click', () => {
+            lifecoachCard.style.animationName = 'fadeOutFlip';
+            lifecoachCard.addEventListener('animationend', () => {
+                lifecoachCard.style.display = 'none';
+                coverOverlay.style.display = 'flex';
+                coverOverlay.style.animation = '';
+                coverOverlay.classList.remove('expanded');
+                coverOverlay.classList.add('resting');
+                isExpanded = false;
+            }, { once: true });
+        });
+
+    });
+</script>
+
+</body>
+</html>
