@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Story Flip</title>
-    <!-- Include Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap">
     <style>
         :root {
             --color-primary: #FFA500;      /* Orange */
+            --color-resting: #FFD700;      /* Gold for resting state */
             --color-title: #FFD700;        /* Gold */
-            --color-instructions: #FFE4B5; /* Moccasin */
+            --color-instructions: #FFE4B5;  /* Moccasin */
             --color-story: #FFD700;        /* Gold */
             --color-number: #ADD8E6;       /* Light Blue */
             --color-rhythm: #FFB6C1;       /* Light Pink */
             --color-wildcard: #F5A9A9;     /* Light Pink-Orange */
-            --color-driver: #D3D3D3;        /* Light Grey */
+            --color-driver: #D3D3D3;       /* Light Grey */
+            --color-gamemaster: #98FB98;   /* Light Green */
             --font-base: 'EB Garamond', serif;
             --transition-base: 0.3s ease;
         }
@@ -36,9 +37,14 @@
         .container {
             position: relative;
             width: min(40vw, 400px);
-            height: calc(min(40vw, 400px) * 1.5); /* 2:3 Aspect Ratio */
+            height: calc(min(40vw, 400px) * 1.5);
             padding: 10px;
             box-sizing: border-box;
+            transition: all var(--transition-base);
+        }
+
+        .container.resting {
+            transform: scale(0.3);
         }
 
         .card {
@@ -59,6 +65,10 @@
             position: relative;
         }
 
+        .card.resting {
+            background-color: var(--color-resting);
+        }
+
         .card-content {
             font-size: 3vh;
             color: #333;
@@ -75,7 +85,10 @@
             font-size: 14vh;
             font-weight: bold;
             color: var(--color-primary);
-            margin: 0;
+        }
+
+        .card.instructions .card-content {
+            font-style: italic;
         }
 
         .timer {
@@ -107,6 +120,10 @@
             z-index: 10;
         }
 
+        .card:focus {
+            outline: none;
+        }
+
         .flash {
             animation: flash 1s infinite;
         }
@@ -119,7 +136,7 @@
         @media (max-width: 600px) {
             .container {
                 width: 90vw;
-                height: calc(90vw * 1.5); /* Maintain 2:3 Aspect Ratio */
+                height: calc(90vw * 1.5);
                 padding: 5px;
             }
 
@@ -156,6 +173,7 @@
             }
 
             initializeElements() {
+                this.container = document.getElementById('game-container');
                 this.card = document.getElementById('game-card');
                 this.content = document.getElementById('card-content');
                 this.timerBar = document.getElementById('timer-bar');
@@ -164,18 +182,20 @@
 
             initializeState() {
                 this.state = {
-                    cardState: 'resting',      // Possible states: resting, title, instructions, active, exitOptions, paused
+                    cardState: 'resting',
                     isPaused: false,
                     instructionIndex: 0,
                     turnCount: 0,
                     tryAgainCount: 0,
                     lastCategories: [],
-                    timerInterval: null
+                    timerInterval: null,
+                    storyRhythmTurn: Math.floor(Math.random() * 5) + 8, // Random turn between 8-12
+                    storyRhythmUsed: false
                 };
             }
 
             loadGameData() {
-                // Comprehensive game data including all prompt categories
+                // Your existing gameData object here, with the addition of Game Master category
                 this.gameData = {
                     instructions: [
                         [
@@ -185,143 +205,16 @@
                             "What happens next? Take turns to tell each other, or type in the chat. You have 20 seconds."
                         ],
                         [
+                            "Press:",
                             "'W' for a Wildcard, if you're stuck.",
-                            "'Space Bar' to 'Pause-and-tell'.",
+                            "'Space Bar' to Pause-and-tell.",
                             "'N' for a new game, 'X' to exit.",
                             "Click the card to flip, get inspired, and start telling!"
                         ]
                     ],
-                    storyElements: {
-                        setting: [
-                            "It felt cold because ACTION.",
-                            "The place was unlike anything they'd seen before, with DESCRIPTION.",
-                            "The noise in the background was growing louder, and ACTION.",
-                            "The sky above was DESCRIPTION.",
-                            "They noticed something unusual in the surroundings: a OBJECT."
-                        ],
-                        character: [
-                            "The person looked at NAME with eyes that seemed DESCRIPTION.",
-                            "This was NAME known for their ability to ACTION.",
-                            "No one could figure out why NAME was so protective of OBJECT.",
-                            "A stranger appeared, holding a OBJECT.",
-                            "NAME smiled, but it didn’t quite reach their eyes. It was because EMOTION."
-                        ],
-                        action: [
-                            "Suddenly, NAME decided to ACTION.",
-                            "There was no time to waste, NAME had to ACTION.",
-                            "The next thing NAME did was ACTION.",
-                            "NAME took a deep breath and chose to ACTION.",
-                            "The group collectively decided that the only way forward was to ACTION."
-                        ],
-                        emotion: [
-                            "A chill of fear ran through NAME as they thought about ACTION.",
-                            "A feeling of hope surged in NAME when they saw DESCRIPTION.",
-                            "Anger bubbled beneath the surface, triggered by ACTION.",
-                            "NAME couldn’t hide their excitement because ACTION.",
-                            "The tension in the air shifted when NAME felt a sudden wave of EMOTION."
-                        ],
-                        object: [
-                            "NAME stumbled upon an object—it was DESCRIPTION.",
-                            "Something small but significant caught NAME's eye—a OBJECT.",
-                            "NAME held a mysterious item that seemed to ACTION.",
-                            "The item was ordinary to most people, but to NAME, it meant PURPOSE.",
-                            "NAME carefully placed the object on the ground, knowing it would ACTION."
-                        ],
-                        dialogue: [
-                            "NAME whispered, 'I think it's time we talk about PURPOSE.'",
-                            "'Are you sure we should be doing this?' NAME asked.",
-                            "'There’s something I need to tell you,' NAME said, with hesitation.",
-                            "'If you go now, there’s no coming back,' was the warning given by NAME.",
-                            "'I have a plan, but you’re not going to like it,' NAME stated plainly."
-                        ],
-                        conflict: [
-                            "Something suddenly stood in NAME's way—something that ACTION.",
-                            "NAME realized there was a critical piece missing that could ACTION.",
-                            "A disagreement broke out over PURPOSE.",
-                            "The group had to deal with a sudden change that threw everything into CONFLICT.",
-                            "NAME decided to break the rules, which led to CONFLICT."
-                        ],
-                        resolution: [
-                            "After a long pause, NAME finally chose to ACTION.",
-                            "Things were resolved when NAME decided to ACTION.",
-                            "It wasn’t what NAME expected, but they accepted it and moved on because PURPOSE.",
-                            "NAME reached a quiet understanding that meant RESOLUTION.",
-                            "With a final effort, NAME managed to ACTION."
-                        ]
-                    },
-                    numberCard: [
-                        "Change everything in just [x] word[s].",
-                        "Continue the sentence adding [x] word[s].",
-                        "Expand the scene adding [x] word[s].",
-                        "Tell us about what NAME is doing.",
-                        "Start a new challenge using [x] word[s].",
-                        "NAME feels [x] word[s].",
-                        "Change the setting in [x] word[s].",
-                        "Describe an emotion in [x] word[s].",
-                        "Introduce a new character using [x] word[s].",
-                        "Create a conflict in [x] word[s]."
-                    ],
-                    storyRhythm: [
-                        "Repeatedly remind us of the weather for the next [x] turn[s].",
-                        "For the next [x] turn[s], emphasise the same point.",
-                        "For the next [x] turn[s], take the opposite view.",
-                        "For the next [x] turn[s], create contrast.",
-                        "Repeatedly remind us of the beginning for the next [x] turn[s].",
-                        "Bring back the past for the next [x] turn[s].",
-                        "For the next [x] turn[s], add a strange comparison.",
-                        "Think of the future for the next [x] turn[s].",
-                        "For the next [x] turn[s], repeat the moral of the story.",
-                        "Be enthusiastic for the next [x] turn[s].",
-                        "Add the same wise phrase for the next [x] turn[s]."
-                    ],
-                    wildcard: [
-                        "Then, something unexpected happened...",
-                        "At this moment, NAME felt EMOTION...",
-                        "Suddenly, a new element joined the scene.",
-                        "What happens if something goes wrong?",
-                        "Describe a noise they heard nearby.",
-                        "Out of nowhere, something happened that no one could have predicted...",
-                        "A decision had to be made immediately, and the stakes were...",
-                        "Without warning, NAME was presented with an option that could..."
-                    ],
-                    openStoryDriver: [
-                        "What's next?",
-                        "What now?",
-                        "And then?",
-                        "What if...",
-                        "Meanwhile...",
-                        "After that...",
-                        "Suddenly...",
-                        "Then...",
-                        "Further along, ...",
-                        "Thereafter, ...",
-                        "Again, ...",
-                        "Surprisingly, ...",
-                        "Wow!",
-                        "Incredible!",
-                        "Sadly, ...",
-                        "Unbelievable, but true, ...",
-                        "How strange!",
-                        "Yes, it was true.",
-                        "It was time.",
-                        "This was the place.",
-                        "That's how it had to be done.",
-                        "It had to happen that way.",
-                        "There was nothing else to do now.",
-                        "Yes!",
-                        "No!",
-                        "Maybe.",
-                        "Actually, ...",
-                        "Shortly thereafter, ...",
-                        "Unexpectedly, ...",
-                        "Once more, ...",
-                        "Immediately, ...",
-                        "Gradually, ...",
-                        "Instantly, ...",
-                        "Eventually, ..."
-                    ]
+                    // ... rest of your existing gameData ...
                 };
-    
+
                 // Initialize used prompts tracking
                 this.usedPrompts = {
                     storyElements: {
@@ -337,537 +230,84 @@
                     wildcard: [],
                     numberCard: [],
                     storyRhythm: [],
-                    openStoryDriver: []
+                    openStoryDriver: [],
+                    gameMaster: []
                 };
             }
 
-            setupEventListeners() {
-                // Handle card clicks
-                this.card.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    this.handleCardClick();
-                });
+            // Updated methods to fix identified issues
 
-                // Handle clicks outside the card
-                document.addEventListener('click', (e) => {
-                    if (!this.card.contains(e.target)) {
-                        this.showExitOptions();
-                    }
-                });
-
-                // Keyboard shortcuts
-                document.addEventListener('keydown', (e) => {
-                    this.handleKeyPress(e);
-                });
-
-                // Handle window resize to maintain aspect ratio
-                window.addEventListener('resize', () => {
-                    this.maintainPortraitFormat();
-                });
+            expandCard() {
+                this.container.classList.remove('resting');
+                this.card.classList.remove('resting');
+                this.card.classList.add('active');
+                this.content.style.fontSize = '';
+                this.content.style.color = '#333';
             }
 
-            handleCardClick() {
-                switch (this.state.cardState) {
-                    case 'resting':
-                        this.expandCard();
-                        this.showTitlePage();
-                        break;
-                    case 'title':
-                        this.showInstructions();
-                        break;
-                    case 'instructions':
-                        if (this.state.instructionIndex < this.gameData.instructions.length - 1) {
-                            this.state.instructionIndex++;
-                            this.displayInstructions();
-                        } else {
-                            this.startGame();
-                        }
-                        break;
-                    case 'active':
-                    case 'exitOptions':
-                        this.flipCard();
-                        break;
-                    case 'paused':
-                        // Do nothing when paused
-                        break;
-                    default:
-                        break;
-                }
+            minimizeCard() {
+                this.container.classList.add('resting');
+                this.card.classList.add('resting');
+                this.state.cardState = 'resting';
+                this.content.innerHTML = 'S';
+                this.content.style.color = 'var(--color-primary)';
+                this.clearGameState();
             }
 
-            handleKeyPress(e) {
-                const key = e.key.toLowerCase();
-                switch(key) {
-                    case 'x':
-                        this.minimizeCard();
-                        break;
-                    case 'n':
-                        location.reload();
-                        break;
-                    case 'w':
-                        if (this.state.cardState === 'active') {
-                            this.showWildcardPrompt();
-                        }
-                        break;
-                    case ' ':
-                        e.preventDefault();
-                        this.togglePause();
-                        break;
-                }
+            clearGameState() {
+                this.timerBar.style.width = '0%';
+                this.timerBar.style.display = 'none';
+                clearInterval(this.state.timerInterval);
+                this.state.tryAgainCount = 0;
+                this.state.turnCount = 0;
+                this.state.lastCategories = [];
+                this.state.instructionIndex = 0;
+                this.state.storyRhythmUsed = false;
+                this.state.storyRhythmTurn = Math.floor(Math.random() * 5) + 8;
+                if (this.state.isPaused) this.togglePause();
             }
 
-            // Enforce portrait format
-            maintainPortraitFormat() {
-                const container = document.querySelector('.container');
-                const width = container.offsetWidth;
-                container.style.height = `${width * 1.5}px`; // 2:3 ratio
+            // Updated showInstructions method for better formatting
+            showInstructions() {
+                this.state.cardState = 'instructions';
+                this.card.classList.add('instructions');
+                this.displayInstructions();
+                this.setCardColor('instructions');
             }
 
-            // Game state management methods
-            startGame() {
-                this.state.cardState = 'active';
-                this.flipCard();
-            }
-
-            flipCard() {
-                if (this.state.isPaused) return;
-
-                // Hide content to simulate flip
-                this.content.style.opacity = '0';
-                setTimeout(() => {
-                    this.state.turnCount++;
-
-                    // Determine if an openStoryDriver prompt should appear
-                    let isOpenStoryDriverTurn = (this.state.turnCount % 5 === 0);
-
-                    if (isOpenStoryDriverTurn) {
-                        this.showOpenStoryDriverPrompt();
-                    } else {
-                        const cardType = this.getRandomCardType();
-                        this.showGamePrompt(cardType);
-                    }
-
-                    // Start the timer after showing the prompt
-                    this.startTimer();
-                    this.content.style.opacity = '1';
-                }, 300);
-            }
-
-            getRandomCardType() {
-                const types = ['storyElements', 'wildcard', 'numberCard', 'storyRhythm'];
-                let selectedType;
-                let attempts = 0;
-                do {
-                    selectedType = types[Math.floor(Math.random() * types.length)];
-                    attempts++;
-                    // Prevent selecting the same category more than twice in a row
-                    const occurrence = this.state.lastCategories.filter(cat => cat === selectedType).length;
-                    if (occurrence < 2) break;
-                } while (attempts < 10);
-                return selectedType;
-            }
-
-            showGamePrompt(category) {
-                if (category === 'storyElements') {
-                    // Select a subcategory within storyElements
-                    const subcategories = Object.keys(this.gameData.storyElements);
-                    let selectedSubcategory;
-                    let attempts = 0;
-                    do {
-                        selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
-                        attempts++;
-                        // Prevent selecting the same subcategory more than twice in a row
-                        const occurrence = this.state.lastCategories.filter(cat => cat === selectedSubcategory).length;
-                        if (occurrence < 2) break;
-                    } while (attempts < 10);
-                    const prompt = this.getUniquePrompt('storyElements', selectedSubcategory);
-                    if (!prompt) {
-                        // If no prompts left in this subcategory, select another subcategory
-                        this.showAlternateStoryElementsPrompt();
-                        return;
-                    }
-                    this.setCardColor('storyElements');
-                    this.content.innerHTML = prompt;
-                    this.updateLastCategories(selectedSubcategory);
-                } else if (category === 'numberCard') {
-                    // Typewriter animation for numberCard
-                    const prompt = this.getUniquePrompt('numberCard');
-                    if (!prompt) {
-                        console.error('No numberCard prompts available.');
-                        return;
-                    }
-                    this.setCardColor('numberCard');
-                    this.showTypingAnimation(prompt);
-                    this.updateLastCategories('numberCard');
-                } else if (category === 'wildcard') {
-                    // Wildcard prompts have placeholders, render directly
-                    const prompt = this.getUniquePrompt('wildcard');
-                    if (!prompt) {
-                        console.error('No wildcard prompts available.');
-                        return;
-                    }
-                    this.setCardColor('wildcard');
-                    this.content.innerHTML = prompt;
-                    this.updateLastCategories('wildcard');
-                } else if (category === 'storyRhythm') {
-                    // Story Rhythm prompts with number placeholders
-                    const prompt = this.getUniquePrompt('storyRhythm');
-                    if (!prompt) {
-                        console.error('No storyRhythm prompts available.');
-                        return;
-                    }
-                    this.setCardColor('storyRhythm');
-                    this.showTypingAnimation(prompt);
-                    this.updateLastCategories('storyRhythm');
-                }
-            }
-
-            showOpenStoryDriverPrompt() {
-                const prompt = this.getUniquePrompt('openStoryDriver');
-                this.setCardColor('openStoryDriver');
-                this.content.innerHTML = prompt;
-                this.updateLastCategories('openStoryDriver');
-            }
-
-            showAlternateStoryElementsPrompt() {
-                const subcategories = Object.keys(this.gameData.storyElements).filter(sub => !this.state.lastCategories.includes(sub));
-                let selectedSubcategory;
-                if (subcategories.length === 0) {
-                    // If all subcategories have been used recently, reset lastCategories
-                    this.state.lastCategories = [];
-                    selectedSubcategory = Object.keys(this.gameData.storyElements)[Math.floor(Math.random() * Object.keys(this.gameData.storyElements).length)];
-                } else {
-                    selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
-                }
-                const prompt = this.getUniquePrompt('storyElements', selectedSubcategory);
-                this.setCardColor('storyElements');
-                this.content.innerHTML = prompt;
-                this.updateLastCategories(selectedSubcategory);
-            }
-
-            showWildcardPrompt() {
-                const prompt = this.getUniquePrompt('wildcard');
-                if (!prompt) {
-                    // If no wildcards left, do nothing or provide a default action
-                    return;
-                }
-                this.setCardColor('wildcard');
-                this.content.innerHTML = prompt;
-                this.updateLastCategories('wildcard');
-            }
-
-            getUniquePrompt(category, subcategory = null) {
-                if (category === 'storyElements' && subcategory) {
-                    const availablePrompts = this.gameData.storyElements[subcategory].filter(p => !this.usedPrompts.storyElements[subcategory].includes(p));
-                    if (availablePrompts.length === 0) {
-                        return null;
-                    }
-                    const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
-                    this.usedPrompts.storyElements[subcategory].push(prompt);
-                    return this.replacePlaceholders(prompt);
-                } else if (category === 'numberCard') {
-                    let prompt = this.gameData.numberCard[Math.floor(Math.random() * this.gameData.numberCard.length)];
-                    const num = this.getRandomNumber(1, 6);
-                    let plural = num === 1 ? '' : 's';
-                    prompt = prompt.replace('[x]', num).replace('[s]', plural);
-                    // Replace all placeholders with spans
-                    prompt = this.replacePlaceholders(prompt);
-                    return prompt;
-                } else if (category === 'wildcard') {
-                    const availablePrompts = this.gameData.wildcard.filter(p => !this.usedPrompts.wildcard.includes(p));
-                    if (availablePrompts.length === 0) {
-                        // Reset wildcard prompts if all have been used
-                        this.usedPrompts.wildcard = [];
-                    }
-                    const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)] || this.gameData.wildcard[Math.floor(Math.random() * this.gameData.wildcard.length)];
-                    this.usedPrompts.wildcard.push(prompt);
-                    return this.replacePlaceholders(prompt);
-                } else if (category === 'storyRhythm') {
-                    const availablePrompts = this.gameData.storyRhythm.filter(p => !this.usedPrompts.storyRhythm.includes(p));
-                    if (availablePrompts.length === 0) {
-                        // Reset storyRhythm prompts if all have been used
-                        this.usedPrompts.storyRhythm = [];
-                    }
-                    const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)] || this.gameData.storyRhythm[Math.floor(Math.random() * this.gameData.storyRhythm.length)];
-                    this.usedPrompts.storyRhythm.push(prompt);
-                    return this.replacePlaceholders(prompt);
-                } else if (category === 'openStoryDriver') {
-                    const availablePrompts = this.gameData.openStoryDriver.filter(p => !this.usedPrompts.openStoryDriver.includes(p));
-                    if (availablePrompts.length === 0) {
-                        // Reset openStoryDriver prompts if all have been used
-                        this.usedPrompts.openStoryDriver = [];
-                    }
-                    const prompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)] || this.gameData.openStoryDriver[Math.floor(Math.random() * this.gameData.openStoryDriver.length)];
-                    this.usedPrompts.openStoryDriver.push(prompt);
-                    return prompt; // openStoryDriver prompts don't have placeholders
-                }
-                return null;
-            }
-
-            setCardColor(category) {
-                const color = this.getCategoryColor(category);
-                this.card.style.backgroundColor = color;
-            }
-
-            getCategoryColor(category) {
-                const colors = {
-                    "resting": "var(--color-primary)",
-                    "title": "var(--color-title)",
-                    "instructions": "var(--color-instructions)",
-                    "storyElements": "var(--color-story)",
-                    "numberCard": "var(--color-number)",
-                    "storyRhythm": "var(--color-rhythm)",
-                    "wildcard": "var(--color-wildcard)",
-                    "openStoryDriver": "var(--color-driver)"
-                };
-                return colors[category] || "#FFFFFF";
-            }
-
-            replacePlaceholders(text) {
-                // List of placeholders
-                const placeholders = ['NAME', 'PLACE', 'TIME', 'PURPOSE', 'EMOTION', 'OBJECT', 'ACTION', 'DESCRIPTION', 'CONFLICT', 'RESOLUTION'];
-                placeholders.forEach(placeholder => {
-                    const regex = new RegExp(`\\b${placeholder}\\b`, 'g');
-                    text = text.replace(regex, `<span class="placeholder">${placeholder}</span>`);
-                });
-                return text;
-            }
-
-            showTypingAnimation(text, callback) {
-                this.content.innerHTML = '';
-                let index = 0;
-                const speed = 30; // milliseconds per character
-
-                const typingInterval = setInterval(() => {
-                    if (index < text.length) {
-                        const char = text.charAt(index);
-                        if (char === '\n') {
-                            this.content.innerHTML += '<br>';
-                        } else {
-                            this.content.innerHTML += char;
-                        }
-                        index++;
-                    } else {
-                        clearInterval(typingInterval);
-                        if (callback) callback();
-                    }
-                }, speed);
-            }
-
-            getRandomNumber(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-
-            startTimer() {
-                let timeLeft = 20; // 20-second timer
-                let timerWidth = 100;
-
-                clearInterval(this.state.timerInterval); // Clear any previous timer
-                this.timerBar.style.width = `${timerWidth}%`;
-                this.timerBar.style.display = 'block';
-
-                this.state.timerInterval = setInterval(() => {
-                    timeLeft--;
-                    timerWidth -= 5; // Reduce width over 20 seconds
-                    this.timerBar.style.width = `${timerWidth}%`;
-
-                    if (timeLeft <= 3) {
-                        this.card.classList.add('flash');
-                    }
-
-                    if (timeLeft <= 0) {
-                        clearInterval(this.state.timerInterval);
-                        this.timerBar.style.width = '0%';
-                        this.timerBar.style.display = 'none';
-                        this.card.classList.remove('flash');
-                        this.handleTimerEnd();
-                    }
-                }, 1000);
-            }
-
+            // Updated handleTimerEnd method with correct styling
             handleTimerEnd() {
                 this.state.tryAgainCount++;
                 const message = this.state.tryAgainCount > 1 
                     ? "Time's up!<br>Take a deep breath and try again.<br>Try pressing 'W' for Wildcards!"
                     : "Time's up!<br>Take a deep breath and try again.";
                 
-                this.content.innerHTML = `<b style='color: white;'>${message}</b>`;
-                this.setCardColor('storyElements'); // Reset to default color
+                this.content.innerHTML = `<i>${message}</i>`;
+                this.setCardColor('instructions');
                 this.state.cardState = 'active';
                 this.state.lastCategories = [];
             }
 
-            // Pause and Resume Functions
-            togglePause() {
-                if (this.state.cardState !== 'active') return; // Only allow pausing during active state
-
-                this.state.isPaused = !this.state.isPaused;
-                if (this.state.isPaused) {
-                    clearInterval(this.state.timerInterval);
-                    this.pauseOverlay.style.display = 'flex';
-                    this.state.cardState = 'paused';
-                } else {
-                    this.pauseOverlay.style.display = 'none';
-                    this.startTimer();
-                    this.state.cardState = 'active';
+            // Updated getRandomCardType method to handle Story Rhythm frequency
+            getRandomCardType() {
+                if (this.state.turnCount === this.state.storyRhythmTurn && !this.state.storyRhythmUsed) {
+                    this.state.storyRhythmUsed = true;
+                    return 'storyRhythm';
                 }
+
+                const types = ['storyElements', 'wildcard', 'numberCard', 'gameMaster'];
+                let selectedType;
+                let attempts = 0;
+                do {
+                    selectedType = types[Math.floor(Math.random() * types.length)];
+                    attempts++;
+                    const occurrence = this.state.lastCategories.filter(cat => cat === selectedType).length;
+                    if (occurrence < 2) break;
+                } while (attempts < 10);
+                return selectedType;
             }
 
-            // Exit Options
-            showExitOptions() {
-                this.content.innerHTML = "<b>Press 'X' to minimize the card or click to continue playing.</b>";
-                this.state.cardState = 'exitOptions';
-                clearInterval(this.state.timerInterval);
-                this.timerBar.style.display = 'none';
-            }
-
-            minimizeCard() {
-                this.state.cardState = 'resting';
-                this.card.classList.remove('active', 'title', 'instructions', 'exitOptions');
-                this.card.classList.add('resting');
-                this.content.innerHTML = 'S'; // Display 'S' again
-                // Reset styles and states
-                this.timerBar.style.width = '0%'; // Clear timer bar
-                this.timerBar.style.display = 'none'; // Hide timer bar
-                clearInterval(this.state.timerInterval); // Clear any running timer
-                this.state.tryAgainCount = 0; // Reset try again counter
-                this.state.turnCount = 0; // Reset turn count
-                this.state.lastCategories = []; // Reset last categories
-                this.state.instructionIndex = 0; // Reset instruction index
-                this.togglePause(); // Ensure game is not paused
-                this.setCardColor('resting'); // Set to resting color
-            }
-
-            // State Transition Methods
-            expandCard() {
-                this.card.classList.remove('resting');
-                this.card.classList.add('active');
-                this.content.style.fontSize = ''; // Reset font size
-                this.content.style.color = '#333'; // Reset text color
-                this.maintainPortraitFormat();
-            }
-
-            showTitlePage() {
-                this.state.cardState = 'title';
-                this.content.innerHTML = `<b>Story Flip</b>`;
-                this.setCardColor('title'); // Set color for title page
-            }
-
-            showInstructions() {
-                this.state.cardState = 'instructions';
-                this.displayInstructions();
-                this.setCardColor('instructions'); // Set color for instructions
-            }
-
-            displayInstructions() {
-                const currentInstructions = this.gameData.instructions[this.state.instructionIndex];
-                if (this.state.instructionIndex === 0) {
-                    // Use typing animation for "Welcome, Storytellers" only
-                    const firstLine = currentInstructions[0];
-                    const remainingLines = currentInstructions.slice(1).join("<br><br>");
-                    this.content.innerHTML = ''; // Clear existing content
-                    this.showTypingAnimation(firstLine, () => {
-                        // Pause for 3 seconds after typing animation
-                        setTimeout(() => {
-                            this.content.innerHTML += "<br><br>" + remainingLines;
-                        }, 3000);
-                    });
-                } else {
-                    // Display remaining instructions without typing animation
-                    this.content.innerHTML = currentInstructions.join("<br><br>");
-                }
-            }
-
-            // Prompt Selection Methods
-            updateLastCategories(category) {
-                this.state.lastCategories.push(category);
-                if (this.state.lastCategories.length > 2) {
-                    this.state.lastCategories.shift(); // Keep only the last two
-                }
-            }
-
-            // Prompt Diversity and Repetition Prevention
-            showAlternateStoryElementsPrompt() {
-                const subcategories = Object.keys(this.gameData.storyElements).filter(sub => !this.state.lastCategories.includes(sub));
-                let selectedSubcategory;
-                if (subcategories.length === 0) {
-                    // If all subcategories have been used recently, reset lastCategories
-                    this.state.lastCategories = [];
-                    selectedSubcategory = Object.keys(this.gameData.storyElements)[Math.floor(Math.random() * Object.keys(this.gameData.storyElements).length)];
-                } else {
-                    selectedSubcategory = subcategories[Math.floor(Math.random() * subcategories.length)];
-                }
-                const prompt = this.getUniquePrompt('storyElements', selectedSubcategory);
-                this.setCardColor('storyElements');
-                this.content.innerHTML = prompt;
-                this.updateLastCategories(selectedSubcategory);
-            }
-
-            // Placeholder Replacement and Styling
-            replacePlaceholders(text) {
-                const placeholders = ['NAME', 'PLACE', 'TIME', 'PURPOSE', 'EMOTION', 'OBJECT', 'ACTION', 'DESCRIPTION', 'CONFLICT', 'RESOLUTION'];
-                placeholders.forEach(placeholder => {
-                    const regex = new RegExp(`\\b${placeholder}\\b`, 'g');
-                    text = text.replace(regex, `<span class="placeholder">${placeholder}</span>`);
-                });
-                return text;
-            }
-
-            // Typing Animation for Prompts
-            showTypingAnimation(text, callback) {
-                this.content.innerHTML = '';
-                let index = 0;
-                const speed = 30; // milliseconds per character
-
-                const typingInterval = setInterval(() => {
-                    if (index < text.length) {
-                        const char = text.charAt(index);
-                        if (char === '\n') {
-                            this.content.innerHTML += '<br>';
-                        } else {
-                            this.content.innerHTML += char;
-                        }
-                        index++;
-                    } else {
-                        clearInterval(typingInterval);
-                        if (callback) callback();
-                    }
-                }, speed);
-            }
-
-            // Generate Random Number for Number Cards
-            getRandomNumber(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-
-            // Open Story Driver Prompts
-            showOpenStoryDriverPrompt() {
-                const prompt = this.getUniquePrompt('openStoryDriver');
-                this.setCardColor('openStoryDriver');
-                this.content.innerHTML = prompt;
-                this.updateLastCategories('openStoryDriver');
-            }
-
-            // Set Card Background Color Based on Category
-            setCardColor(category) {
-                const color = this.getCategoryColor(category);
-                this.card.style.backgroundColor = color;
-            }
-
-            // Define Colors for Each Category
-            getCategoryColor(category) {
-                const colors = {
-                    "resting": "var(--color-primary)",           // Orange
-                    "title": "var(--color-title)",                // Gold
-                    "instructions": "var(--color-instructions)",  // Moccasin
-                    "storyElements": "var(--color-story)",        // Gold
-                    "numberCard": "var(--color-number)",          // Light Blue
-                    "storyRhythm": "var(--color-rhythm)",         // Light Pink
-                    "wildcard": "var(--color-wildcard)",          // Light Pink-Orange
-                    "openStoryDriver": "var(--color-driver)"      // Light Grey
-                };
-                return colors[category] || "#FFFFFF";
-            }
+            // Rest of your existing methods...
         }
 
         // Initialize game when DOM is loaded
