@@ -61,6 +61,7 @@
             font-family: 'Montserrat', Arial, sans-serif;
             font-size: 1.8em;
             font-weight: 600;
+            letter-spacing: 0.05em; /* Slightly widened kerning */
             margin-bottom: 15px;
         }
         #instruction-text {
@@ -237,43 +238,44 @@
             "If you could change your life by taking one action today, what would that be?",
             "What are you not willing to admit to yourself?"
         ];
-    
+
         // Initialize State
         const lifecoachCard = document.getElementById('lifecoach-questions-card');
         const lifecoachText = document.getElementById('lifecoach-questions-text');
         const coverOverlay = document.getElementById('cover-overlay');
-    
-        let shuffledPrompts = shuffle([...prompts]);
-        let currentIndex = 0;
-    
+
         // Shuffle Array Utility
         function shuffle(array) {
             let currentIndex = array.length, temporaryValue, randomIndex;
-    
+
             // While there remain elements to shuffle...
             while (0 !== currentIndex) {
                 // Pick a remaining element...
                 randomIndex = Math.floor(Math.random() * currentIndex);
                 currentIndex -= 1;
-    
+
                 // And swap it with the current element.
                 temporaryValue = array[currentIndex];
                 array[currentIndex] = array[randomIndex];
                 array[randomIndex] = temporaryValue;
             }
-    
+
             return array;
         }
-    
+
+        // Prepare Shuffled Queue
+        let shuffledPrompts = shuffle([...prompts]);
+        let currentIndex = 0;
+
         // Handle clicks on cover overlay
         coverOverlay.addEventListener('click', () => {
             // Hide the cover overlay
             coverOverlay.classList.add('hidden');
-    
+
             // Show the first question
             showLifecoachQuestion();
         });
-    
+
         // Handle keyboard accessibility for cover overlay
         coverOverlay.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -281,7 +283,7 @@
                 coverOverlay.click();
             }
         });
-    
+
         function showLifecoachQuestion() {
             if (currentIndex >= shuffledPrompts.length) {
                 // Reshuffle and reset index if all prompts have been used
@@ -294,7 +296,7 @@
             lifecoachCard.classList.add('show');
             lifecoachCard.style.display = 'flex';
         }
-    
+
         // Get next prompt ensuring no repeats until all used
         function getNextPrompt() {
             if (currentIndex >= shuffledPrompts.length) {
@@ -304,20 +306,20 @@
             }
             return shuffledPrompts[currentIndex++];
         }
-    
+
         // Generate a random light background color based on design strategy
         function getRandomBackgroundColor() {
             const colors = ['#FFFFFF', '#E3F2FD', '#E8F5E9', '#FFF3E0', '#F3E5F5']; // Soft pastels
             return colors[Math.floor(Math.random() * colors.length)];
         }
-    
+
         // Reset to initial state when card is clicked
         lifecoachCard.addEventListener('click', () => {
             lifecoachCard.classList.remove('show');
             lifecoachCard.style.display = 'none';
             coverOverlay.classList.remove('hidden');
         });
-    
+
         // Handle keyboard accessibility for question card
         lifecoachCard.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
