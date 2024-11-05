@@ -42,7 +42,7 @@
             filter: brightness(1.2);
         }
         /* Removed explode animation */
-        #icebreaker-card {
+        #text-card {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -65,7 +65,7 @@
             backface-visibility: hidden;
             cursor: pointer;
         }
-        #icebreaker-text {
+        #card-text {
             font-family: 'Montserrat', Arial, sans-serif;
             font-size: 1em;
             color: #333;
@@ -152,16 +152,15 @@
     <!-- Cover Overlay -->
     <div id="cover-overlay" class="resting">
         <div id="cover-text">
-            Fun Ice Breaker<br>
-            Questions<br><br>
+            Title<br><br>
             <span>Click to expand<br>Double-click to minimize</span>
         </div>
     </div>
     <!-- Widget Image Placeholder -->
     <div id="widget-image"></div>
     <!-- Icebreaker Card -->
-    <div id="icebreaker-card">
-        <div id="icebreaker-text"></div>
+    <div id="text-card">
+        <div id="text-text"></div>
     </div>
 </div>
 
@@ -176,8 +175,8 @@
         ];
 
         const widgetImage = document.getElementById('widget-image');
-        const icebreakerCard = document.getElementById('icebreaker-card');
-        const icebreakerText = document.getElementById('icebreaker-text');
+        const icebreakerCard = document.getElementById('text-card');
+        const icebreakerText = document.getElementById('card-text');
         const coverOverlay = document.getElementById('cover-overlay');
 
         let isExpanded = false;
