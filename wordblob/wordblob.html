@@ -5,6 +5,7 @@
     <title>Blob Bounce Card Widget</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
     <style>
+        /* Previous styles remain the same */
         html, body {
             height: 100%;
             margin: 0;
@@ -85,6 +86,9 @@
             line-height: 1.4;
             margin: 0;
             z-index: 2;
+            padding: 15px;
+            max-width: 280px; /* Added to ensure text fits */
+            word-wrap: break-word; /* Added to handle long prompts */
         }
         @keyframes shiftBorders {
             0% {
@@ -139,14 +143,14 @@
     <div id="cover-overlay" class="blob-card resting">
         <div class="inner-border">
             <div class="card-text">
-                Title<br><br>
+                Icebreaker Cards<br><br>
                 <span style="font-weight: normal">Click to expand<br>Double-click to minimize</span>
             </div>
         </div>
     </div>
     <div id="widget-image" class="blob-card">
         <div class="inner-border">
-            <div class="card-text">Click for prompt</div>
+            <div class="card-text">Click for a random icebreaker!</div>
         </div>
     </div>
     <div id="text-card" class="blob-card">
@@ -157,12 +161,18 @@
 </div>
 
 <script>
+    // More interesting prompts
     const prompts = [
-        "Lorem ipsum 1",
-        "Lorem ipsum 2",
-        "Lorem ipsum 3",
-        "Lorem ipsum 4",
-        "Lorem ipsum 5"
+        "If you could instantly master any skill, what would it be and why?",
+        "What's the most interesting place you've ever visited?",
+        "If you could have dinner with any historical figure, who would it be?",
+        "What's the best piece of advice you've ever received?",
+        "If you could live anywhere in the world for a year, where would you go?",
+        "What's your favorite childhood memory?",
+        "If you could instantly learn any language, which would you choose?",
+        "What's the most adventurous thing you've ever done?",
+        "If you could have any superpower, what would it be?",
+        "What's the best book you've read recently?"
     ];
 
     const widgetImage = document.getElementById('widget-image');
@@ -173,7 +183,30 @@
     let isExpanded = false;
     let lastClickTime = 0;
     let isAnimating = false;
+    let lastPromptIndex = -1; // Track last prompt to avoid repetition
     const doubleClickDelay = 300;
+
+    function getRandomPrompt() {
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * prompts.length);
+        } while (newIndex === lastPromptIndex && prompts.length > 1);
+        lastPromptIndex = newIndex;
+        return prompts[newIndex];
+    }
+
+    function showIcebreaker() {
+        const prompt = getRandomPrompt();
+        console.log('Showing prompt:', prompt); // Debug line
+        icebreakerText.textContent = prompt;
+        const hue = Math.floor(Math.random() * 360);
+        icebreakerCard.style.backgroundColor = `hsl(${hue}, 80%, 85%)`;
+        icebreakerCard.style.display = 'flex';
+        icebreakerCard.classList.add('bounce-in');
+        icebreakerCard.addEventListener('animationend', () => {
+            isAnimating = false;
+        }, { once: true });
+    }
 
     coverOverlay.addEventListener('click', (e) => {
         if (isAnimating) return;
@@ -226,17 +259,6 @@
         }, { once: true });
     });
 
-    function showIcebreaker() {
-        icebreakerText.textContent = getRandomPrompt();
-        const hue = Math.floor(Math.random() * 360);
-        icebreakerCard.style.backgroundColor = `hsl(${hue}, 80%, 85%)`;
-        icebreakerCard.style.display = 'flex';
-        icebreakerCard.classList.add('bounce-in');
-        icebreakerCard.addEventListener('animationend', () => {
-            isAnimating = false;
-        }, { once: true });
-    }
-
     icebreakerCard.addEventListener('click', () => {
         if (isAnimating) return;
         isAnimating = true;
@@ -260,9 +282,8 @@
         }, { once: true });
     });
 
-    function getRandomPrompt() {
-        return prompts[Math.floor(Math.random() * prompts.length)];
-    }
+    // Debug check to ensure prompts are loaded
+    console.log('Prompts loaded:', prompts);
 </script>
 </body>
 </html>
