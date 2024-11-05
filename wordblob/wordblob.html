@@ -1,289 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Blob Bounce Card Widget</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
-    <style>
-        /* Previous styles remain the same */
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            min-height: 100vh;
-        }
-        #widget-container {
-            position: relative;
-            width: 320px;
-            height: 180px;
-            background: transparent;
-            overflow: visible;
-        }
-        .blob-card {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 320px;
-            height: 180px;
-            transform: translate(-50%, -50%);
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-family: 'Montserrat', Arial, sans-serif;
-            overflow: hidden;
-        }
-        .blob-card:not(.static) {
-            animation: shiftBorders 4s infinite alternate ease-in-out;
-        }
-        .inner-border {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            background-color: inherit;
-            clip-path: polygon(
-                10% 0%, 90% 0%, 100% 10%, 100% 90%,
-                90% 100%, 10% 100%, 0% 90%, 0% 10%
-            );
-            transition: clip-path 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        #cover-overlay {
-            background-color: #3B1C0A;
-            color: white;
-            z-index: 10;
-        }
-        #cover-overlay.resting {
-            transform: translate(-50%, -50%) scale(0.3);
-        }
-        #cover-overlay.expanded {
-            transform: translate(-50%, -50%) scale(1);
-        }
-        #text-card {
-            background-color: #F8F0E3;
-            display: none;
-        }
-        #widget-image {
-            background-color: #B0E0E6;
-            display: none;
-        }
-        .card-text {
-            font-size: 1.2em;
-            color: inherit;
-            line-height: 1.4;
-            margin: 0;
-            z-index: 2;
-            padding: 15px;
-            max-width: 280px; /* Added to ensure text fits */
-            word-wrap: break-word; /* Added to handle long prompts */
-        }
-        @keyframes shiftBorders {
-            0% {
-                border-radius: 30% 70% 60% 40% / 40% 60% 30% 70%;
-            }
-            100% {
-                border-radius: 40% 30% 50% 60% / 60% 40% 50% 30%;
-            }
-        }
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.3);
-            }
-            50% {
-                opacity: 0.8;
-                transform: translate(-50%, -50%) scale(1.1);
-            }
-            70% {
-                opacity: 0.9;
-                transform: translate(-50%, -50%) scale(0.95);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-        @keyframes bounceOut {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-            20% {
-                opacity: 0.9;
-                transform: translate(-50%, -50%) scale(1.1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.3);
-            }
-        }
-        .bounce-in {
-            animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        .bounce-out {
-            animation: bounceOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Word Card Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Chela+One:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: transparent;
+    }
+
+    .card {
+      width: 320px;
+      height: 180px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .blob {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #3B1C0A;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      animation: blobMove 8s infinite ease-in-out;
+      mix-blend-mode: hard-light;
+    }
+
+    .content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: 'Chela One', cursive;
+      font-size: 32px;
+      text-align: center;
+      z-index: 1;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      text-transform: lowercase;
+    }
+
+    .small {
+      transform: scale(0.3);
+    }
+
+    .expanded {
+      transform: scale(1);
+    }
+
+    @keyframes blobMove {
+      0% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      }
+      25% {
+        border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+      }
+      50% {
+        border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+      }
+      75% {
+        border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+      }
+      100% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      }
+    }
+  </style>
 </head>
 <body>
-<div id="widget-container">
-    <div id="cover-overlay" class="blob-card resting">
-        <div class="inner-border">
-            <div class="card-text">
-                Icebreaker Cards<br><br>
-                <span style="font-weight: normal">Click to expand<br>Double-click to minimize</span>
-            </div>
-        </div>
-    </div>
-    <div id="widget-image" class="blob-card">
-        <div class="inner-border">
-            <div class="card-text">Click for a random icebreaker!</div>
-        </div>
-    </div>
-    <div id="text-card" class="blob-card">
-        <div class="inner-border">
-            <div id="card-text" class="card-text"></div>
-        </div>
-    </div>
-</div>
+  <div id="card" class="card small">
+    <div id="blob" class="blob"></div>
+    <div id="content" class="content">click mi</div>  </div>
 
-<script>
-    // More interesting prompts
-    const prompts = [
-        "If you could instantly master any skill, what would it be and why?",
-        "What's the most interesting place you've ever visited?",
-        "If you could have dinner with any historical figure, who would it be?",
-        "What's the best piece of advice you've ever received?",
-        "If you could live anywhere in the world for a year, where would you go?",
-        "What's your favorite childhood memory?",
-        "If you could instantly learn any language, which would you choose?",
-        "What's the most adventurous thing you've ever done?",
-        "If you could have any superpower, what would it be?",
-        "What's the best book you've read recently?"
-    ];
-
-    const widgetImage = document.getElementById('widget-image');
-    const icebreakerCard = document.getElementById('text-card');
-    const icebreakerText = document.getElementById('card-text');
-    const coverOverlay = document.getElementById('cover-overlay');
+  <script>
+    const card = document.getElementById('card');
+    const blob = document.getElementById('blob');
+    const content = document.getElementById('content');
+  
+    const words = ['floʊ', 'gloʊ', 'raɪz', 'bluːm', 'spɑːrk', 'weɪv', 'drɪft', 'pʌls', 'floʊt', 'ʃaɪn']; // Words phonetically spelled
 
     let isExpanded = false;
-    let lastClickTime = 0;
-    let isAnimating = false;
-    let lastPromptIndex = -1; // Track last prompt to avoid repetition
-    const doubleClickDelay = 300;
+    let lastHue1 = 0;
+    let lastHue2 = 180;
 
-    function getRandomPrompt() {
-        let newIndex;
-        do {
-            newIndex = Math.floor(Math.random() * prompts.length);
-        } while (newIndex === lastPromptIndex && prompts.length > 1);
-        lastPromptIndex = newIndex;
-        return prompts[newIndex];
-    }
-
-    function showIcebreaker() {
-        const prompt = getRandomPrompt();
-        console.log('Showing prompt:', prompt); // Debug line
-        icebreakerText.textContent = prompt;
-        const hue = Math.floor(Math.random() * 360);
-        icebreakerCard.style.backgroundColor = `hsl(${hue}, 80%, 85%)`;
-        icebreakerCard.style.display = 'flex';
-        icebreakerCard.classList.add('bounce-in');
-        icebreakerCard.addEventListener('animationend', () => {
-            isAnimating = false;
-        }, { once: true });
-    }
-
-    coverOverlay.addEventListener('click', (e) => {
-        if (isAnimating) return;
-        
-        const currentTime = new Date().getTime();
-        const timeDiff = currentTime - lastClickTime;
-
-        if (timeDiff < doubleClickDelay && isExpanded) {
-            coverOverlay.classList.remove('expanded');
-            coverOverlay.classList.add('resting');
-            isExpanded = false;
-        } else if (isExpanded) {
-            startGame();
-        } else {
-            coverOverlay.classList.remove('resting');
-            coverOverlay.classList.add('expanded');
-            isExpanded = true;
-        }
-
-        lastClickTime = currentTime;
-    });
-
-    function startGame() {
-        if (isAnimating) return;
-        isAnimating = true;
-        
-        coverOverlay.classList.add('bounce-out');
-        coverOverlay.addEventListener('animationend', () => {
-            coverOverlay.style.display = 'none';
-            coverOverlay.classList.remove('bounce-out');
-            
-            widgetImage.style.display = 'flex';
-            widgetImage.classList.add('bounce-in');
-            widgetImage.addEventListener('animationend', () => {
-                isAnimating = false;
-            }, { once: true });
-        }, { once: true });
-    }
-
-    widgetImage.addEventListener('click', () => {
-        if (isAnimating) return;
-        isAnimating = true;
-        
-        widgetImage.classList.remove('bounce-in');
-        widgetImage.classList.add('bounce-out');
-        widgetImage.addEventListener('animationend', () => {
-            widgetImage.style.display = 'none';
-            widgetImage.classList.remove('bounce-out');
-            showIcebreaker();
-        }, { once: true });
-    });
-
-    icebreakerCard.addEventListener('click', () => {
-        if (isAnimating) return;
-        isAnimating = true;
-        
-        icebreakerCard.classList.remove('bounce-in');
-        icebreakerCard.classList.add('bounce-out');
-        icebreakerCard.addEventListener('animationend', () => {
-            icebreakerCard.style.display = 'none';
-            icebreakerCard.classList.remove('bounce-out');
-            
-            coverOverlay.style.display = 'flex';
-            coverOverlay.classList.add('bounce-in');
-            coverOverlay.classList.remove('expanded');
-            coverOverlay.classList.add('resting');
-            isExpanded = false;
-            
-            coverOverlay.addEventListener('animationend', () => {
-                coverOverlay.classList.remove('bounce-in');
-                isAnimating = false;
-            }, { once: true });
-        }, { once: true });
-    });
-
-    // Debug check to ensure prompts are loaded
-    console.log('Prompts loaded:', prompts);
-</script>
-</body>
-</html>
+    function getComplexColor() {
+      // Generate two complementary hues
+      lastHue1 = (lastHue1 + 137.5) % 360;
+      lastHue2 =
