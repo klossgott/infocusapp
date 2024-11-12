@@ -1,0 +1,146 @@
+:root {
+    --color-primary: #FFA500;      /* Orange */
+    --color-resting: #FFD700;      /* Gold for resting state */
+    --color-title: #FFD700;        /* Gold */
+    --color-instructions: #FFE4B5;  /* Moccasin */
+    --color-story: #FFD700;        /* Gold */
+    --color-number: #ADD8E6;       /* Light Blue */
+    --color-rhythm: #FFB6C1;       /* Light Pink */
+    --color-wildcard: #F5A9A9;     /* Light Pink-Orange */
+    --color-driver: #D3D3D3;       /* Light Grey */
+    --color-gamemaster: #98FB98;   /* Light Green */
+    --font-base: 'EB Garamond', serif;
+    --transition-base: 0.3s ease;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    background: transparent;
+    font-family: var(--font-base);
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    position: relative;
+    width: min(40vw, 400px);
+    height: calc(min(40vw, 400px) * 1.5);
+    padding: 10px;
+    box-sizing: border-box;
+    transition: all var(--transition-base);
+}
+
+.container.resting {
+    transform: scale(0.3);
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+
+.card.resting {
+    background-color: var(--color-resting);
+}
+
+.card-content {
+    font-size: 3vh;
+    color: #333;
+    line-height: 1.5;
+    transition: opacity var(--transition-base);
+    max-width: 90%;
+    max-height: 90%;
+    overflow: hidden;
+    word-break: break-word;
+    margin: 0 auto;
+}
+
+.card.resting .card-content {
+    font-size: 14vh;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.card.instructions .card-content {
+    font-style: italic;
+}
+
+.timer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    background-color: rgba(51, 51, 51, 0.5);
+    transition: width 1s linear;
+    width: 100%;
+}
+
+.placeholder {
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.pause-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 3vh;
+    border-radius: 10px;
+    z-index: 10;
+}
+
+.card:focus {
+    outline: none;
+}
+
+.flash {
+    animation: flash 1s infinite;
+}
+
+@keyframes flash {
+    0%, 100% { background-color: var(--color-story); }
+    50% { background-color: var(--color-title); }
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 90vw;
+        height: calc(90vw * 1.5);
+        padding: 5px;
+    }
+
+    .card-content {
+        font-size: 4vh;
+    }
+
+    .card.resting .card-content {
+        font-size: 16vh;
+    }
+
+    .pause-overlay {
+        font-size: 4vh;
+    }
+}
