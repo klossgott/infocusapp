@@ -23,13 +23,23 @@ export class StoryFlipGame {
             tryAgainCount: 0,
             lastCategories: [],
             timerInterval: null,
-            storyRhythmTurn: Math.floor(Math.random() * 5) + 8, // Random turn between 8-12
+            storyRhythmTurn: Math.floor(Math.random() * 5) + 8,
             storyRhythmUsed: false
         };
     }
 
     setupEventListeners() {
-        // Add event listeners here
+        this.card.addEventListener('click', () => this.handleCardClick());
+    }
+
+    handleCardClick() {
+        if (this.state.cardState === 'resting') {
+            this.expandCard();
+            this.startTimer();
+            this.setState('active');
+        } else if (this.state.cardState === 'active') {
+            this.minimizeCard();
+        }
     }
 
     expandCard() {
@@ -43,7 +53,7 @@ export class StoryFlipGame {
     minimizeCard() {
         this.container.classList.add('resting');
         this.card.classList.add('resting');
-        this.state.cardState = 'resting';
+        this.setState('resting');
         this.content.innerHTML = 'S';
         this.content.style.color = 'var(--color-primary)';
         this.clearGameState();
@@ -61,16 +71,16 @@ export class StoryFlipGame {
         if (this.state.isPaused) this.togglePause();
     }
 
-    showInstructions() {
-        this.state.cardState = 'instructions';
-        this.card.classList.add('instructions');
-        this.displayInstructions();
-        this.setCardColor('instructions');
-    }
-
-    displayInstructions() {
-        const instructions = this.gameData.instructions[this.state.instructionIndex];
-        this.content.innerHTML = instructions.join('<br>');
+    startTimer() {
+        const timerDuration = 20000; // 20 seconds
+        this.state.timerInterval = setInterval(() => {
+            const progress = (timerDuration - (Date.now() - this.state.timerStartTime)) / timerDuration;
+            this.timerBar.style.width = `${progress * 100}%`;
+            if (progress <= 0) {
+                this.handleTimerEnd();
+            }
+        }, 100);
+        this.state.timerStartTime = Date.now();
     }
 
     handleTimerEnd() {
@@ -80,27 +90,13 @@ export class StoryFlipGame {
             : "Time's up!<br>Take a deep breath and try again.";
         this.content.innerHTML = `<i>${message}</i>`;
         this.setCardColor('instructions');
-        this.state.cardState = 'active';
+        this.setState('active');
         this.state.lastCategories = [];
         this.minimizeCard();
     }
 
-    getRandomCardType() {
-        if (this.state.turnCount === this.state.storyRhythmTurn && !this.state.storyRhythmUsed) {
-            this.state.storyRhythmUsed = true;
-            return 'storyRhythm';
-        }
-
-        const types = ['storyElements', 'wildcard', 'numberCard', 'gameMaster'];
-        let selectedType;
-        let attempts = 0;
-        do {
-            selectedType = types[Math.floor(Math.random() * types.length)];
-            attempts++;
-            const occurrence = this.state.lastCategories.filter(cat => cat === selectedType).length;
-            if (occurrence < 2) break;
-        } while (attempts < 10);
-        return selectedType;
+    setState(state) {
+        this.state.cardState = state;
     }
 
     setCardColor(type) {
