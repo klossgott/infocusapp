@@ -4,7 +4,7 @@ let responses = {};
 // Prompts Data Structure
 const prompts = [
   {
-    key: "field",
+    key: 'field',
     prompt: `Imagine an open field.
 
 **Describe the field**:
@@ -12,419 +12,405 @@ const prompts = [
 - How big is this field?
 - What is it filled with?
 - What are the surroundings like?
-- How do you feel being in this field?`,
+- How do you feel being in this field?
+- What do you think about it?`
   },
   {
-    key: "cube",
+    key: 'cube',
     prompt: `There is a cube in the field.
 
 **Describe the cube**:
 
 - How big is the cube?
 - What is it made of?
-- What is the surface like?
+- What is its texture?
 - What color is it?
-- Where in the field is it?
-- Is it on the ground or floating?
-- Is it transparent? If so, can you see inside?`,
+- Where is it in the field?
+- How do you feel about this cube?`
   },
   {
-    key: "ladder",
+    key: 'ladder',
     prompt: `There is a ladder in the field.
 
 **Describe the ladder**:
 
-- How long is the ladder?
 - What is it made of?
+- How big is it?
 - Where is it in relation to the cube?
-- Is it leaning on the cube?
-- Can you climb it?`,
+- What condition is it in?
+- How do you feel about this ladder?`
   },
   {
-    key: "horse",
+    key: 'horse',
     prompt: `There is a horse in the field.
 
 **Describe the horse**:
 
-- What color is the horse?
+- What colour is it?
 - What is it doing?
-- Where is it in relation to the cube?
-- How do you feel about the horse?`,
+- Where is it in relation to the cube and the ladder?
+- How do you feel about this horse?`
   },
   {
-    key: "flowers",
+    key: 'flowers',
     prompt: `There are flowers in the field.
 
 **Describe the flowers**:
 
 - What kind of flowers are they?
-- What color are they?
-- Where are they in relation to the other elements?
-- How do you feel about the flowers?`,
+- How many flowers are there?
+- Where are the flowers in relation to the other elements?
+- What colours are they?
+- How do you feel about the flowers?`
   },
   {
-    key: "weather",
-    prompt: `What is the weather in the field?
+    key: 'weather',
+    prompt: `What is the weather like in the field?
 
 **Describe the weather**:
 
 - Is it raining? Sunny?
-- Is your field foggy?`,
+- Is your field foggy?
+- How does the weather make you feel?`
   },
   {
-    key: "storm",
+    key: 'storm',
     prompt: `There is a storm in the field.
 
 **Describe the storm**:
 
-- What kind of storm is it?
-- Where is it in relation to the cube?
-- How intense is the storm?
-- How do you feel about this storm?`,
-  },
+- What is the distance between the storm and the cube?
+- Is it a big storm or a small storm?
+- Is it passing through or staying?
+- How does it affect the field?
+- How do you feel about this storm?`
+  }
 ];
 
 // Element Meanings
 const elementMeanings = {
-  field: "your worldview and state of mind",
-  cube: "yourself",
-  ladder: "your goals and friendships",
-  horse: "your ideal partner or passion",
-  flowers: "your social connections, family, or children",
-  weather: "your general outlook on life",
-  storm: "challenges and stress",
+  field: 'your worldview and state of mind',
+  cube: 'yourself',
+  ladder: 'your friends',
+  horse: 'your lover or ideal partner',
+  flowers: 'children or your creative potential',
+  weather: 'your general outlook on life',
+  storm: 'challenges and difficulties in your life'
 };
 
-// Keywords Data Structure
+// Keyword-Interpretation Pairs for Each Element
 const keywords = {
   field: [
     {
-      characteristics: ["large", "vast", "big", "huge", "expansive", "endless"],
-      meaning_tags: ["open", "optimistic", "free"],
-      interpretation:
-        "A large field suggests you have a broad and optimistic worldview, with a sense of freedom and possibility.",
+      keywords: ['vast', 'large', 'expansive', 'open'],
+      interpretation: 'You have a broad perspective and an open mind.'
     },
     {
-      characteristics: ["small", "tiny", "limited", "enclosed"],
-      meaning_tags: ["limited", "inward", "restricted"],
-      interpretation:
-        "A small field may indicate a more limited or inward-focused worldview, possibly feeling restricted or confined.",
+      keywords: ['small', 'enclosed', 'limited'],
+      interpretation: 'You may feel limited or restricted in your outlook.'
     },
     {
-      characteristics: ["empty", "barren", "desolate", "lifeless"],
-      meaning_tags: ["empty", "lonely", "unfulfilled"],
-      interpretation:
-        "An empty or barren field could suggest feelings of loneliness, emptiness, or a lack of direction in life.",
+      keywords: ['dry', 'dead', 'barren'],
+      interpretation: 'You may be feeling pessimistic or uninspired.'
     },
     {
-      characteristics: [
-        "full",
-        "lush",
-        "green",
-        "vibrant",
-        "alive",
-        "abundant",
-      ],
-      meaning_tags: ["abundant", "fulfilling", "content"],
-      interpretation:
-        "A full and vibrant field suggests you are feeling content, fulfilled, and surrounded by abundance.",
+      keywords: ['grassy', 'healthy', 'green', 'lush'],
+      interpretation: 'You are feeling optimistic and content.'
     },
     {
-      characteristics: ["well-kept", "neat", "orderly", "manicured"],
-      meaning_tags: ["organized", "controlled", "structured"],
-      interpretation:
-        "A well-kept field indicates a preference for order and structure, and a controlled approach to life.",
-    },
-    {
-      characteristics: ["wild", "overgrown", "chaotic", "untamed"],
-      meaning_tags: ["free-spirited", "unstructured", "spontaneous"],
-      interpretation:
-        "A wild and overgrown field may represent a free-spirited nature, a preference for spontaneity, and a lack of desire for rigid structures.",
-    },
+      keywords: ['well-trimmed', 'neat', 'ordered'],
+      interpretation: 'You are analytical, cautious, and like things in order.'
+    }
+    // Additional keywords as needed
   ],
   cube: [
+    // Size
     {
-      characteristics: ["large", "big", "huge", "massive"],
-      meaning_tags: ["confident", "strong", "ego"],
-      interpretation:
-        "A large cube indicates a strong sense of self and confidence, possibly even a large ego.",
+      keywords: ['large', 'huge', 'giant'],
+      interpretation: 'You have a strong sense of self and high self-esteem.'
     },
     {
-      characteristics: ["small", "tiny", "insignificant"],
-      meaning_tags: ["insecure", "modest", "humble"],
-      interpretation:
-        "A small cube suggests feelings of insecurity or modesty, perhaps a sense of being insignificant.",
+      keywords: ['small', 'tiny', 'miniature'],
+      interpretation: 'You may be feeling insecure or insignificant.'
+    },
+    // Material
+    {
+      keywords: ['transparent', 'glass', 'clear'],
+      interpretation: 'You are open and honest with yourself and others.'
     },
     {
-      characteristics: ["transparent", "glass", "see-through"],
-      meaning_tags: ["open", "honest", "vulnerable"],
-      interpretation:
-        "A transparent cube represents openness, honesty, and a willingness to be vulnerable.",
+      keywords: ['opaque', 'solid', 'metal'],
+      interpretation: 'You are more private and guarded.'
     },
     {
-      characteristics: ["opaque", "solid", "impenetrable"],
-      meaning_tags: ["private", "guarded", "closed-off"],
-      interpretation:
-        "An opaque cube suggests you are private and guarded, keeping your thoughts and feelings hidden.",
+      keywords: ['gold', 'silver', 'precious'],
+      interpretation: 'You value yourself highly and have a sense of worth.'
     },
     {
-      characteristics: ["smooth", "polished", "perfect"],
-      meaning_tags: ["refined", "composed", "controlled"],
-      interpretation:
-        "A smooth and polished cube indicates a refined and composed personality, with a strong sense of control.",
+      keywords: ['wood', 'natural'],
+      interpretation: 'You are grounded and connected to nature.'
+    },
+    // Position
+    {
+      keywords: ['centre', 'middle'],
+      interpretation: 'You feel secure and grounded.'
     },
     {
-      characteristics: ["rough", "textured", "imperfect"],
-      meaning_tags: ["authentic", "unpolished", "genuine"],
-      interpretation:
-        "A rough or textured cube suggests authenticity, a genuine nature, and a lack of pretense.",
+      keywords: ['edge', 'side'],
+      interpretation: 'You may be feeling unstable or on the edge.'
     },
     {
-      characteristics: ["metallic", "gold", "silver", "bronze", "steel"],
-      meaning_tags: ["strong", "valuable", "resilient"],
-      interpretation:
-        "A metallic cube represents strength, resilience, and a sense of self-worth.",
+      keywords: ['above', 'floating'],
+      interpretation: 'You are idealistic or have your head in the clouds.'
     },
     {
-      characteristics: ["wooden", "natural", "earthy"],
-      meaning_tags: ["grounded", "stable", "connected"],
-      interpretation:
-        "A wooden cube suggests you are grounded, stable, and connected to nature.",
-    },
-    {
-      characteristics: ["floating", "above ground", "levitating"],
-      meaning_tags: ["dreamer", "idealistic", "detached"],
-      interpretation:
-        "A floating cube indicates idealism, a tendency to dream, or a sense of detachment from reality.",
-    },
-    {
-      characteristics: ["buried", "underground", "hidden"],
-      meaning_tags: ["hidden", "suppressed", "unconscious"],
-      interpretation:
-        "A buried cube suggests hidden aspects of yourself, suppressed emotions, or unconscious desires.",
-    },
+      keywords: ['buried', 'underground'],
+      interpretation: 'You may be suppressing your true self.'
+    }
+    // Additional keywords as needed
   ],
   ladder: [
+    // Material
     {
-      characteristics: ["long", "tall", "high", "reaching"],
-      meaning_tags: ["ambitious", "aspirational"],
-      interpretation:
-        "A long ladder suggests you have high aspirations and ambitious goals for your friendships or your future.",
+      keywords: ['strong', 'sturdy', 'stable'],
+      interpretation: 'You have strong and supportive friendships.'
     },
     {
-      characteristics: ["short", "small", "low"],
-      meaning_tags: ["realistic", "grounded"],
-      interpretation:
-        "A short ladder may indicate that you have realistic expectations for your friendships and focus on achievable goals.",
+      keywords: ['weak', 'rickety', 'unstable'],
+      interpretation: 'You may have unstable or unreliable friendships.'
+    },
+    // Position
+    {
+      keywords: ['leaning on cube', 'touching cube'],
+      interpretation: 'You rely heavily on your friends.'
     },
     {
-      characteristics: ["strong", "sturdy", "metal", "wood", "solid"],
-      meaning_tags: ["reliable", "trustworthy", "supportive"],
-      interpretation:
-        "A ladder made of strong materials suggests that you have reliable and supportive friends.",
-    },
-    {
-      characteristics: ["weak", "flimsy", "broken", "unstable", "rickety"],
-      meaning_tags: ["fragile", "uncertain", "unreliable"],
-      interpretation:
-        "A weak or broken ladder could indicate fragile friendships or a lack of support in your life.",
-    },
-    {
-      characteristics: ["close", "near", "touching", "leaning on"],
-      meaning_tags: ["close-knit", "dependent", "intertwined"],
-      interpretation:
-        "A ladder close to the cube suggests you are very close to your friends and may rely on them heavily.",
-    },
-    {
-      characteristics: ["far", "distant", "away"],
-      meaning_tags: ["independent", "distant", "separate"],
-      interpretation:
-        "A ladder far from the cube may indicate a desire for independence or distance in your friendships.",
-    },
-    {
-      characteristics: ["new", "shiny", "modern", "clean"],
-      meaning_tags: ["fresh", "evolving", "growing"],
-      interpretation:
-        "A new or shiny ladder suggests you are open to new friendships and that your relationships are evolving.",
-    },
-    {
-      characteristics: ["old", "worn", "rusty", "broken"],
-      meaning_tags: ["past", "challenges", "lessons"],
-      interpretation:
-        "An old or worn ladder might represent friendships from your past that have brought challenges and lessons.",
-    },
+      keywords: ['away from cube', 'distant'],
+      interpretation: 'You are more independent or have distant friendships.'
+    }
+    // Additional keywords as needed
   ],
   horse: [
+    // Colour
     {
-      characteristics: ["white", "light", "pure"],
-      meaning_tags: ["idealistic", "innocent", "spiritual"],
-      interpretation:
-        "A white horse symbolizes purity, innocence, and spiritual aspirations in a partner.",
+      keywords: ['white', 'light'],
+      interpretation: 'Your ideal partner is pure and innocent.'
     },
     {
-      characteristics: ["black", "dark", "mysterious"],
-      meaning_tags: ["passionate", "intense", "unknown"],
-      interpretation:
-        "A black horse represents passion, intensity, and a sense of the unknown in a relationship.",
+      keywords: ['black', 'dark'],
+      interpretation: 'Your ideal partner is mysterious and passionate.'
     },
     {
-      characteristics: ["brown", "earthly", "reliable"],
-      meaning_tags: ["stable", "grounded", "practical"],
-      interpretation:
-        "A brown horse suggests you seek stability, practicality, and a grounded nature in a partner.",
+      keywords: ['brown', 'earthly'],
+      interpretation: 'Your ideal partner is reliable and down-to-earth.'
+    },
+    // Behaviour
+    {
+      keywords: ['running', 'galloping'],
+      interpretation: 'You desire a passionate and adventurous relationship.'
     },
     {
-      characteristics: ["wild", "untamed", "free"],
-      meaning_tags: ["adventurous", "independent", "unconventional"],
-      interpretation:
-        "A wild and untamed horse represents a desire for adventure, independence, and unconventionality in a relationship.",
+      keywords: ['standing', 'calm'],
+      interpretation: 'You desire a stable and peaceful relationship.'
+    },
+    // Position
+    {
+      keywords: ['near cube', 'close'],
+      interpretation: 'You feel close and connected to your partner.'
     },
     {
-      characteristics: ["calm", "gentle", "tame"],
-      meaning_tags: ["peaceful", "harmonious", "easygoing"],
-      interpretation:
-        "A calm and gentle horse suggests you seek peace, harmony, and an easygoing nature in a partner.",
-    },
-    {
-      characteristics: ["strong", "powerful", "muscular"],
-      meaning_tags: ["dominant", "protective", "assertive"],
-      interpretation:
-        "A strong and powerful horse may indicate a desire for a dominant, protective, or assertive partner.",
-    },
-    {
-      characteristics: ["close", "near", "nuzzling", "affectionate"],
-      meaning_tags: ["intimate", "connected", "close"],
-      interpretation:
-        "A horse that is close to the cube suggests a desire for intimacy and closeness in a relationship.",
-    },
-    {
-      characteristics: ["far", "distant", "running away"],
-      meaning_tags: ["distant", "independent", "fearful"],
-      interpretation:
-        "A horse that is far away may indicate a fear of commitment, a need for space, or emotional distance in a relationship.",
-    },
+      keywords: ['far from cube', 'distant'],
+      interpretation: 'You may feel distant or disconnected from your partner.'
+    }
+    // Additional keywords as needed
   ],
   flowers: [
+    // Type
     {
-      characteristics: ["abundant", "many", "field full"],
-      meaning_tags: ["extroverted", "sociable", "connected"],
-      interpretation:
-        "An abundance of flowers suggests you are extroverted, sociable, and have a strong network of connections.",
+      keywords: ['roses', 'beautiful', 'fragrant'],
+      interpretation: 'You have a romantic and nurturing nature.'
     },
     {
-      characteristics: ["few", "scattered", "isolated"],
-      meaning_tags: ["introverted", "selective", "limited"],
-      interpretation:
-        "Few flowers may indicate that you are more introverted, selective in your relationships, or feel a limited sense of connection.",
+      keywords: ['wildflowers', 'simple', 'natural'],
+      interpretation: 'You appreciate simplicity and natural beauty.'
+    },
+    // Quantity
+    {
+      keywords: ['many', 'abundance'],
+      interpretation: 'You are fertile and have a lot of creative potential.'
     },
     {
-      characteristics: ["bright", "colourful", "vibrant"],
-      meaning_tags: ["positive", "joyful", "happy"],
-      interpretation:
-        "Bright and colorful flowers represent positive relationships, joy, and happiness in your social life.",
+      keywords: ['few', 'scarce'],
+      interpretation: 'You may be feeling creatively blocked.'
+    },
+    // Position
+    {
+      keywords: ['near cube', 'close'],
+      interpretation: 'You are nurturing and protective of your children or creative projects.'
     },
     {
-      characteristics: ["pale", "wilting", "faded"],
-      meaning_tags: ["strained", "difficult", "neglected"],
-      interpretation:
-        "Pale or wilting flowers could indicate strained or neglected relationships.",
-    },
-    {
-      characteristics: ["close", "near", "surrounding"],
-      meaning_tags: ["close", "supportive", "nurturing"],
-      interpretation:
-        "Flowers close to the cube suggest you feel loved and supported by your social circle.",
-    },
-    {
-      characteristics: ["far", "distant", "isolated"],
-      meaning_tags: ["distant", "lonely", "disconnected"],
-      interpretation:
-        "Flowers far from the cube may indicate feelings of loneliness, disconnection, or a lack of support from others.",
-    },
+      keywords: ['far from cube', 'distant'],
+      interpretation: 'You may be neglecting your children or creative potential.'
+    }
+    // Additional keywords as needed
   ],
   weather: [
     {
-      characteristics: ["sunny", "bright", "clear"],
-      meaning_tags: ["optimistic", "positive", "happy"],
-      interpretation:
-        "Sunny weather suggests you have a positive outlook on life and are feeling optimistic.",
+      keywords: ['sunny', 'bright', 'clear'],
+      interpretation: 'You have a positive outlook on life.'
     },
     {
-      characteristics: ["rainy", "stormy", "dark"],
-      meaning_tags: ["challenging", "difficult", "overwhelmed"],
-      interpretation:
-        "Rainy or stormy weather may indicate you are facing challenges or feeling overwhelmed.",
-    },
-    {
-      characteristics: ["foggy", "misty", "unclear"],
-      meaning_tags: ["confused", "uncertain", "lost"],
-      interpretation:
-        "Foggy weather suggests feelings of confusion, uncertainty, or a lack of direction.",
-    },
-    {
-      characteristics: ["windy", "blustery", "changing"],
-      meaning_tags: ["change", "transition", "adaptable"],
-      interpretation:
-        "Windy weather represents a time of change, transition, or a need to be adaptable.",
-    },
+      keywords: ['rainy', 'stormy', 'dark'],
+      interpretation: 'You may be feeling down or experiencing difficulties.'
+    }
+    // Additional keywords as needed
   ],
   storm: [
+    // Size and Intensity
     {
-      characteristics: ["large", "powerful", "intense"],
-      meaning_tags: ["overwhelmed", "stressed", "intense"],
-      interpretation:
-        "A large and powerful storm suggests you are feeling overwhelmed by challenges and stress.",
+      keywords: ['large', 'powerful', 'intense'],
+      interpretation: 'You are facing significant challenges.'
     },
     {
-      characteristics: ["small", "distant", "passing"],
-      meaning_tags: ["manageable", "temporary", "resilient"],
-      interpretation:
-        "A small or passing storm indicates that you see challenges as manageable and temporary.",
+      keywords: ['small', 'weak', 'passing'],
+      interpretation: 'Your challenges are manageable.'
+    },
+    // Distance
+    {
+      keywords: ['near', 'close'],
+      interpretation: 'Your challenges are affecting you deeply.'
     },
     {
-      characteristics: ["violent", "destructive", "threatening"],
-      meaning_tags: ["fearful", "vulnerable", "out of control"],
-      interpretation:
-        "A violent or destructive storm may represent feeling fearful, vulnerable, or out of control.",
-    },
-    {
-      characteristics: ["close", "near", "approaching"],
-      meaning_tags: ["imminent", "worried", "anxious"],
-      interpretation:
-        "A storm that is close to the cube suggests you are facing imminent challenges that are causing worry and anxiety.",
-    },
-    {
-      characteristics: ["far", "distant", "receding"],
-      meaning_tags: ["distant", "manageable", "in control"],
-      interpretation:
-        "A distant or receding storm indicates that you feel more in control of challenges and see them as less threatening.",
-    },
-  ],
+      keywords: ['far', 'distant'],
+      interpretation: 'You are coping well with your challenges.'
+    }
+    // Additional keywords as needed
+  ]
 };
 
 // Start the app
 function startApp() {
-  // ... [Same as before]
+  const contentDiv = document.getElementById('content');
+  contentDiv.innerHTML = `
+Welcome to The Cube Personality Test. This exercise uses visualization to help you explore aspects of your subconscious mind. Please describe whatever comes to mind first for each question, focusing on your feelings and perceptions.
+<button onclick="beginTest()">Start the Test</button>
+`;
 }
 
 function beginTest() {
-  // ... [Same as before]
+  showQuestion();
 }
 
 function showQuestion() {
-  // ... [Same as before]
+  if (currentQuestionIndex >= prompts.length) {
+    showResults();
+    return;
+  }
+
+  const currentPrompt = prompts[currentQuestionIndex];
+  const contentDiv = document.getElementById('content');
+  contentDiv.innerHTML = '';
+
+  const promptDiv = document.createElement('div');
+  promptDiv.className = 'question';
+  promptDiv.innerHTML = `
+<p>${currentPrompt.prompt.replace(/\n/g, '<br>')}</p>
+`;
+  contentDiv.appendChild(promptDiv);
+
+  const inputElement = document.createElement('textarea');
+  inputElement.rows = 10;
+  inputElement.id = 'userInput';
+  contentDiv.appendChild(inputElement);
+
+  const button = document.createElement('button');
+  button.textContent = 'Next';
+  button.onclick = nextQuestion;
+  contentDiv.appendChild(button);
 }
 
 function nextQuestion() {
-  // ... [Same as before]
+  const currentPrompt = prompts[currentQuestionIndex];
+  const userInput = document.getElementById('userInput').value.trim();
+  responses[currentPrompt.key] = userInput;
+  currentQuestionIndex++;
+  showQuestion();
 }
 
 function showResults() {
-  // ... [Same as before]
+  const contentDiv = document.getElementById('content');
+  contentDiv.innerHTML = '<h2>Your Results</h2>';
+
+  Object.keys(responses).forEach(key => {
+    const userResponse = responses[key];
+    const interpretation = generateInterpretation(key, userResponse);
+
+    const responseDiv = document.createElement('div');
+    responseDiv.className = 'response';
+
+    const questionTitle = document.createElement('h3');
+    questionTitle.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+    responseDiv.appendChild(questionTitle);
+
+    const userResponsePara = document.createElement('p');
+    userResponsePara.innerHTML = `*Your description:*<br>${userResponse.replace(/\n/g, '<br>')}`;
+    responseDiv.appendChild(userResponsePara);
+
+    const interpretationPara = document.createElement('p');
+    interpretationPara.innerHTML = `*Interpretation:*<br>${interpretation}`;
+    responseDiv.appendChild(interpretationPara);
+
+    const reflection = document.createElement('p');
+    reflection.innerHTML = `*Reflect on how your description of the ${key} relates to your life. Consider your feelings and thoughts associated with it.*`;
+    responseDiv.appendChild(reflection);
+
+    contentDiv.appendChild(responseDiv);
+  });
+
+  // Add a concluding message
+  const conclusion = document.createElement('div');
+  conclusion.className = 'conclusion';
+  conclusion.innerHTML = `
+<p>*This exercise is a tool for self-reflection. Interpretations are subjective, and the most important insights come from your personal reflections.*</p>
+`;
+  contentDiv.appendChild(conclusion);
+
+  // Add a replay button
+  const replayButton = document.createElement('button');
+  replayButton.textContent = 'Retake the Test';
+  replayButton.onclick = () => {
+    currentQuestionIndex = 0;
+    responses = {};
+    startApp();
+  };
+  contentDiv.appendChild(replayButton);
 }
 
 function generateInterpretation(key, userInput) {
-  // ... [Same as before]
+  userInput = userInput.toLowerCase();
+  let interpretation = '';
+
+  const relevantKeywords = keywords[key].filter(keywordObj => {
+    return keywordObj.keywords.some(keyword => userInput.includes(keyword));
+  });
+
+  if (relevantKeywords.length > 0) {
+    interpretation = `The ${key} represents **${elementMeanings[key]}**.
+
+`;
+    relevantKeywords.forEach(keywordObj => {
+      interpretation += `- ${keywordObj.interpretation}
+
+`;
+    });
+  } else {
+    interpretation = `The ${key} represents **${elementMeanings[key]}**.
+
+`;
+    interpretation += 'Your description is unique. Reflect on how it relates to your life.';
+  }
+
+  return interpretation;
 }
 
 window.onload = startApp;
