@@ -176,7 +176,7 @@ function loadQuestion() {
   const question = prompts[currentQuestionIndex];
   app.innerHTML = `
     ${question.prompt}
-    <textarea id="response"></textarea>
+    <textarea id="response" placeholder="Type your response here..."></textarea>
     <button id="next">Next</button>`;
   document.getElementById('next').addEventListener('click', saveAnswer);
 }
@@ -191,24 +191,36 @@ function saveAnswer() {
 
 function displayResults() {
   const app = document.getElementById('app');
-  app.innerHTML = '<h2>Results</h2>';
+  app.innerHTML = '<h2>Your Results</h2>';
   for (let key in responses) {
-    app.innerHTML += `
-      <h3>${capitalize(key)}</h3>
-      <p><strong>Description:</strong> ${responses[key]}</p>
-      <p><strong>Interpretation:</strong> ${generateInterpretation(key, responses[key])}</p>`;
+    const userResponse = responses[key];
+    const interpretation = generateInterpretation(key, userResponse);
+
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <h3>The <strong>${capitalize(key)}</strong> represents your <strong>${elementMeanings[key]}</strong>.</h3>
+      <p><strong>Interpretation:</strong> ${interpretation}</p>
+      <button class="toggle-response">Your response was...</button>
+      <div class="response-text">
+        <p>${userResponse}</p>
+      </div>`;
+    card.querySelector('.toggle-response').addEventListener('click', function () {
+      const responseText = this.nextElementSibling;
+      responseText.style.display = responseText.style.display === 'block' ? 'none' : 'block';
+    });
+    app.appendChild(card);
   }
-  app.innerHTML += `<button id="restart">Restart</button>`;
+  app.innerHTML += `<button id="restart" class="restart-button">Retake the Test</button>`;
   document.getElementById('restart').addEventListener('click', () => location.reload());
 }
 
-function generateInterpretation(key, answer) {
-  const matches = keywords[key]?.filter(k =>
-    k.keywords.some(word => answer.toLowerCase().includes(word))
+function generateInterpretation(key, userInput) {
+  const lowerCaseInput = userInput.toLowerCase();
+  const relevantKeywords = keywords[key]?.filter(keywordObj =>
+    keywordObj.keywords.some(keyword => lowerCaseInput.includes(keyword))
   );
-  return matches?.length
-    ? matches.map(k => `<ul><li>${k.interpretation}</li></ul>`).join('')
-    : `Unique insight about your ${key}. Reflect further.`;
+  return relevantKeywords?.map(k => `<ul><li>${k.interpretation}</li></ul>`).join('') || `Unique insight about your ${key}. Reflect further.`;
 }
 
 function capitalize(str) {
