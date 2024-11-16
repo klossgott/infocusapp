@@ -1,3 +1,5 @@
+document.addEventListener('DOMContentLoaded', initializeApp);
+
 let currentQuestionIndex = 0;
 let responses = {};
 
@@ -5,92 +7,71 @@ let responses = {};
 const prompts = [
   {
     key: 'field',
-    prompt: `
-      <strong>Imagine an open field.</strong>
-      <p><strong>Describe the field:</strong></p>
-      <ul>
-        <li>How big is this field?</li>
-        <li>What is it filled with?</li>
-        <li>What are the surroundings like?</li>
-        <li>How do you feel being in this field?</li>
-        <li>What do you think about it?</li>
-      </ul>`
+    prompt: `<strong>Imagine an open field.</strong><br><ul>
+      <li>How big is this field?</li>
+      <li>What is it filled with?</li>
+      <li>What are the surroundings like?</li>
+      <li>How do you feel being in this field?</li>
+      <li>What do you think about it?</li>
+    </ul>`
   },
   {
     key: 'cube',
-    prompt: `
-      <strong>There is a cube in the field.</strong>
-      <p><strong>Describe the cube:</strong></p>
-      <ul>
-        <li>How big is the cube?</li>
-        <li>What is it made of?</li>
-        <li>What is its texture?</li>
-        <li>What color is it?</li>
-        <li>Where is it in the field?</li>
-        <li>How do you feel about this cube?</li>
-      </ul>`
+    prompt: `<strong>There is a cube in the field.</strong><br><ul>
+      <li>How big is the cube?</li>
+      <li>What is it made of?</li>
+      <li>What is its texture?</li>
+      <li>What color is it?</li>
+      <li>Where is it in the field?</li>
+      <li>How do you feel about this cube?</li>
+    </ul>`
   },
   {
     key: 'ladder',
-    prompt: `
-      <strong>There is a ladder in the field.</strong>
-      <p><strong>Describe the ladder:</strong></p>
-      <ul>
-        <li>What is it made of?</li>
-        <li>How big is it?</li>
-        <li>Where is it in relation to the cube?</li>
-        <li>What condition is it in?</li>
-        <li>How do you feel about this ladder?</li>
-      </ul>`
+    prompt: `<strong>There is a ladder in the field.</strong><br><ul>
+      <li>What is it made of?</li>
+      <li>How big is it?</li>
+      <li>Where is it in relation to the cube?</li>
+      <li>What condition is it in?</li>
+      <li>How do you feel about this ladder?</li>
+    </ul>`
   },
   {
     key: 'horse',
-    prompt: `
-      <strong>There is a horse in the field.</strong>
-      <p><strong>Describe the horse:</strong></p>
-      <ul>
-        <li>What colour is it?</li>
-        <li>What is it doing?</li>
-        <li>Where is it in relation to the cube and the ladder?</li>
-        <li>How do you feel about this horse?</li>
-      </ul>`
+    prompt: `<strong>There is a horse in the field.</strong><br><ul>
+      <li>What color is it?</li>
+      <li>What is it doing?</li>
+      <li>Where is it in relation to the cube and the ladder?</li>
+      <li>How do you feel about this horse?</li>
+    </ul>`
   },
   {
     key: 'flowers',
-    prompt: `
-      <strong>There are flowers in the field.</strong>
-      <p><strong>Describe the flowers:</strong></p>
-      <ul>
-        <li>What kind of flowers are they?</li>
-        <li>How many flowers are there?</li>
-        <li>Where are the flowers in relation to the other elements?</li>
-        <li>What colours are they?</li>
-        <li>How do you feel about the flowers?</li>
-      </ul>`
+    prompt: `<strong>There are flowers in the field.</strong><br><ul>
+      <li>What kind of flowers are they?</li>
+      <li>How many flowers are there?</li>
+      <li>Where are the flowers in relation to the other elements?</li>
+      <li>What colors are they?</li>
+      <li>How do you feel about the flowers?</li>
+    </ul>`
   },
   {
     key: 'weather',
-    prompt: `
-      <strong>What is the weather like in the field?</strong>
-      <p><strong>Describe the weather:</strong></p>
-      <ul>
-        <li>Is it raining? Sunny?</li>
-        <li>Is your field foggy?</li>
-        <li>How does the weather make you feel?</li>
-      </ul>`
+    prompt: `<strong>What is the weather like in the field?</strong><br><ul>
+      <li>Is it raining? Sunny?</li>
+      <li>Is your field foggy?</li>
+      <li>How does the weather make you feel?</li>
+    </ul>`
   },
   {
     key: 'storm',
-    prompt: `
-      <strong>There is a storm in the field.</strong>
-      <p><strong>Describe the storm:</strong></p>
-      <ul>
-        <li>What is the distance between the storm and the cube?</li>
-        <li>Is it a big storm or a small storm?</li>
-        <li>Is it passing through or staying?</li>
-        <li>How does it affect the field?</li>
-        <li>How do you feel about this storm?</li>
-      </ul>`
+    prompt: `<strong>There is a storm in the field.</strong><br><ul>
+      <li>What is the distance between the storm and the cube?</li>
+      <li>Is it a big storm or a small storm?</li>
+      <li>Is it passing through or staying?</li>
+      <li>How does it affect the field?</li>
+      <li>How do you feel about this storm?</li>
+    </ul>`
   }
 ];
 
@@ -155,44 +136,59 @@ const keywords = {
   ]
 };
 
-// App Initialization
-document.addEventListener('DOMContentLoaded', initializeApp);
-
+// Initialize App
 function initializeApp() {
   const app = document.getElementById('app');
   app.innerHTML = `
     <p>Welcome to <strong>The Cube Personality Test</strong>. Describe what comes to mind first.</p>
-    <button id="start">Start Test</button>`;
-  document.getElementById('start').addEventListener('click', beginTest);
+    <button id="startTest">Start Test</button>`;
+  document.getElementById('startTest').addEventListener('click', startTest);
 }
 
-function beginTest() {
-  if (currentQuestionIndex >= prompts.length) displayResults();
-  else loadQuestion();
+// Start Test
+function startTest() {
+  currentQuestionIndex = 0;
+  responses = {};
+  loadQuestion();
 }
 
+// Load Question
 function loadQuestion() {
+  if (currentQuestionIndex >= prompts.length) {
+    displayResults();
+    return;
+  }
+
   const app = document.getElementById('app');
   const question = prompts[currentQuestionIndex];
   app.innerHTML = `
-    ${question.prompt}
-    <textarea id="response" placeholder="Type your response here..."></textarea>
-    <button id="next">Next</button>`;
-  document.getElementById('next').addEventListener('click', saveAnswer);
+    <div>
+      ${question.prompt}
+      <textarea id="response" placeholder="Type your response here..."></textarea>
+      <button id="next">Next</button>
+    </div>`;
+  document.getElementById('next').addEventListener('click', saveResponse);
 }
 
-function saveAnswer() {
-  const answer = document.getElementById('response').value.trim();
-  if (!answer) return alert('Please provide a response.');
-  responses[prompts[currentQuestionIndex].key] = answer;
+// Save Response
+function saveResponse() {
+  const response = document.getElementById('response').value.trim();
+  if (!response) {
+    alert('Please provide a response.');
+    return;
+  }
+  const promptKey = prompts[currentQuestionIndex].key;
+  responses[promptKey] = response;
   currentQuestionIndex++;
-  beginTest();
+  loadQuestion();
 }
 
+// Display Results
 function displayResults() {
   const app = document.getElementById('app');
   app.innerHTML = '<h2>Your Results</h2>';
-  for (let key in responses) {
+
+  Object.keys(responses).forEach(key => {
     const userResponse = responses[key];
     const interpretation = generateInterpretation(key, userResponse);
 
@@ -200,29 +196,33 @@ function displayResults() {
     card.className = 'result-card';
     card.innerHTML = `
       <h3>The <strong>${capitalize(key)}</strong> represents your <strong>${elementMeanings[key]}</strong>.</h3>
-      <p><strong>Interpretation:</strong> ${interpretation}</p>
+      <p><strong>Interpretation:</strong></p>
+      ${interpretation}
       <button class="toggle-response">Your response was...</button>
-      <div class="response-text">
+      <div class="response-text" style="display: none;">
         <p>${userResponse}</p>
       </div>`;
     card.querySelector('.toggle-response').addEventListener('click', function () {
-      const responseText = this.nextElementSibling;
-      responseText.style.display = responseText.style.display === 'block' ? 'none' : 'block';
+      const responseDiv = this.nextElementSibling;
+      responseDiv.style.display = responseDiv.style.display === 'block' ? 'none' : 'block';
     });
     app.appendChild(card);
-  }
+  });
+
   app.innerHTML += `<button id="restart" class="restart-button">Retake the Test</button>`;
-  document.getElementById('restart').addEventListener('click', () => location.reload());
+  document.getElementById('restart').addEventListener('click', initializeApp);
 }
 
+// Generate Interpretation
 function generateInterpretation(key, userInput) {
-  const lowerCaseInput = userInput.toLowerCase();
-  const relevantKeywords = keywords[key]?.filter(keywordObj =>
-    keywordObj.keywords.some(keyword => lowerCaseInput.includes(keyword))
+  const lowerInput = userInput.toLowerCase();
+  const matches = keywords[key]?.filter(item =>
+    item.keywords.some(keyword => lowerInput.includes(keyword))
   );
-  return relevantKeywords?.map(k => `<ul><li>${k.interpretation}</li></ul>`).join('') || `Unique insight about your ${key}. Reflect further.`;
+  return matches?.map(item => `<ul><li>${item.interpretation}</li></ul>`).join('') || '<p>Your response is unique. Reflect on its meaning.</p>';
 }
 
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+// Capitalize First Letter
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
 }
