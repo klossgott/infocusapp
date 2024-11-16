@@ -2,8 +2,8 @@
 body {
   font-family: 'Roboto', sans-serif;
   margin: 20px;
-  background-color: #e8e5de; /* Updated background color */
-  color: black; /* Ensure text is black */
+  background-color: #e8e5de; /* Beige background */
+  color: black; /* Text color */
 }
 
 /* Main Content */
@@ -21,6 +21,20 @@ body {
 .note {
   font-size: 14px;
   color: black;
+}
+
+.start-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.start-button:hover {
+  background-color: #0056b3;
 }
 
 /* FAQ Section */
@@ -54,7 +68,7 @@ body {
   font-size: 14px;
 }
 
-/* Question Styles */
+/* Question Container */
 .question-container {
   border: 1px solid #ddd;
   padding: 20px;
@@ -65,9 +79,9 @@ body {
 
 .response-input {
   width: 100%;
-  padding: 10px;
+  height: 120px; /* Larger input box */
   font-size: 16px;
-  margin-top: 10px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -103,8 +117,13 @@ body {
   background: none;
   border: none;
   color: #007bff;
-  text-decoration: underline;
+  font-size: 14px;
   cursor: pointer;
+  text-decoration: underline;
+}
+
+.toggle-response:hover {
+  color: #0056b3;
 }
 
 .response-text {
@@ -113,14 +132,10 @@ body {
   padding: 10px;
   background-color: #f9f9f9;
   border-left: 4px solid #007bff;
+  border-radius: 5px;
 }
 
 /* Buttons */
-button {
-  font-size: 16px;
-  margin-top: 20px;
-}
-
 .restart-button {
   display: block;
   margin: 30px auto 0;
