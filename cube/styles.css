@@ -1,40 +1,64 @@
+/* General Body Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
+  background-color: #f4f4f4; /* Add a subtle background color for better contrast */
+  color: #333; /* Standardized font color for readability */
 }
 
+/* Main Content Container */
 #content {
   max-width: 800px;
   margin: 0 auto;
+  background-color: #ffffff; /* Add a white background to isolate content */
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a slight shadow for elevation */
+  border-radius: 8px;
 }
 
+/* Question Styles */
 .question p {
   font-size: 16px;
   line-height: 1.5;
+  margin-bottom: 15px;
 }
 
+/* Textarea for User Input */
 textarea {
   width: 100%;
   padding: 10px;
   font-size: 16px;
   margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical; /* Allow resizing vertically only */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Add slight depth */
 }
 
+/* Response Block */
 .response {
   background-color: #f9f9f9;
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 5px;
+  border: 1px solid #e1e1e1; /* Add a light border for clarity */
 }
 
+/* Response Titles */
 .response h3 {
   margin-top: 0;
+  font-size: 18px;
+  color: #444; /* Differentiate titles from body text */
 }
 
+/* Response Content */
 .response p {
   margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
+/* Conclusion Block */
 .conclusion {
   font-style: italic;
   text-align: center;
@@ -42,24 +66,42 @@ textarea {
   padding: 10px;
   background-color: #e9e9e9;
   border-radius: 5px;
+  color: #555; /* Add contrast for legibility */
 }
 
+/* Button Styles */
 button {
   padding: 10px 20px;
   font-size: 16px;
   margin-top: 20px;
+  background-color: #007bff; /* Add a primary color for buttons */
+  color: white; /* Ensure contrast */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+button:hover {
+  background-color: #0056b3; /* Darken on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Note Text */
 p.note {
   font-size: 12px;
   color: #777;
   text-align: center;
+  margin-bottom: 20px;
 }
 
+/* FAQ Section Styles */
 .faq-section {
   margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  background-color: #fafafa; /* Add a soft background color for FAQ */
 }
 
 .faq-question {
@@ -67,9 +109,17 @@ p.note {
   padding: 10px 15px;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.faq-question:hover {
+  background-color: #e0e0e0; /* Highlight on hover */
 }
 
 .faq-answer {
   padding: 10px 15px;
   display: none; /* Initially hidden */
+  font-size: 14px;
+  line-height: 1.5;
+  border-top: 1px solid #ddd; /* Separate question and answer */
 }
