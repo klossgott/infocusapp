@@ -86,7 +86,7 @@ const elementMeanings = {
   storm: 'challenges and difficulties in your life'
 };
 
-// Keyword-Interpretation Pairs for Each Element
+// Keywords for Interpretation
 const keywords = {
   field: [
     { keywords: ['vast', 'large', 'expansive', 'open'], interpretation: 'You have a broad perspective and an open mind.' },
@@ -140,9 +140,12 @@ const keywords = {
 function initializeApp() {
   const app = document.getElementById('app');
   app.innerHTML = `
-    <p>Welcome to <strong>The Cube Personality Test</strong>. Describe what comes to mind first.</p>
+    <p>Welcome to <strong>The Cube Personality Test</strong>. This exercise uses visualization to explore your subconscious mind.</p>
     <button id="startTest">Start Test</button>`;
   document.getElementById('startTest').addEventListener('click', startTest);
+
+  const faqContainer = document.getElementById('faq-container');
+  if (faqContainer) faqContainer.style.display = 'block';
 }
 
 // Start Test
@@ -150,15 +153,17 @@ function startTest() {
   currentQuestionIndex = 0;
   responses = {};
   loadQuestion();
+
+  const faqContainer = document.getElementById('faq-container');
+  if (faqContainer) faqContainer.style.display = 'none';
 }
 
-// Load Question
+// Load Questions
 function loadQuestion() {
   if (currentQuestionIndex >= prompts.length) {
     displayResults();
     return;
   }
-
   const app = document.getElementById('app');
   const question = prompts[currentQuestionIndex];
   app.innerHTML = `
