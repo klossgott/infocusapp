@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Cube Personality Test</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
   <div id="content">
     <h1>The Cube Personality Test</h1>
     <p class="note">Note: This test is for entertainment and self-reflection purposes only. Your responses are processed locally and are not stored or transmitted.</p>
 
+    <!-- App Section -->
     <div id="app"></div>
 
+    <!-- FAQ Section -->
     <h2>The Cube FAQ</h2>
     <div id="faq">
       <div class="faq-section">
@@ -52,17 +55,19 @@
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="script.js"></script>
   <script>
-    // Simple JavaScript to toggle FAQ answers
-    const faqQuestions = document.querySelectorAll('.faq-question');
-    faqQuestions.forEach(question => {
-      question.addEventListener('click', () => {
-        const answer = question.nextElementSibling;
-        answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+    // FAQ Toggle Functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const faqQuestions = document.querySelectorAll('.faq-question');
+      faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+          const answer = question.nextElementSibling;
+          answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+        });
       });
     });
   </script>
-
 </body>
 </html>
