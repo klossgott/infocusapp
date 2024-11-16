@@ -13,6 +13,7 @@
     <div id="cover-container">
       <h1>The Cube Personality Test</h1>
       <p class="note">Note: This test is for entertainment and self-reflection purposes only. Your responses are processed locally and are not stored or transmitted.</p>
+      <button id="startTest" class="start-button">Start Test</button>
     </div>
 
     <!-- App Section -->
@@ -25,21 +26,23 @@
         <div class="faq-section">
           <div class="faq-question">What is The Cube?</div>
           <div class="faq-answer">
-            <p>The Cube is an imagination game and a tool for self-discovery. It involves visualizing five elements in a desert landscape: a cube, a ladder, a horse, a storm, and flowers...</p>
+            <p>The Cube is an imagination game and a tool for self-discovery. It involves visualizing elements like a cube, ladder, horse, flowers, and storm in a field...</p>
           </div>
         </div>
         <div class="faq-section">
-          <div class="faq-question">Who created The Cube?</div>
+          <div class="faq-question">How do I play The Cube?</div>
           <div class="faq-answer">
-            <p>The origins of The Cube are unclear, but it has been popularized through various books and online articles...</p>
+            <p>Relax and imagine each element as described. Answer honestly and reflect on your responses.</p>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
-  <!-- FAQ Toggle Script -->
+  <!-- JavaScript Files -->
   <script>
+    // FAQ Toggle Functionality
     document.addEventListener('DOMContentLoaded', () => {
       const faqQuestions = document.querySelectorAll('.faq-question');
       faqQuestions.forEach(question => {
@@ -50,8 +53,6 @@
       });
     });
   </script>
-
-  <!-- Main Script -->
   <script src="script.js"></script>
 </body>
 </html>
