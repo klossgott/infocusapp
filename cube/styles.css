@@ -1,26 +1,54 @@
-/* General Body Styles */
+/* General Styles */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #f4f4f4; /* Add a subtle background color for better contrast */
-  color: #333; /* Standardized font color for readability */
+  font-family: 'Roboto', sans-serif;
+  background-color: #f7f5f2; /* Light beige background */
+  color: #000000; /* Black text */
+  margin: 0;
+  padding: 20px;
 }
 
-/* Main Content Container */
 #content {
   max-width: 800px;
-  margin: 0 auto;
-  background-color: #ffffff; /* Add a white background to isolate content */
+  margin: auto;
+  background-color: #ffffff; /* White card background */
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a slight shadow for elevation */
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Question Styles */
-.question p {
-  font-size: 16px;
-  line-height: 1.5;
+/* Typography */
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #000000;
   margin-bottom: 15px;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #333333;
+}
+
+p.note {
+  font-size: 14px;
+  text-align: center;
+  color: #777777;
 }
 
 /* Textarea for User Input */
@@ -28,80 +56,55 @@ textarea {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #cccccc;
   border-radius: 5px;
-  resize: vertical; /* Allow resizing vertically only */
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Add slight depth */
-}
-
-/* Response Block */
-.response {
-  background-color: #f9f9f9;
-  padding: 15px;
   margin-bottom: 20px;
-  border-radius: 5px;
-  border: 1px solid #e1e1e1; /* Add a light border for clarity */
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Response Titles */
-.response h3 {
-  margin-top: 0;
-  font-size: 18px;
-  color: #444; /* Differentiate titles from body text */
-}
-
-/* Response Content */
-.response p {
-  margin-bottom: 10px;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* Conclusion Block */
-.conclusion {
-  font-style: italic;
-  text-align: center;
-  margin-top: 30px;
-  padding: 10px;
-  background-color: #e9e9e9;
-  border-radius: 5px;
-  color: #555; /* Add contrast for legibility */
-}
-
-/* Button Styles */
+/* Buttons */
 button {
-  padding: 10px 20px;
-  font-size: 16px;
-  margin-top: 20px;
-  background-color: #007bff; /* Add a primary color for buttons */
-  color: white; /* Ensure contrast */
+  background-color: #a9c18c; /* Muted green */
+  color: #000000; /* Black text */
   border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 500;
   border-radius: 5px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #0056b3; /* Darken on hover */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  background-color: #88a87b; /* Darker green */
 }
 
-/* Note Text */
-p.note {
-  font-size: 12px;
-  color: #777;
+button:active {
+  background-color: #b8d2a1; /* Lighter green */
+}
+
+.restart-button {
+  display: block;
+  margin: 30px auto 0;
+  padding: 12px 20px;
+  background-color: #6699cc; /* Muted blue */
+  color: #ffffff; /* White text */
+  font-size: 18px;
+  font-weight: 600;
   text-align: center;
-  margin-bottom: 20px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-/* FAQ Section Styles */
+.restart-button:hover {
+  background-color: #5577aa; /* Darker blue */
+}
+
+/* FAQ Section */
 .faq-section {
   margin-bottom: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   border-radius: 5px;
-  background-color: #fafafa; /* Add a soft background color for FAQ */
 }
 
 .faq-question {
@@ -109,177 +112,82 @@ p.note {
   padding: 10px 15px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.faq-question:hover {
-  background-color: #e0e0e0; /* Highlight on hover */
 }
 
 .faq-answer {
   padding: 10px 15px;
   display: none; /* Initially hidden */
-  font-size: 14px;
-  line-height: 1.5;
-  border-top: 1px solid #ddd; /* Separate question and answer */
+  color: #333333;
 }
 
-/* Importing Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-/* General Body Styling */
-body {
-  font-family: 'Roboto', sans-serif;
-  background-color: #F7F5F2; /* Light beige */
-  color: #000000; /* Black text */
-  margin: 0;
-  padding: 0;
-  line-height: 1.5;
-}
-
-/* Page Content Wrapper */
-#content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #ffffff; /* White content background */
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Headings */
-h1 {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-h2 {
-  font-size: 24px;
-  font-weight: 500;
-  margin-bottom: 15px;
-  color: #6699CC; /* Muted blue accent */
-}
-
-h3 {
-  font-size: 18px;
-  font-weight: 400;
-  margin-bottom: 10px;
-}
-
-/* Paragraph Text */
-p {
-  font-size: 16px;
-  font-weight: 400;
-  margin-bottom: 10px;
-}
-
-/* Result Cards */
+/* Results Section - Card Design */
 .result-card {
-  background: #ffffff;
+  background-color: #ffffff; /* White card */
   padding: 20px;
-  margin-bottom: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .result-card h3 {
-  margin-bottom: 5px;
-  font-size: 18px;
-  font-weight: 500;
+  margin-top: 0;
+  color: #333333;
 }
 
-.result-card .keywords {
+.result-card p {
+  margin-bottom: 10px;
+}
+
+.result-card .response-text {
+  display: none;
   margin-top: 10px;
-  font-size: 14px;
-  color: #A9C18C; /* Muted green */
-}
-
-.result-card .keywords .tag {
-  display: inline-block;
-  background: #e0e0e0;
-  color: #000;
-  padding: 2px 8px;
-  margin: 0 5px 0 0;
+  padding: 10px;
+  background-color: #f9f9f9; /* Light gray background for responses */
+  border-left: 4px solid #a9c18c; /* Green accent */
   border-radius: 4px;
 }
 
-/* Buttons */
-button {
-  display: inline-block;
-  background-color: #6699CC; /* Muted blue */
-  color: #000000; /* Black text */
-  border: none;
-  border-radius: 4px;
-  padding: 10px 15px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #5577AA; /* Darker blue */
-}
-
-button:active {
-  background-color: #88AACC; /* Lighter blue */
-}
-
-/* Toggle Response */
+/* Toggle Button for Responses */
 .toggle-response {
-  margin-top: 10px;
-  font-weight: 500;
-  text-decoration: underline;
-  cursor: pointer;
   background: none;
   border: none;
-  padding: 0;
+  color: #000000; /* Black text */
   font-size: 14px;
-  color: #6699CC;
-}
-
-.response-text {
-  margin-top: 10px;
-  display: none; /* Initially hidden */
-  padding: 10px;
-  background-color: #F7F5F2; /* Light beige */
-  border-left: 4px solid #6699CC; /* Muted blue accent */
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-/* Restart Button */
-.restart-button {
-  display: block;
-  margin: 20px auto 0;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  background-color: #A9C18C; /* Muted green */
-  color: #000000;
-  border: none;
-  border-radius: 6px;
+  text-decoration: underline;
   cursor: pointer;
 }
 
-.restart-button:hover {
-  background-color: #88A87B; /* Slightly darker green */
-}
-
-/* Error Message */
-.error {
-  color: #CC6666; /* Muted red */
-  font-weight: 500;
-  margin-top: 10px;
+/* Tags (if included in results) */
+.tag {
+  display: inline-block;
+  background-color: #e0e0e0; /* Light gray tag */
+  color: #333333;
+  padding: 4px 8px;
+  margin-right: 5px;
   font-size: 14px;
+  border-radius: 4px;
 }
 
-/* Alignments */
-ul {
-  padding-left: 20px;
-}
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 28px;
+  }
 
-li {
-  margin-bottom: 5px;
-}
+  h2 {
+    font-size: 22px;
+  }
 
+  h3 {
+    font-size: 18px;
+  }
+
+  p, textarea, button {
+    font-size: 14px;
+  }
+
+  .restart-button {
+    font-size: 16px;
+    padding: 10px 15px;
+  }
+}
