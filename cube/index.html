@@ -36,6 +36,8 @@
           </div>
         </div>
       </div>
+      <!-- Button for FAQ Section -->
+      <button id="faqButton" class="faq-button">Return to Top</button>
     </div>
 
   </div>
@@ -50,6 +52,12 @@
           const answer = question.nextElementSibling;
           answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
         });
+      });
+
+      // Scroll to Top Button
+      const faqButton = document.getElementById('faqButton');
+      faqButton.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
   </script>
