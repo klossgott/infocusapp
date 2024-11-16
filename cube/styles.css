@@ -2,23 +2,30 @@
 body {
   font-family: 'Roboto', sans-serif;
   margin: 20px;
-  background-color: #f4f4f4; /* Subtle background for contrast */
-  color: #333; /* Standardized font color for readability */
+  background-color: #e8e5de; /* Updated background color */
+  color: black; /* Ensure text is black */
 }
 
-/* Main Content Container */
+/* Main Content */
 #content {
   max-width: 800px;
   margin: 0 auto;
-  background-color: #ffffff; /* White background to isolate content */
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
-  border-radius: 8px;
 }
 
-/* FAQ Section Styles */
+/* Cover Section */
+#cover-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.note {
+  font-size: 14px;
+  color: black;
+}
+
+/* FAQ Section */
 #faq-container {
-  display: block; /* FAQ is visible by default */
+  display: block;
   margin-top: 20px;
 }
 
@@ -26,189 +33,105 @@ body {
   margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: #fafafa; /* Soft background for FAQ */
+  background-color: #f9f9f9;
 }
 
 .faq-question {
   background-color: #f0f0f0;
-  padding: 10px 15px;
+  padding: 10px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
 }
 
 .faq-question:hover {
-  background-color: #e0e0e0; /* Highlight on hover */
+  background-color: #e0e0e0;
 }
 
 .faq-answer {
-  padding: 10px 15px;
-  display: none; /* Initially hidden */
+  display: none;
+  padding: 10px;
   font-size: 14px;
-  line-height: 1.5;
-  border-top: 1px solid #ddd; /* Separate question and answer */
 }
 
 /* Question Styles */
-.question p {
-  font-size: 16px;
-  line-height: 1.5;
-  margin-bottom: 15px;
+.question-container {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  margin-bottom: 20px;
 }
 
-/* Textarea for User Input */
-textarea {
+.response-input {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
+  margin-top: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  resize: vertical; /* Allow resizing vertically only */
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Add slight depth */
 }
 
-/* Button Styles */
-button {
+.next-button {
+  background-color: #007bff;
+  color: white;
   padding: 10px 20px;
-  font-size: 16px;
-  margin-top: 20px;
-  background-color: #007bff; /* Primary button color */
-  color: white; /* Ensure contrast */
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #0056b3; /* Darken on hover */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+.next-button:hover {
+  background-color: #0056b3;
+}
+
+/* Result Cards */
+.result-card {
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.result-card h3 {
+  margin: 0 0 10px;
+}
+
+.result-card .toggle-response {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.response-text {
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #007bff;
+}
+
+/* Buttons */
+button {
+  font-size: 16px;
+  margin-top: 20px;
 }
 
 .restart-button {
   display: block;
   margin: 30px auto 0;
-  padding: 12px 20px;
-  font-size: 18px;
-  font-weight: bold;
-  background-color: #6699cc; /* Muted blue */
-  color: #ffffff; /* White text */
+  padding: 10px 20px;
+  background-color: #6699cc;
+  color: white;
   border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
-  text-align: center;
 }
 
 .restart-button:hover {
-  background-color: #5577aa; /* Darker blue */
-}
-
-/* Response Block */
-.response {
-  background-color: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  border: 1px solid #e1e1e1; /* Light border for clarity */
-}
-
-.response h3 {
-  margin-top: 0;
-  font-size: 18px;
-  color: #444; /* Differentiate titles from body text */
-}
-
-.response p {
-  margin-bottom: 10px;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* Card Styles for Results */
-.result-card {
-  background-color: #ffffff; /* White card */
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for distinction */
-}
-
-.result-card h3 {
-  margin-top: 0;
-  font-size: 20px;
-  color: #333333;
-}
-
-.result-card p {
-  margin-bottom: 10px;
-}
-
-.result-card .response-text {
-  display: none;
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f9f9f9; /* Light gray for response block */
-  border-left: 4px solid #a9c18c; /* Green accent */
-  border-radius: 4px;
-}
-
-.toggle-response {
-  background: none;
-  border: none;
-  color: #007bff; /* Blue for interactivity */
-  font-size: 14px;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* Conclusion Block */
-.conclusion {
-  font-style: italic;
-  text-align: center;
-  margin-top: 30px;
-  padding: 10px;
-  background-color: #e9e9e9;
-  border-radius: 5px;
-  color: #555; /* Add contrast for legibility */
-}
-
-/* Note Text */
-p.note {
-  font-size: 12px;
-  color: #777;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  body {
-    padding: 10px;
-  }
-
-  #content {
-    padding: 15px;
-  }
-
-  h1 {
-    font-size: 28px;
-  }
-
-  h2 {
-    font-size: 22px;
-  }
-
-  h3 {
-    font-size: 18px;
-  }
-
-  p, textarea, button {
-    font-size: 14px;
-  }
-
-  .restart-button {
-    font-size: 16px;
-    padding: 10px 15px;
-  }
+  background-color: #5577aa;
 }
