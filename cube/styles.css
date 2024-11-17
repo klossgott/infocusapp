@@ -77,6 +77,7 @@ body {
   border-radius: 5px;
   background-color: #ffffff;
   margin-bottom: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Card effect */
 }
 
 .response-input {
@@ -86,6 +87,7 @@ body {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  resize: vertical; /* Enable vertical resizing */
 }
 
 /* Result Cards */
@@ -117,12 +119,12 @@ body {
 
 /* Response Text Container */
 .response-text {
-  max-height: 0; /* Initially collapsed */
-  overflow: hidden; /* Hide overflow content */
-  transition: max-height 0.3s ease; /* Smooth expand/collapse */
-  padding: 0 15px; /* Add consistent padding when expanded */
-  background-color: #f9f9f9;
-  border-left: 4px solid #007bff;
+  max-height: 0; /* Start collapsed */
+  overflow: hidden; /* Hide content overflow */
+  transition: max-height 0.3s ease-out; /* Smooth collapse/expand */
+  padding: 0 15px; /* Padding for expanded content */
+  background-color: #f9f9f9; /* Subtle background */
+  border-left: 4px solid #007bff; /* Visual indicator for expanded section */
   border-radius: 5px;
   margin-top: 10px;
 }
@@ -132,5 +134,5 @@ body {
 }
 
 .hidden {
-  max-height: 0; /* Keep hidden content collapsed */
+  max-height: 0; /* Keep collapsed content hidden */
 }
