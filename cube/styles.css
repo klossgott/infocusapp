@@ -23,18 +23,20 @@ body {
   color: black;
 }
 
-.start-button {
+/* Button Styles */
+.button {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  background-color: #b5b1a8; /* 30% darker shade */
+  color: black;
   border: none;
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.start-button:hover {
-  background-color: #0056b3;
+.button:hover {
+  background-color: #8e8b82; /* Slightly darker */
 }
 
 /* FAQ Section */
@@ -68,23 +70,6 @@ body {
   font-size: 14px;
 }
 
-/* FAQ Return Button */
-.faq-button {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.faq-button:hover {
-  background-color: #218838;
-}
-
 /* Question Container */
 .question-container {
   border: 1px solid #ddd;
@@ -96,25 +81,11 @@ body {
 
 .response-input {
   width: 100%;
-  height: 120px; /* Larger input box */
+  height: auto; /* Allow dynamic height */
   font-size: 16px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-}
-
-.next-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.next-button:hover {
-  background-color: #0056b3;
 }
 
 /* Result Cards */
