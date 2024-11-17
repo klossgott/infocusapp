@@ -147,9 +147,9 @@ body {
 /* Response Text Container */
 .response-text {
   max-height: 0; /* Initially collapsed */
-  overflow: hidden;
+  overflow: hidden; /* Hide overflow content */
   transition: max-height 0.3s ease; /* Smooth expand/collapse */
-  padding: 0 15px; /* Consistent padding when expanded */
+  padding: 0 15px; /* Add consistent padding when expanded */
   background-color: #f9f9f9;
   border-left: 4px solid #007bff;
   border-radius: 5px;
@@ -157,9 +157,9 @@ body {
 }
 
 .response-text p {
-  margin: 10px 0; /* Consistent spacing for text */
+  margin: 10px 0;
 }
 
 .hidden {
-  max-height: 0; /* Ensure hidden content remains collapsed */
+  max-height: 0; /* Keep hidden content collapsed */
 }
