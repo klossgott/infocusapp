@@ -39,35 +39,41 @@ body {
   background-color: #8e8b82; /* Slightly darker */
 }
 
-/* FAQ Section */
-#faq-container {
-  display: block;
-  margin-top: 20px;
-}
-
-.faq-section {
+/* FAQ Section and Interpretation Section */
+.faq-section,
+.response-section {
   margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
   background-color: #f9f9f9;
 }
 
-.faq-question {
+.faq-question,
+.response-heading {
   background-color: #f0f0f0;
   padding: 10px;
   cursor: pointer;
-  font-weight: bold;
+  font-style: italic; /* Regular italic for headings */
   transition: background-color 0.3s ease;
 }
 
-.faq-question:hover {
-  background-color: #e0e0e0;
+.faq-question:hover,
+.response-heading:hover {
+  background-color: #e0e0e0; /* Highlight on hover */
 }
 
-.faq-answer {
-  display: none;
-  padding: 10px;
+.faq-answer,
+.response-text {
+  display: none; /* Initially hidden */
+  padding: 10px 15px;
+  font-style: italic; /* Italics for the content */
   font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Toggle visibility styles */
+.response-section.open .response-text {
+  display: block; /* Show content when open */
 }
 
 /* Question Container */
@@ -88,51 +94,4 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
   resize: vertical; /* Enable vertical resizing */
-}
-
-/* Result Cards */
-.result-card {
-  background-color: #ffffff;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.result-card h3 {
-  margin: 0 0 10px;
-}
-
-.result-card .toggle-response {
-  background: none;
-  border: none;
-  color: #007bff;
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 10px;
-}
-
-.toggle-response:hover {
-  color: #0056b3;
-}
-
-/* Response Text Container */
-.response-text {
-  max-height: 0; /* Start collapsed */
-  overflow: hidden; /* Hide content overflow */
-  transition: max-height 0.3s ease-out; /* Smooth collapse/expand */
-  padding: 0 15px; /* Padding for expanded content */
-  background-color: #f9f9f9; /* Subtle background */
-  border-left: 4px solid #007bff; /* Visual indicator for expanded section */
-  border-radius: 5px;
-  margin-top: 10px;
-}
-
-.response-text p {
-  margin: 10px 0;
-}
-
-.hidden {
-  max-height: 0; /* Keep collapsed content hidden */
 }
