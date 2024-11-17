@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 let currentQuestionIndex = 0;
 let responses = {};
 
+// Prompts for the questions
 const prompts = [
   {
     key: 'field',
@@ -58,6 +59,7 @@ const prompts = [
   }
 ];
 
+// Meanings associated with each element
 const elementMeanings = {
   field: 'your worldview and state of mind',
   cube: 'yourself',
@@ -67,6 +69,7 @@ const elementMeanings = {
   storm: 'your challenges or difficulties'
 };
 
+// Initialize the app
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
 
@@ -78,6 +81,7 @@ function initializeApp() {
   });
 }
 
+// Start the test
 function startTest() {
   currentQuestionIndex = 0;
   responses = {};
@@ -87,6 +91,7 @@ function startTest() {
   document.getElementById('faq-container').style.display = 'none';
 }
 
+// Load a question
 function loadQuestion() {
   if (currentQuestionIndex >= prompts.length) {
     displayResults();
@@ -104,6 +109,7 @@ function loadQuestion() {
   document.getElementById('next').addEventListener('click', saveResponse);
 }
 
+// Save a response
 function saveResponse() {
   const response = document.getElementById('response').value.trim();
   if (!response) {
@@ -115,6 +121,7 @@ function saveResponse() {
   loadQuestion();
 }
 
+// Display results with interpretations
 function displayResults() {
   const app = document.getElementById('app');
   app.innerHTML = '<h2>Interpretation</h2>';
@@ -142,19 +149,28 @@ function displayResults() {
   document.getElementById('restart').addEventListener('click', restartTest);
 }
 
+// Toggle responses in results
 function setupResponseToggles() {
   document.querySelectorAll('.toggle-response').forEach(button => {
     button.addEventListener('click', () => {
-      const responseText = button.nextElementSibling;
+      const responseText = button.nextElementSibling; // The .response-text element
+
       if (responseText.classList.contains('hidden')) {
+        // Collapse all other responses first
         document.querySelectorAll('.response-text').forEach(el => {
           el.classList.add('hidden');
           el.style.maxHeight = '0';
         });
+        document.querySelectorAll('.toggle-response').forEach(btn => {
+          btn.textContent = 'Your response ▼';
+        });
+
+        // Expand the selected response
         responseText.classList.remove('hidden');
         responseText.style.maxHeight = responseText.scrollHeight + 'px';
         button.textContent = 'Your response ▲';
       } else {
+        // Collapse the selected response
         responseText.classList.add('hidden');
         responseText.style.maxHeight = '0';
         button.textContent = 'Your response ▼';
@@ -163,6 +179,7 @@ function setupResponseToggles() {
   });
 }
 
+// Generate interpretation based on user input
 function generateInterpretation(key, userInput) {
   const lowerInput = userInput.toLowerCase();
   const keywords = {
@@ -218,13 +235,15 @@ function generateInterpretation(key, userInput) {
   return interpretations[key]?.[matchKey] || '<li>Your description is unique. Reflect on its meaning.</li>';
 }
 
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
+// Restart the test
 function restartTest() {
   responses = {};
   document.getElementById('cover-container').style.display = 'block';
   document.getElementById('app').innerHTML = '';
   document.getElementById('faq-container').style.display = 'block';
+}
+
+// Capitalize first letter of a word
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
 }
