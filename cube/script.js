@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 let currentQuestionIndex = 0;
 let responses = {};
 
-// Prompts for the Test
 const prompts = [
   {
     key: 'field',
@@ -59,7 +58,6 @@ const prompts = [
   }
 ];
 
-// Element Meanings
 const elementMeanings = {
   field: 'your worldview and state of mind',
   cube: 'yourself',
@@ -69,14 +67,12 @@ const elementMeanings = {
   storm: 'your challenges or difficulties'
 };
 
-// Initialize the App
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
   document.getElementById('cover-container').style.display = 'block';
   document.getElementById('faq-container').style.display = 'block';
 }
 
-// Start the Test
 function startTest() {
   currentQuestionIndex = 0;
   responses = {};
@@ -86,13 +82,11 @@ function startTest() {
   document.getElementById('faq-container').style.display = 'none';
 }
 
-// Load the Current Question
 function loadQuestion() {
   if (currentQuestionIndex >= prompts.length) {
     displayResults();
     return;
   }
-
   const question = prompts[currentQuestionIndex];
   const app = document.getElementById('app');
   app.innerHTML = `
@@ -104,7 +98,6 @@ function loadQuestion() {
   document.getElementById('next').addEventListener('click', saveResponse);
 }
 
-// Save the User's Response
 function saveResponse() {
   const response = document.getElementById('response').value.trim();
   if (!response) {
@@ -116,7 +109,6 @@ function saveResponse() {
   loadQuestion();
 }
 
-// Display Results
 function displayResults() {
   const app = document.getElementById('app');
   app.innerHTML = '<h2>Interpretation</h2>';
@@ -129,25 +121,39 @@ function displayResults() {
     card.className = 'result-card';
     card.innerHTML = `
       <h3>The <strong>${capitalize(key)}</strong> represents ${elementMeanings[key]}.</h3>
-      <ul>${interpretation}</ul>
-      <button class="toggle-response">Your response</button>
-      <div class="response-text" style="display: none;">
+      <ul class="interpretation-list">${interpretation}</ul>
+      <button class="toggle-response">Your response ▼</button>
+      <div class="response-text hidden">
         <p>${userResponse}</p>
       </div>`;
-    app.appendChild(card);
 
-    const toggleButton = card.querySelector('.toggle-response');
-    const responseText = card.querySelector('.response-text');
-    toggleButton.addEventListener('click', () => {
-      responseText.style.display = responseText.style.display === 'block' ? 'none' : 'block';
-    });
+    app.appendChild(card);
   });
+
+  setupResponseToggles();
 
   app.innerHTML += `<button id="restart" class="restart-button">Retake the Test</button>`;
   document.getElementById('restart').addEventListener('click', initializeApp);
 }
 
-// Generate Interpretation for a Response
+function setupResponseToggles() {
+  const responseToggles = document.querySelectorAll('.toggle-response');
+  responseToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const responseText = toggle.nextElementSibling;
+      if (responseText.classList.contains('hidden')) {
+        responseText.classList.remove('hidden');
+        responseText.style.maxHeight = responseText.scrollHeight + 'px';
+        toggle.textContent = 'Your response ▲';
+      } else {
+        responseText.classList.add('hidden');
+        responseText.style.maxHeight = '0';
+        toggle.textContent = 'Your response ▼';
+      }
+    });
+  });
+}
+
 function generateInterpretation(key, userInput) {
   const lowerInput = userInput.toLowerCase();
   const keywords = {
@@ -203,7 +209,6 @@ function generateInterpretation(key, userInput) {
   return interpretations[key]?.[matchKey] || '<li>Your description is unique. Reflect on its meaning.</li>';
 }
 
-// Capitalize the First Letter of a Word
 function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
