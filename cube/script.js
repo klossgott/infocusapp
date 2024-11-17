@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 let currentQuestionIndex = 0;
 let responses = {};
 
-// Prompts and their corresponding keys
+// Prompts for questions
 const prompts = [
   { key: 'field', prompt: `<strong>Imagine an open field...</strong>` },
   { key: 'cube', prompt: `<strong>There is a cube...</strong>` },
@@ -23,44 +23,50 @@ const elementMeanings = {
   storm: 'your challenges or difficulties'
 };
 
-// Keywords and interpretations
+// Keywords for interpretations
 const interpretationKeys = {
   field: [
-    { keywords: ['large', 'vast'], meaning: 'You have an expansive worldview.' },
-    { keywords: ['small', 'enclosed'], meaning: 'You may feel restricted or introverted.' },
-    { keywords: ['barren', 'dry'], meaning: 'You may feel uninspired or emotionally dry.' },
-    { keywords: ['lush', 'green'], meaning: 'You are feeling optimistic and energized.' }
+    { keywords: ['large', 'vast', 'open'], meaning: 'You have an expansive worldview and an open mind.' },
+    { keywords: ['small', 'enclosed', 'limited'], meaning: 'You may feel restricted or introverted.' },
+    { keywords: ['barren', 'dry', 'desolate'], meaning: 'You may feel uninspired or emotionally dry.' },
+    { keywords: ['lush', 'green', 'healthy'], meaning: 'You are feeling optimistic and energized.' }
   ],
   cube: [
     { keywords: ['large', 'big'], meaning: 'You have a strong sense of self and confidence.' },
     { keywords: ['small', 'tiny'], meaning: 'You may feel reserved or unsure of yourself.' },
     { keywords: ['transparent', 'glass'], meaning: 'You value honesty and openness.' },
-    { keywords: ['solid', 'opaque'], meaning: 'You may prefer privacy and introspection.' }
+    { keywords: ['solid', 'opaque'], meaning: 'You may prefer privacy and introspection.' },
+    { keywords: ['gold', 'precious'], meaning: 'You hold yourself in high esteem and see value in yourself.' }
   ],
   ladder: [
     { keywords: ['close', 'near'], meaning: 'You have strong, supportive friendships.' },
     { keywords: ['far', 'distant'], meaning: 'You may feel disconnected from your friends.' },
     { keywords: ['strong', 'sturdy'], meaning: 'You rely on a solid support network.' },
-    { keywords: ['weak', 'rickety'], meaning: 'Your friendships may feel uncertain.' }
+    { keywords: ['weak', 'rickety'], meaning: 'Your friendships may feel uncertain or unreliable.' }
   ],
   horse: [
     { keywords: ['white', 'pure'], meaning: 'You value purity and honesty in a partner.' },
     { keywords: ['brown', 'reliable'], meaning: 'You value stability and dependability in relationships.' },
-    { keywords: ['black', 'mysterious'], meaning: 'You are drawn to mystery and passion in love.' }
+    { keywords: ['black', 'mysterious'], meaning: 'You are drawn to mystery and passion in love.' },
+    { keywords: ['calm', 'peaceful'], meaning: 'You desire stability and serenity in your partner.' },
+    { keywords: ['energetic', 'playful'], meaning: 'You are attracted to excitement and adventure in relationships.' }
   ],
   flowers: [
     { keywords: ['many', 'abundant'], meaning: 'You have abundant creativity or a nurturing nature.' },
     { keywords: ['few', 'scarce'], meaning: 'You may feel creatively blocked or distant.' },
-    { keywords: ['colorful', 'vivid'], meaning: 'You are full of life and inspiration.' }
+    { keywords: ['colorful', 'vivid'], meaning: 'You are full of life and inspiration.' },
+    { keywords: ['wilted', 'dry'], meaning: 'You may feel creatively drained or uninspired.' }
   ],
   storm: [
     { keywords: ['close', 'near'], meaning: 'Challenges feel immediate and intense for you.' },
     { keywords: ['distant', 'far'], meaning: 'You handle difficulties with perspective.' },
-    { keywords: ['intense', 'powerful'], meaning: 'You are facing significant challenges.' },
-    { keywords: ['small', 'weak'], meaning: 'Your challenges feel manageable.' }
+    { keywords: ['intense', 'powerful'], meaning: 'You are facing significant challenges in your life.' },
+    { keywords: ['small', 'weak'], meaning: 'Your challenges feel manageable or insignificant.' },
+    { keywords: ['passing', 'temporary'], meaning: 'You see your difficulties as temporary and fleeting.' }
   ]
 };
 
+// Initialize the app
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
 }
@@ -118,7 +124,7 @@ function displayResults() {
       <div class="response-section">
         <div class="response-heading">Your Response</div>
         <div class="response-text" style="display: none;">
-          <p><strong>Original Response:</strong> <em>${userResponse}</em></p>
+          <p><strong>Your Answer:</strong> <em>${userResponse}</em></p>
           <p><strong>Interpretation:</strong> ${interpretation}</p>
         </div>
       </div>`;
@@ -146,7 +152,7 @@ function generateInterpretation(key, userInput) {
   return 'Your response is unique. Reflect on its meaning.';
 }
 
-// Setup toggle functionality for interpretation section
+// Setup toggle functionality for the interpretation section
 function setupResponseToggles() {
   document.querySelectorAll('.response-heading').forEach(heading => {
     heading.addEventListener('click', () => {
