@@ -72,13 +72,6 @@ const elementMeanings = {
 // Initialize the app
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
-
-  // Shortcut Key: Alt + Shift + T
-  document.addEventListener('keydown', (event) => {
-    if (event.altKey && event.shiftKey && event.code === 'KeyT') {
-      displayResults();
-    }
-  });
 }
 
 // Start the test
@@ -130,17 +123,16 @@ function displayResults() {
     const userResponse = responses[key];
     const interpretation = generateInterpretation(key, userResponse);
 
-    const card = document.createElement('div');
-    card.className = 'result-card';
-    card.innerHTML = `
-      <h3>The <strong>${capitalize(key)}</strong> represents ${elementMeanings[key]}.</h3>
-      <ul class="interpretation-list">${interpretation}</ul>
-      <button class="toggle-response">Your response ▼</button>
-      <div class="response-text hidden">
-        <p>${userResponse}</p>
+    const card = `
+      <div class="result-card">
+        <h3>The <strong>${capitalize(key)}</strong> represents ${elementMeanings[key]}.</h3>
+        <ul class="interpretation-list">${interpretation}</ul>
+        <button class="toggle-response">Your response ▼</button>
+        <div class="response-text hidden">
+          <p>${userResponse}</p>
+        </div>
       </div>`;
-
-    app.appendChild(card);
+    app.insertAdjacentHTML('beforeend', card);
   });
 
   setupResponseToggles();
@@ -149,31 +141,26 @@ function displayResults() {
   document.getElementById('restart').addEventListener('click', restartTest);
 }
 
-// Toggle responses in results
+// Setup toggle functionality for responses
 function setupResponseToggles() {
   document.querySelectorAll('.toggle-response').forEach(button => {
     button.addEventListener('click', () => {
-      const responseText = button.nextElementSibling; // The .response-text element
+      const responseText = button.nextElementSibling; // .response-text element
 
-      if (responseText.classList.contains('hidden')) {
-        // Collapse all other responses first
+      // Toggle visibility
+      if (responseText.style.display === 'block') {
+        responseText.style.display = 'none';
+        button.textContent = 'Your response ▼';
+      } else {
         document.querySelectorAll('.response-text').forEach(el => {
-          el.classList.add('hidden');
-          el.style.maxHeight = '0';
+          el.style.display = 'none';
         });
         document.querySelectorAll('.toggle-response').forEach(btn => {
           btn.textContent = 'Your response ▼';
         });
 
-        // Expand the selected response
-        responseText.classList.remove('hidden');
-        responseText.style.maxHeight = responseText.scrollHeight + 'px';
+        responseText.style.display = 'block';
         button.textContent = 'Your response ▲';
-      } else {
-        // Collapse the selected response
-        responseText.classList.add('hidden');
-        responseText.style.maxHeight = '0';
-        button.textContent = 'Your response ▼';
       }
     });
   });
