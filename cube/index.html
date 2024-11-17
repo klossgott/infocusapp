@@ -1,64 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Cube Personality Test</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cube Personality Test</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+            background-color: #e8e5de;
+            color: black;
+            line-height: 1.6;
+        }
+
+        #content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        #cover-container {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .note {
+            font-size: 14px;
+            color: #666;
+            margin: 20px 0;
+        }
+
+        .button {
+            padding: 12px 24px;
+            background-color: #b5b1a8;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px 0;
+        }
+
+        .button:hover {
+            background-color: #8e8b82;
+        }
+
+        .faq-section, .response-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background-color: #f5f5f5;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: #e0e0e0;
+        }
+
+        .faq-answer {
+            padding: 15px;
+            font-size: 15px;
+            line-height: 1.6;
+            border-top: 1px solid #eee;
+        }
+
+        .question-container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .response-input {
+            width: 100%;
+            min-height: 100px;
+            font-size: 16px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            margin: 15px 0;
+            font-family: inherit;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .interpretation-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .interpretation-points {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .interpretation-points ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .interpretation-points li {
+            margin: 5px 0;
+        }
+
+        .response-heading {
+            background-color: #f5f5f5;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .response-heading:hover {
+            background-color: #e0e0e0;
+        }
+
+        .response-text {
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
-  <div id="content">
+    <div id="content">
+        <div id="cover-container">
+            <h1>The Cube Personality Test</h1>
+            <p class="note">Note: This test is for entertainment and self-reflection purposes only. Your responses are processed locally and are not stored or transmitted.</p>
+            <button id="startTest" class="button">Start Test</button>
+        </div>
 
-    <!-- Cover Section -->
-    <div id="cover-container">
-      <h1>The Cube Personality Test</h1>
-      <p class="note">Note: This test is for entertainment and self-reflection purposes only. Your responses are processed locally and are not stored or transmitted.</p>
-      <button id="startTest" class="button">Start Test</button>
+        <div id="app"></div>
+
+        <div id="faq-container">
+            <h2>The Cube FAQ</h2>
+            <div id="faq">
+                <div class="faq-section">
+                    <div class="faq-question">What is The Cube?</div>
+                    <div class="faq-answer hidden">
+                        <p>The Cube is an imagination game and a tool for self-discovery. It involves visualizing elements like a cube, ladder, horse, flowers, and storm in a field. Each element represents different aspects of your life.</p>
+                    </div>
+                </div>
+                <div class="faq-section">
+                    <div class="faq-question">How do I play The Cube?</div>
+                    <div class="faq-answer hidden">
+                        <p>Relax and imagine each element as described. Answer honestly and reflect on your responses.</p>
+                    </div>
+                </div>
+                <div class="faq-section">
+                    <div class="faq-question">What do the interpretations mean?</div>
+                    <div class="faq-answer hidden">
+                        <p>The interpretations provide insights into your subconscious mind. They are subjective and based on common symbolic meanings associated with each element.</p>
+                    </div>
+                </div>
+            </div>
+            <button id="faqButton" class="button">Return to Top</button>
+        </div>
     </div>
 
-    <!-- App Section -->
-    <div id="app"></div>
+    <script>
+        class QuestionManager {
+            constructor() {
+                this.questionGuides = {
+                    field: [
+                        "How big is this field?",
+                        "What is in it?",
+                        "What are the surroundings like?"
+                    ],
+                    cube: [
+                        "How big is the cube?",
+                        "What is it made of?",
+                        "What is its texture?",
+                        "What color is it?",
+                        "Where is it in the field?"
+                    ],
+                    ladder: [
+                        "What is it made of?",
+                        "How big is it?",
+                        "Where is it in relation to the cube?",
+                        "What condition is it in?"
+                    ],
+                    horse: [
+                        "What colour is it?",
+                        "What is it doing?",
+                        "Where is it in relation to the cube and the ladder?"
+                    ],
+                    flowers: [
+                        "What kind of flowers are they?",
+                        "How many flowers are there?",
+                        "What colours are they?"
+                    ],
+                    weather: [
+                        "What is the weather like in the field?",
+                        "What do you see in the sky?",
+                        "What is the temperature?",
+                        "How is the visibility?"
+                    ],
+                    storm: [
+                        "What is the distance between the storm and the cube?",
+                        "Is it a big storm or a small storm?",
+                        "Is it passing through or staying?",
+                        "How does it affect the field?"
+                    ]
+                };
 
-    <!-- FAQ Section -->
-    <div id="faq-container">
-      <h2>The Cube FAQ</h2>
-      <div id="faq">
-        <div class="faq-section">
-          <div class="faq-question">What is The Cube?</div>
-          <div class="faq-answer">
-            <p>The Cube is an imagination game and a tool for self-discovery. It involves visualizing elements like a cube, ladder, horse, flowers, and storm in a field...</p>
-          </div>
-        </div>
-        <div class="faq-section">
-          <div class="faq-question">How do I play The Cube?</div>
-          <div class="faq-answer">
-            <p>Relax and imagine each element as described. Answer honestly and reflect on your responses.</p>
-          </div>
-        </div>
-      </div>
-      <button id="faqButton" class="button">Return to Top</button>
-    </div>
+                this.explorationQuestions = [
+                    "What does the [element] add to the scene?",
+                    "What is the first word that comes to mind when you think about the [element]?",
+                    "How do you feel about this [element]?",
+                    "What stands out to you about this [element]?",
+                    "How does this [element] fit into the scene?",
+                    "What is the relationship between the [element] and its surroundings?",
+                    "If the [element] could move, where would it go in the scene?",
+                    "Imagine the [element] is removed. How does that change the scene?"
+                ];
 
-  </div>
+                this.remainingQuestions = {};
+                this.remainingExplorationQuestions = [...this.explorationQuestions];
+                
+                // Initialize remaining questions for each element
+                Object.keys(this.questionGuides).forEach(element => {
+                    this.remainingQuestions[element] = [...this.questionGuides[element]];
+                });
+            }
 
-  <script>
-    // FAQ Toggle Functionality
-    document.addEventListener('DOMContentLoaded', () => {
-      const faqQuestions = document.querySelectorAll('.faq-question');
-      faqQuestions.forEach(question => {
-        question.addEventListener('click', () => {
-          const answer = question.nextElementSibling;
-          answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
-        });
-      });
+            getQuestionsCount(element) {
+                const guidingCount = this.remainingQuestions[element]?.length || 0;
+                const explorationCount = this.remainingExplorationQuestions.length;
+                return {
+                    guiding: guidingCount,
+                    exploration: explorationCount
+                };
+            }
 
-      // Scroll to Top Button
-      const faqButton = document.getElementById('faqButton');
-      faqButton.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    });
-  </script>
-  <script src="script.js"></script>
+            getRandomQuestions(element) {
+                if (this.remainingQuestions[element]?.length > 0) {
+                    // Fisher-Yates shuffle for better randomness
+                    const array = [...this.remainingQuestions[element]];
+                    for (let i = array.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                    return {
+                        type: 'guiding',
+                        questions: array,
+                        count: array.length
+                    };
+                } else if (this.remainingExplorationQuestions.length > 0) {
+                    // Fisher-Yates shuffle for better randomness
+                    const array = [...this.remainingExplorationQuestions];
+                    for (let i = array.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                    return {
+                        type: 'exploration',
+                        questions: array.map(q => q.replace('[element]', element)),
+                        count: array.length
+                    };
+                }
+                return null;
+            }
+
+            useQuestion(element, questionIndex, type) {
+                if (type === 'guiding') {
+                    this.remainingQuestions[element].splice(questionIndex, 1);
+                } else {
+                    this.remainingExplorationQuestions.splice(questionIndex, 1);
+                }
+            }
+
+            reset() {
+                Object.keys(this.questionGuides).forEach(element => {
+                    this.remainingQuestions[element] = [...this.questionGuides[element]];
+                });
+                this.remainingExplorationQuestions = [...this.explorationQuestions];
+            }
+        }
+
+        let currentQuestionIndex = 0;
+        let responses = {};
+        const questionManager = new QuestionManager();
+
+        const prompts = [
+            { key: 'field', prompt: '<strong>Imagine an open field...</strong>' },
+            { key: 'cube', prompt: '<strong>There is a cube...</strong>' },
+            { key: 'ladder', prompt: '<strong>There is a ladder...</strong>' },
+            { key: 'horse', prompt: '<strong>There is a horse...</strong>' },
+            { key: 'flowers', prompt: '<strong>There are flowers...</strong>' },
+            { key: 'storm', prompt: '<strong>There is a storm...</strong>' }
+        ];
+
+        const elementMeanings = {
+            field: 'worldview and state of mind',
+            cube: 'self',
+            ladder: 'friends',
+            horse: 'ideal partner',
+            flowers: 'creativity or children',
+            storm: 'challenges or difficulties'
+        };
+
+        const interpretationKeys = {
+            field: [
+                { keywords: ['large', 'vast', 'open'], meaning: 'You have an expansive worldview and an open mind.' },
+                { keywords: ['small', 'enclosed', 'limited'], meaning: 'You may feel restricted or introverted.' },
+                { keywords: ['barren', 'dry', 'desolate'], meaning: 'You may feel uninspired or emotionally dry.' },
+                { keywords: ['lush', 'green', 'healthy'], meaning: 'You are feeling optimistic and energized.' }
+            ],
+            cube: [
+                { keywords: ['large', 'big'], meaning: 'You have a strong sense of self and confidence.' },
+                { keywords: ['small', 'tiny'], meaning: 'You may feel reserved or unsure of yourself.' },
+                { keywords: ['transparent', 'glass'], meaning: 'You value honesty and openness.' },
+                { keywords: ['solid', 'opaque'], meaning: 'You may prefer privacy and introspection.' },
+                { keywords: ['gold', 'precious'], meaning: 'You hold yourself in high esteem and see value in yourself.' }
+            ],
+            ladder: [
+                { keywords: ['close', 'near'], meaning: 'You have strong, supportive friendships.' },
+                { keywords: ['far', 'distant'], meaning: 'You may feel disconnected from your friends.' },
+                { keywords: ['strong', 'sturdy'], meaning: 'You rely on a solid support network.' },
+                { keywords: ['weak', 'rickety'], meaning: 'Your friendships may feel uncertain or unreliable.' }
+            ],
+            horse: [
+                { keywords: ['white', 'pure'], meaning: 'You value purity and honesty in a partner.' },
+                { keywords: ['brown', 'reliable'], meaning: 'You value stability and dependability in relationships.' },
+                { keywords: ['black', 'mysterious'], meaning: 'You are drawn to mystery and passion in love.' },
+                { keywords: ['calm', 'peaceful'], meaning: 'You desire stability and serenity in your partner.' },
+                { keywords: ['energetic', 'playful'], meaning: 'You are attracted to excitement and adventure in relationships.' }
+            ],
+            flowers: [
+                { keywords: ['many', 'abundant'], meaning: 'You have abundant creativity or a nurturing nature.' },
+                { keywords: ['few', 'scarce'], meaning: 'You may feel creatively blocked or distant.' },
+                { keywords: ['colorful', 'vivid'], meaning: 'You are full of life and inspiration.' },
+                { keywords: ['wilted', 'dry'], meaning: 'You may feel creatively drained or uninspired.' }
+            ],
+            storm: [
+                { keywords: ['close', 'near'], meaning: 'Challenges feel immediate and intense for you.' },
+                { keywords: ['distant', 'far'], meaning: 'You handle difficulties with perspective.' },
+                { keywords: ['intense', 'powerful'], meaning: 'You are facing significant challenges in your life.' },
+                { keywords: ['small', 'weak'], meaning: 'Your challenges feel manageable or insignificant.' },
+                { keywords: ['passing', 'temporary'], meaning: 'You see your difficulties as temporary and fleeting.' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        function initializeApp() {
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    answer.classList.toggle('hidden');
+                });
+            });
+
+            document.getElementById('startTest').addEventListener('click', startTest);
+            document.getElementById('faqButton').addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        function startTest() {
+            currentQuestionIndex = 0;
+            responses = {};
+            loadQuestion();
+
+            document.getElementById('cover-container').classList.add('hidden');
+            document.getElementById('faq-container').classList.add('hidden');
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= prompts.length) {
+                displayResults();
+                return;
+            }
+
+            const question = prompts[currentQuestionIndex];
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="question-container">
+                    ${question.prompt}
+                    <textarea id="response" class="response-input" 
+                        placeholder="Type your response here..." 
+                        aria-label="Your response"></textarea>
+                    <button id="next" class="button">Next</button>
+                    <div id="error-message" class="error-message hidden">Please provide a response.</div>
+                </div>`;
+            
+            document.getElementById('next').addEventListener('click', saveResponse);
+        }
+
+        function saveResponse() {
+            const response = document.getElementById('response').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            if (!response) {
+                errorMessage.classList.remove('hidden');
+                document.getElementById('response').focus();
+                return;
+            } else {
+                errorMessage.classList.add('hidden');
+            }
+            responses[prompts[currentQuestionIndex].key] = response;
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function displayResults() {
+            const app = document.getElementById('app');
+            app.innerHTML = '<h2>Interpretation</h2>';
+
+            Object.keys(responses).forEach(key => {
+                const userResponse = responses[key];
+                const meaning = elementMeanings[key];
+                const interpretation = generateInterpretation(key, userResponse);
+                const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
+
+                const section = `
+                    <div class="response-section">
+                        <div class="interpretation-header">
+                            The <strong>${capitalizedKey}</strong> represents your <strong>${meaning}</strong>.
+                        </div>
+                        <div class="interpretation-points">
+                            ${interpretation}
+                        </div>
+                        <div class="response-heading">Your Response</div>
+                        <div class="response-text hidden">
+                            <em>${userResponse}</em>
+                        </div>
+                    </div>`;
+                app.insertAdjacentHTML('beforeend', section);
+            });
+
+            setupResponseToggles();
+
+            app.insertAdjacentHTML('beforeend', 
+                '<button id="restart" class="button">Retake the Test</button>');
+            document.getElementById('restart').addEventListener('click', restartTest);
+        }
+
+        function generateInterpretation(key, userInput) {
+            const lowerInput = userInput.toLowerCase();
+            const interpretations = interpretationKeys[key];
+            let points = [];
+
+            if (interpretations) {
+                for (const { keywords, meaning } of interpretations) {
+                    if (keywords.some(keyword => lowerInput.includes(keyword))) {
+                        points.push(`<li>${meaning}</li>`);
+                    }
+                }
+            }
+
+            return points.length > 0 
+                ? `<ul>${points.join('')}</ul>` 
+                : '<ul><li>Your response is unique. Reflect on its meaning.</li></ul>';
+        }
+
+        function setupResponseToggles() {
+            document.querySelectorAll('.response-heading').forEach(heading => {
+                heading.addEventListener('click', () => {
+                    const responseText = heading.nextElementSibling;
+                    responseText.classList.toggle('hidden');
+                });
+            });
+        }
+
+        function restartTest() {
+            responses = {};
+            document.getElementById('cover-container').classList.remove('hidden');
+            document.getElementById('app').innerHTML = '';
+            document.getElementById('faq-container').classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
