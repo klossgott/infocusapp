@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 let currentQuestionIndex = 0;
 let responses = {};
 
+// Prompts and their corresponding keys
 const prompts = [
   { key: 'field', prompt: `<strong>Imagine an open field...</strong>` },
   { key: 'cube', prompt: `<strong>There is a cube...</strong>` },
@@ -12,6 +13,7 @@ const prompts = [
   { key: 'storm', prompt: `<strong>There is a storm...</strong>` }
 ];
 
+// Meanings for each element
 const elementMeanings = {
   field: 'your worldview and state of mind',
   cube: 'yourself',
@@ -21,12 +23,13 @@ const elementMeanings = {
   storm: 'your challenges or difficulties'
 };
 
+// Keywords and interpretations
 const interpretationKeys = {
   field: [
-    { keywords: ['large', 'vast', 'open'], meaning: 'You have an expansive worldview.' },
-    { keywords: ['small', 'closed', 'enclosed'], meaning: 'You may feel restricted or introverted.' },
+    { keywords: ['large', 'vast'], meaning: 'You have an expansive worldview.' },
+    { keywords: ['small', 'enclosed'], meaning: 'You may feel restricted or introverted.' },
     { keywords: ['barren', 'dry'], meaning: 'You may feel uninspired or emotionally dry.' },
-    { keywords: ['lush', 'green', 'healthy'], meaning: 'You are feeling optimistic and energized.' }
+    { keywords: ['lush', 'green'], meaning: 'You are feeling optimistic and energized.' }
   ],
   cube: [
     { keywords: ['large', 'big'], meaning: 'You have a strong sense of self and confidence.' },
@@ -58,6 +61,7 @@ const interpretationKeys = {
   ]
 };
 
+// Initialize the app
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
 }
@@ -102,7 +106,7 @@ function saveResponse() {
   loadQuestion();
 }
 
-// Display results with dynamic interpretations
+// Display results with interpretations
 function displayResults() {
   const app = document.getElementById('app');
   app.innerHTML = '<h2>Interpretation</h2>';
@@ -115,7 +119,8 @@ function displayResults() {
       <div class="response-section">
         <div class="response-heading">Your Response</div>
         <div class="response-text">
-          <p>${interpretation}</p>
+          <p><em>${userResponse}</em></p>
+          <p><strong>Interpretation:</strong> ${interpretation}</p>
         </div>
       </div>`;
     app.insertAdjacentHTML('beforeend', section);
@@ -148,6 +153,7 @@ function setupResponseToggles() {
     heading.addEventListener('click', () => {
       const responseText = heading.nextElementSibling;
 
+      // Toggle visibility
       if (responseText.style.display === 'block') {
         responseText.style.display = 'none';
       } else {
