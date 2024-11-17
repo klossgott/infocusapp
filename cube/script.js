@@ -69,8 +69,13 @@ const elementMeanings = {
 
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
-  document.getElementById('cover-container').style.display = 'block';
-  document.getElementById('faq-container').style.display = 'block';
+
+  // Add a secret shortcut key to skip to the interpretation section for testing
+  document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.shiftKey && event.code === 'KeyE') {
+      displayResults();
+    }
+  });
 }
 
 function startTest() {
@@ -87,6 +92,7 @@ function loadQuestion() {
     displayResults();
     return;
   }
+
   const question = prompts[currentQuestionIndex];
   const app = document.getElementById('app');
   app.innerHTML = `
@@ -111,7 +117,7 @@ function saveResponse() {
 
 function displayResults() {
   const app = document.getElementById('app');
-  app.innerHTML = '<h2>Interpretation</h2>';
+  app.innerHTML = '<h2>Interpretation</h2>'; // Main heading for results
 
   Object.keys(responses).forEach(key => {
     const userResponse = responses[key];
