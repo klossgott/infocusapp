@@ -61,7 +61,6 @@ const interpretationKeys = {
   ]
 };
 
-// Initialize the app
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
 }
@@ -118,8 +117,8 @@ function displayResults() {
     const section = `
       <div class="response-section">
         <div class="response-heading">Your Response</div>
-        <div class="response-text">
-          <p><em>${userResponse}</em></p>
+        <div class="response-text" style="display: none;">
+          <p><strong>Original Response:</strong> <em>${userResponse}</em></p>
           <p><strong>Interpretation:</strong> ${interpretation}</p>
         </div>
       </div>`;
