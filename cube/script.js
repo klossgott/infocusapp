@@ -70,9 +70,9 @@ const elementMeanings = {
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
 
-  // Add a secret shortcut key to skip to the interpretation section for testing
+  // Shortcut Key: Alt + Shift + T
   document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.shiftKey && event.code === 'KeyE') {
+    if (event.altKey && event.shiftKey && event.code === 'KeyT') {
       displayResults();
     }
   });
@@ -99,7 +99,7 @@ function loadQuestion() {
     <div class="question-container">
       ${question.prompt}
       <textarea id="response" class="response-input" placeholder="Type your response here..."></textarea>
-      <button id="next" class="next-button">Next</button>
+      <button id="next" class="button">Next</button>
     </div>`;
   document.getElementById('next').addEventListener('click', saveResponse);
 }
@@ -117,7 +117,7 @@ function saveResponse() {
 
 function displayResults() {
   const app = document.getElementById('app');
-  app.innerHTML = '<h2>Interpretation</h2>'; // Main heading for results
+  app.innerHTML = '<h2>Interpretation</h2>';
 
   Object.keys(responses).forEach(key => {
     const userResponse = responses[key];
@@ -138,23 +138,26 @@ function displayResults() {
 
   setupResponseToggles();
 
-  app.innerHTML += `<button id="restart" class="restart-button">Retake the Test</button>`;
-  document.getElementById('restart').addEventListener('click', initializeApp);
+  app.innerHTML += `<button id="restart" class="button">Retake the Test</button>`;
+  document.getElementById('restart').addEventListener('click', restartTest);
 }
 
 function setupResponseToggles() {
-  const responseToggles = document.querySelectorAll('.toggle-response');
-  responseToggles.forEach(toggle => {
-    toggle.addEventListener('click', () => {
-      const responseText = toggle.nextElementSibling;
+  document.querySelectorAll('.toggle-response').forEach(button => {
+    button.addEventListener('click', () => {
+      const responseText = button.nextElementSibling;
       if (responseText.classList.contains('hidden')) {
+        document.querySelectorAll('.response-text').forEach(el => {
+          el.classList.add('hidden');
+          el.style.maxHeight = '0';
+        });
         responseText.classList.remove('hidden');
         responseText.style.maxHeight = responseText.scrollHeight + 'px';
-        toggle.textContent = 'Your response ▲';
+        button.textContent = 'Your response ▲';
       } else {
         responseText.classList.add('hidden');
         responseText.style.maxHeight = '0';
-        toggle.textContent = 'Your response ▼';
+        button.textContent = 'Your response ▼';
       }
     });
   });
@@ -217,4 +220,11 @@ function generateInterpretation(key, userInput) {
 
 function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function restartTest() {
+  responses = {};
+  document.getElementById('cover-container').style.display = 'block';
+  document.getElementById('app').innerHTML = '';
+  document.getElementById('faq-container').style.display = 'block';
 }
