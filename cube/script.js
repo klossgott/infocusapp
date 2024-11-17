@@ -3,63 +3,15 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 let currentQuestionIndex = 0;
 let responses = {};
 
-// Prompts for the questions
 const prompts = [
-  {
-    key: 'field',
-    prompt: `<strong>Imagine an open field.</strong><br><ul>
-      <li>How big is this field?</li>
-      <li>What is it filled with?</li>
-      <li>What are the surroundings like?</li>
-      <li>How do you feel being in this field?</li>
-    </ul>`
-  },
-  {
-    key: 'cube',
-    prompt: `<strong>There is a cube in the field.</strong><br><ul>
-      <li>How big is the cube?</li>
-      <li>What is it made of?</li>
-      <li>What is its texture?</li>
-      <li>What color is it?</li>
-      <li>Where is it located in the field?</li>
-    </ul>`
-  },
-  {
-    key: 'ladder',
-    prompt: `<strong>There is a ladder in the field.</strong><br><ul>
-      <li>What is it made of?</li>
-      <li>How big is it?</li>
-      <li>Where is it in relation to the cube?</li>
-      <li>What condition is it in?</li>
-    </ul>`
-  },
-  {
-    key: 'horse',
-    prompt: `<strong>There is a horse in the field.</strong><br><ul>
-      <li>What color is the horse?</li>
-      <li>What is it doing?</li>
-      <li>Where is it in relation to the cube and the ladder?</li>
-    </ul>`
-  },
-  {
-    key: 'flowers',
-    prompt: `<strong>There are flowers in the field.</strong><br><ul>
-      <li>What kind of flowers are they?</li>
-      <li>How many flowers are there?</li>
-      <li>Where are the flowers located?</li>
-    </ul>`
-  },
-  {
-    key: 'storm',
-    prompt: `<strong>There is a storm in the field.</strong><br><ul>
-      <li>What is the distance between the storm and the cube?</li>
-      <li>Is it a big storm or a small storm?</li>
-      <li>How does it affect the field?</li>
-    </ul>`
-  }
+  { key: 'field', prompt: `<strong>Imagine an open field...</strong>` },
+  { key: 'cube', prompt: `<strong>There is a cube...</strong>` },
+  { key: 'ladder', prompt: `<strong>There is a ladder...</strong>` },
+  { key: 'horse', prompt: `<strong>There is a horse...</strong>` },
+  { key: 'flowers', prompt: `<strong>There are flowers...</strong>` },
+  { key: 'storm', prompt: `<strong>There is a storm...</strong>` }
 ];
 
-// Meanings associated with each element
 const elementMeanings = {
   field: 'your worldview and state of mind',
   cube: 'yourself',
@@ -69,7 +21,43 @@ const elementMeanings = {
   storm: 'your challenges or difficulties'
 };
 
-// Initialize the app
+const interpretationKeys = {
+  field: [
+    { keywords: ['large', 'vast', 'open'], meaning: 'You have an expansive worldview.' },
+    { keywords: ['small', 'closed', 'enclosed'], meaning: 'You may feel restricted or introverted.' },
+    { keywords: ['barren', 'dry'], meaning: 'You may feel uninspired or emotionally dry.' },
+    { keywords: ['lush', 'green', 'healthy'], meaning: 'You are feeling optimistic and energized.' }
+  ],
+  cube: [
+    { keywords: ['large', 'big'], meaning: 'You have a strong sense of self and confidence.' },
+    { keywords: ['small', 'tiny'], meaning: 'You may feel reserved or unsure of yourself.' },
+    { keywords: ['transparent', 'glass'], meaning: 'You value honesty and openness.' },
+    { keywords: ['solid', 'opaque'], meaning: 'You may prefer privacy and introspection.' }
+  ],
+  ladder: [
+    { keywords: ['close', 'near'], meaning: 'You have strong, supportive friendships.' },
+    { keywords: ['far', 'distant'], meaning: 'You may feel disconnected from your friends.' },
+    { keywords: ['strong', 'sturdy'], meaning: 'You rely on a solid support network.' },
+    { keywords: ['weak', 'rickety'], meaning: 'Your friendships may feel uncertain.' }
+  ],
+  horse: [
+    { keywords: ['white', 'pure'], meaning: 'You value purity and honesty in a partner.' },
+    { keywords: ['brown', 'reliable'], meaning: 'You value stability and dependability in relationships.' },
+    { keywords: ['black', 'mysterious'], meaning: 'You are drawn to mystery and passion in love.' }
+  ],
+  flowers: [
+    { keywords: ['many', 'abundant'], meaning: 'You have abundant creativity or a nurturing nature.' },
+    { keywords: ['few', 'scarce'], meaning: 'You may feel creatively blocked or distant.' },
+    { keywords: ['colorful', 'vivid'], meaning: 'You are full of life and inspiration.' }
+  ],
+  storm: [
+    { keywords: ['close', 'near'], meaning: 'Challenges feel immediate and intense for you.' },
+    { keywords: ['distant', 'far'], meaning: 'You handle difficulties with perspective.' },
+    { keywords: ['intense', 'powerful'], meaning: 'You are facing significant challenges.' },
+    { keywords: ['small', 'weak'], meaning: 'Your challenges feel manageable.' }
+  ]
+};
+
 function initializeApp() {
   document.getElementById('startTest').addEventListener('click', startTest);
 }
@@ -114,7 +102,7 @@ function saveResponse() {
   loadQuestion();
 }
 
-// Display results with interpretations
+// Display results with dynamic interpretations
 function displayResults() {
   const app = document.getElementById('app');
   app.innerHTML = '<h2>Interpretation</h2>';
@@ -123,16 +111,14 @@ function displayResults() {
     const userResponse = responses[key];
     const interpretation = generateInterpretation(key, userResponse);
 
-    const card = `
-      <div class="result-card">
-        <h3>The <strong>${capitalize(key)}</strong> represents ${elementMeanings[key]}.</h3>
-        <ul class="interpretation-list">${interpretation}</ul>
-        <button class="toggle-response">Your response ▼</button>
-        <div class="response-text hidden">
-          <p>${userResponse}</p>
+    const section = `
+      <div class="response-section">
+        <div class="response-heading">Your Response</div>
+        <div class="response-text">
+          <p>${interpretation}</p>
         </div>
       </div>`;
-    app.insertAdjacentHTML('beforeend', card);
+    app.insertAdjacentHTML('beforeend', section);
   });
 
   setupResponseToggles();
@@ -141,85 +127,37 @@ function displayResults() {
   document.getElementById('restart').addEventListener('click', restartTest);
 }
 
-// Setup toggle functionality for responses
-function setupResponseToggles() {
-  document.querySelectorAll('.toggle-response').forEach(button => {
-    button.addEventListener('click', () => {
-      const responseText = button.nextElementSibling; // .response-text element
-
-      // Toggle visibility
-      if (responseText.style.display === 'block') {
-        responseText.style.display = 'none';
-        button.textContent = 'Your response ▼';
-      } else {
-        document.querySelectorAll('.response-text').forEach(el => {
-          el.style.display = 'none';
-        });
-        document.querySelectorAll('.toggle-response').forEach(btn => {
-          btn.textContent = 'Your response ▼';
-        });
-
-        responseText.style.display = 'block';
-        button.textContent = 'Your response ▲';
-      }
-    });
-  });
-}
-
 // Generate interpretation based on user input
 function generateInterpretation(key, userInput) {
   const lowerInput = userInput.toLowerCase();
-  const keywords = {
-    field: ['large', 'vast', 'small', 'barren', 'lush', 'green', 'dry'],
-    cube: ['big', 'small', 'transparent', 'solid', 'gold', 'floating'],
-    ladder: ['strong', 'weak', 'close', 'far', 'wooden', 'metal'],
-    horse: ['white', 'black', 'brown', 'running', 'standing'],
-    flowers: ['many', 'few', 'vibrant', 'colorful', 'scarce'],
-    storm: ['close', 'distant', 'intense', 'weak', 'large', 'small']
-  };
+  const interpretations = interpretationKeys[key];
 
-  const interpretations = {
-    field: {
-      large: 'You have an expansive and open worldview.',
-      small: 'You may feel restricted in your perspective.',
-      lush: 'You are feeling optimistic and fulfilled.',
-      barren: 'You may feel pessimistic or uninspired.'
-    },
-    cube: {
-      big: 'You have a strong sense of self.',
-      small: 'You may feel hesitant or reserved.',
-      transparent: 'You value openness and honesty.',
-      solid: 'You may be more private and guarded.',
-      gold: 'You hold yourself in high regard.'
-    },
-    ladder: {
-      strong: 'You have supportive and reliable friends.',
-      weak: 'You may feel your friendships lack stability.',
-      close: 'Your friends are deeply connected to you.',
-      far: 'You may prefer independence from your friends.'
-    },
-    horse: {
-      white: 'You value purity and honesty in a partner.',
-      black: 'You appreciate mystery and passion in a partner.',
-      brown: 'You seek reliability and groundedness in relationships.',
-      running: 'You desire adventure and excitement in love.',
-      standing: 'You value stability and peace in relationships.'
-    },
-    flowers: {
-      many: 'You have abundant creative potential.',
-      few: 'You may feel creatively blocked or hesitant about expressing yourself.',
-      vibrant: 'You are inspired and full of life.'
-    },
-    storm: {
-      close: 'Your challenges feel overwhelming or immediate.',
-      distant: 'You handle difficulties with perspective.',
-      intense: 'You are dealing with significant life challenges.',
-      weak: 'Your challenges are manageable and passing.'
+  if (interpretations) {
+    for (const { keywords, meaning } of interpretations) {
+      if (keywords.some(keyword => lowerInput.includes(keyword))) {
+        return meaning;
+      }
     }
-  };
+  }
+  return 'Your response is unique. Reflect on its meaning.';
+}
 
-  const matchKey = keywords[key]?.find(keyword => lowerInput.includes(keyword));
-  return interpretations[key]?.[matchKey] || '<li>Your description is unique. Reflect on its meaning.</li>';
+// Setup toggle functionality for interpretation section
+function setupResponseToggles() {
+  document.querySelectorAll('.response-heading').forEach(heading => {
+    heading.addEventListener('click', () => {
+      const responseText = heading.nextElementSibling;
+
+      if (responseText.style.display === 'block') {
+        responseText.style.display = 'none';
+      } else {
+        document.querySelectorAll('.response-text').forEach(text => {
+          text.style.display = 'none';
+        });
+        responseText.style.display = 'block';
+      }
+    });
+  });
 }
 
 // Restart the test
@@ -228,9 +166,4 @@ function restartTest() {
   document.getElementById('cover-container').style.display = 'block';
   document.getElementById('app').innerHTML = '';
   document.getElementById('faq-container').style.display = 'block';
-}
-
-// Capitalize first letter of a word
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
 }
