@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Writing Prompts</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Futura:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: 'Futura', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #prompt {
+            font-size: 2em;
+            color: #000;
+            text-align: center;
+            margin: 20px;
+            opacity: 0;
+            transition: opacity 2s;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div id="prompt"></div>
+
+    <script>
+        const prompts = [
+            "Pause for a moment. What sounds surround you right now?",
+            "Write about the first object you see. Why is it meaningful?",
+            "Describe how you're feeling in this exact moment.",
+            "List three things you're grateful for today.",
+            "How can you create a cozy space for your journaling practice?",
+            "Imagine your distractions fading away. What remains?",
+            "Plan a 10-minute journaling session. When will you fit it in?",
+            "What does 'being present' mean to you?",
+            "Write about a recent moment when you felt truly yourself.",
+            "How can you simplify your environment to enhance focus?"
+        ];
+
+        const promptElement = document.getElementById('prompt');
+
+        function showPrompt() {
+            // Fade out the current prompt
+            promptElement.style.opacity = 0;
+
+            setTimeout(() => {
+                // Select a random prompt
+                const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+                promptElement.textContent = randomPrompt;
+
+                // Fade in the new prompt
+                promptElement.style.opacity = 1;
+            }, 2000); // Match this to the CSS transition duration
+        }
+
+        // Initial prompt display
+        showPrompt();
+
+        // Change prompt on body click
+        document.body.addEventListener('click', showPrompt);
+    </script>
+</body>
+</html>
