@@ -163,12 +163,12 @@
         </div>
     </div>
 
-    <script>
-        class StoryFlipGame {
-            constructor() {
+    <script type="module">
+        export class StoryFlipGame {
+            constructor(gameData) {
+                this.gameData = gameData;
                 this.initializeElements();
                 this.initializeState();
-                this.loadGameData();
                 this.setupEventListeners();
             }
 
@@ -189,53 +189,24 @@
                     tryAgainCount: 0,
                     lastCategories: [],
                     timerInterval: null,
-                    storyRhythmTurn: Math.floor(Math.random() * 5) + 8, // Random turn between 8-12
+                    storyRhythmTurn: Math.floor(Math.random() * 5) + 8,
                     storyRhythmUsed: false
                 };
             }
 
-            loadGameData() {
-                // Your existing gameData object here, with the addition of Game Master category
-                this.gameData = {
-                    instructions: [
-                        [
-                            "Welcome, Storytellers",
-                            "Set a timer for how long you want to play.",
-                            "Listen carefully, pick up on developments, and keep the story going.",
-                            "What happens next? Take turns to tell each other, or type in the chat. You have 20 seconds."
-                        ],
-                        [
-                            "Press:",
-                            "'W' for a Wildcard, if you're stuck.",
-                            "'Space Bar' to Pause-and-tell.",
-                            "'N' for a new game, 'X' to exit.",
-                            "Click the card to flip, get inspired, and start telling!"
-                        ]
-                    ],
-                    // ... rest of your existing gameData ...
-                };
-
-                // Initialize used prompts tracking
-                this.usedPrompts = {
-                    storyElements: {
-                        setting: [],
-                        character: [],
-                        action: [],
-                        emotion: [],
-                        object: [],
-                        dialogue: [],
-                        conflict: [],
-                        resolution: []
-                    },
-                    wildcard: [],
-                    numberCard: [],
-                    storyRhythm: [],
-                    openStoryDriver: [],
-                    gameMaster: []
-                };
+            setupEventListeners() {
+                this.card.addEventListener('click', () => this.handleCardClick());
             }
 
-            // Updated methods to fix identified issues
+            handleCardClick() {
+                if (this.state.cardState === 'resting') {
+                    this.expandCard();
+                    this.startTimer();
+                    this.setState('active');
+                } else if (this.state.cardState === 'active') {
+                    this.minimizeCard();
+                }
+            }
 
             expandCard() {
                 this.container.classList.remove('resting');
@@ -248,7 +219,7 @@
             minimizeCard() {
                 this.container.classList.add('resting');
                 this.card.classList.add('resting');
-                this.state.cardState = 'resting';
+                this.setState('resting');
                 this.content.innerHTML = 'S';
                 this.content.style.color = 'var(--color-primary)';
                 this.clearGameState();
@@ -256,7 +227,6 @@
 
             clearGameState() {
                 this.timerBar.style.width = '0%';
-                this.timerBar.style.display = 'none';
                 clearInterval(this.state.timerInterval);
                 this.state.tryAgainCount = 0;
                 this.state.turnCount = 0;
@@ -267,52 +237,74 @@
                 if (this.state.isPaused) this.togglePause();
             }
 
-            // Updated showInstructions method for better formatting
-            showInstructions() {
-                this.state.cardState = 'instructions';
-                this.card.classList.add('instructions');
-                this.displayInstructions();
-                this.setCardColor('instructions');
+            startTimer() {
+                const timerDuration = 20000; // 20 seconds
+                this.state.timerStartTime = Date.now();
+                this.state.timerInterval = setInterval(() => {
+                    const progress = (timerDuration - (Date.now() - this.state.timerStartTime)) / timerDuration;
+                    this.timerBar.style.width = `${progress * 100}%`;
+                    if (progress <= 0) {
+                        clearInterval(this.state.timerInterval);
+                        this.handleTimerEnd();
+                    }
+                }, 100);
             }
 
-            // Updated handleTimerEnd method with correct styling
             handleTimerEnd() {
                 this.state.tryAgainCount++;
                 const message = this.state.tryAgainCount > 1 
                     ? "Time's up!<br>Take a deep breath and try again.<br>Try pressing 'W' for Wildcards!"
                     : "Time's up!<br>Take a deep breath and try again.";
-                
                 this.content.innerHTML = `<i>${message}</i>`;
                 this.setCardColor('instructions');
-                this.state.cardState = 'active';
+                this.setState('active');
                 this.state.lastCategories = [];
             }
 
-            // Updated getRandomCardType method to handle Story Rhythm frequency
-            getRandomCardType() {
-                if (this.state.turnCount === this.state.storyRhythmTurn && !this.state.storyRhythmUsed) {
-                    this.state.storyRhythmUsed = true;
-                    return 'storyRhythm';
-                }
-
-                const types = ['storyElements', 'wildcard', 'numberCard', 'gameMaster'];
-                let selectedType;
-                let attempts = 0;
-                do {
-                    selectedType = types[Math.floor(Math.random() * types.length)];
-                    attempts++;
-                    const occurrence = this.state.lastCategories.filter(cat => cat === selectedType).length;
-                    if (occurrence < 2) break;
-                } while (attempts < 10);
-                return selectedType;
+            setState(state) {
+                this.state.cardState = state;
             }
 
-            // Rest of your existing methods...
+            setCardColor(type) {
+                switch (type) {
+                    case 'instructions':
+                        this.card.style.backgroundColor = 'var(--color-instructions)';
+                        this.content.style.color = '#333';
+                        break;
+                    case 'storyElements':
+                        this.card.style.backgroundColor = 'var(--color-story)';
+                        this.content.style.color = '#333';
+                        break;
+                    case 'wildcard':
+                        this.card.style.backgroundColor = 'var(--color-wildcard)';
+                        this.content.style.color = '#333';
+                        break;
+                    case 'numberCard':
+                        this.card.style.backgroundColor = 'var(--color-number)';
+                        this.content.style.color = '#333';
+                        break;
+                    case 'storyRhythm':
+                        this.card.style.backgroundColor = 'var(--color-rhythm)';
+                        this.content.style.color = '#333';
+                        break;
+                    case 'openStoryDriver':
+                        this.card.style.backgroundColor = 'var(--color-driver)';
+                        this.content.style.color = '#333';
+                        break;
+                    case 'gameMaster':
+                        this.card.style.backgroundColor = 'var(--color-gamemaster)';
+                        this.content.style.color = '#333';
+                        break;
+                    default:
+                        this.card.style.backgroundColor = 'var(--color-primary)';
+                        this.content.style.color = '#333';
+                }
+            }
         }
 
-        // Initialize game when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new StoryFlipGame();
+            const gameData = {}; // Placeholder for game data object
+            new StoryFlipGame(gameData);
         });
     </script>
 </body>
