@@ -4,155 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Story Flip</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap">
-    <style>
-        :root {
-            --color-primary: #FFA500;      /* Orange */
-            --color-resting: #FFD700;      /* Gold for resting state */
-            --color-title: #FFD700;        /* Gold */
-            --color-instructions: #FFE4B5;  /* Moccasin */
-            --color-story: #FFD700;        /* Gold */
-            --color-number: #ADD8E6;       /* Light Blue */
-            --color-rhythm: #FFB6C1;       /* Light Pink */
-            --color-wildcard: #F5A9A9;     /* Light Pink-Orange */
-            --color-driver: #D3D3D3;       /* Light Grey */
-            --color-gamemaster: #98FB98;   /* Light Green */
-            --font-base: 'EB Garamond', serif;
-            --transition-base: 0.3s ease;
-        }
-
-        html, body {
-            height: 100%;
-            margin: 0;
-            background: transparent;
-            font-family: var(--font-base);
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container {
-            position: relative;
-            width: min(40vw, 400px);
-            height: calc(min(40vw, 400px) * 1.5);
-            padding: 10px;
-            box-sizing: border-box;
-            transition: all var(--transition-base);
-        }
-
-        .container.resting {
-            transform: scale(0.3);
-        }
-
-        .card {
-            width: 100%;
-            height: 100%;
-            background-color: var(--color-primary);
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: all var(--transition-base);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .card.resting {
-            background-color: var(--color-resting);
-        }
-
-        .card-content {
-            font-size: 3vh;
-            color: #333;
-            line-height: 1.5;
-            transition: opacity var(--transition-base);
-            max-width: 90%;
-            max-height: 90%;
-            overflow: hidden;
-            word-break: break-word;
-            margin: 0 auto;
-        }
-
-        .card.resting .card-content {
-            font-size: 14vh;
-            font-weight: bold;
-            color: var(--color-primary);
-        }
-
-        .card.instructions .card-content {
-            font-style: italic;
-        }
-
-        .timer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 5px;
-            background-color: rgba(51, 51, 51, 0.5);
-            transition: width 1s linear;
-            width: 100%;
-        }
-
-        .placeholder {
-            background-color: rgba(255, 255, 255, 0.3);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .pause-overlay {
-            position: absolute;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            font-size: 3vh;
-            border-radius: 10px;
-            z-index: 10;
-        }
-
-        .card:focus {
-            outline: none;
-        }
-
-        .flash {
-            animation: flash 1s infinite;
-        }
-
-        @keyframes flash {
-            0%, 100% { background-color: var(--color-story); }
-            50% { background-color: var(--color-title); }
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                width: 90vw;
-                height: calc(90vw * 1.5);
-                padding: 5px;
-            }
-
-            .card-content {
-                font-size: 4vh;
-            }
-
-            .card.resting .card-content {
-                font-size: 16vh;
-            }
-
-            .pause-overlay {
-                font-size: 4vh;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <div class="container" id="game-container">
@@ -163,8 +15,8 @@
         </div>
     </div>
 
-    <script type="module">
-        export class StoryFlipGame {
+    <script>
+        class StoryFlipGame {
             constructor(gameData) {
                 this.gameData = gameData;
                 this.initializeElements();
@@ -178,6 +30,7 @@
                 this.content = document.getElementById('card-content');
                 this.timerBar = document.getElementById('timer-bar');
                 this.pauseOverlay = document.getElementById('pause-overlay');
+                console.log("Elements initialized");
             }
 
             initializeState() {
@@ -192,18 +45,27 @@
                     storyRhythmTurn: Math.floor(Math.random() * 5) + 8,
                     storyRhythmUsed: false
                 };
+                console.log("State initialized", this.state);
             }
 
             setupEventListeners() {
                 this.card.addEventListener('click', () => this.handleCardClick());
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === ' ') {
+                        this.togglePause();
+                    }
+                });
+                console.log("Event listeners set up");
             }
 
             handleCardClick() {
                 if (this.state.cardState === 'resting') {
+                    console.log("Expanding card");
                     this.expandCard();
                     this.startTimer();
                     this.setState('active');
                 } else if (this.state.cardState === 'active') {
+                    console.log("Minimizing card");
                     this.minimizeCard();
                 }
             }
@@ -214,6 +76,7 @@
                 this.card.classList.add('active');
                 this.content.style.fontSize = '';
                 this.content.style.color = '#333';
+                console.log("Card expanded");
             }
 
             minimizeCard() {
@@ -223,6 +86,7 @@
                 this.content.innerHTML = 'S';
                 this.content.style.color = 'var(--color-primary)';
                 this.clearGameState();
+                console.log("Card minimized");
             }
 
             clearGameState() {
@@ -235,11 +99,13 @@
                 this.state.storyRhythmUsed = false;
                 this.state.storyRhythmTurn = Math.floor(Math.random() * 5) + 8;
                 if (this.state.isPaused) this.togglePause();
+                console.log("Game state cleared");
             }
 
             startTimer() {
                 const timerDuration = 20000; // 20 seconds
                 this.state.timerStartTime = Date.now();
+                console.log("Starting timer");
                 this.state.timerInterval = setInterval(() => {
                     const progress = (timerDuration - (Date.now() - this.state.timerStartTime)) / timerDuration;
                     this.timerBar.style.width = `${progress * 100}%`;
@@ -252,6 +118,7 @@
 
             handleTimerEnd() {
                 this.state.tryAgainCount++;
+                console.log("Timer ended");
                 const message = this.state.tryAgainCount > 1 
                     ? "Time's up!<br>Take a deep breath and try again.<br>Try pressing 'W' for Wildcards!"
                     : "Time's up!<br>Take a deep breath and try again.";
@@ -262,10 +129,12 @@
             }
 
             setState(state) {
+                console.log(`Setting state to ${state}`);
                 this.state.cardState = state;
             }
 
             setCardColor(type) {
+                console.log(`Setting card color to ${type}`);
                 switch (type) {
                     case 'instructions':
                         this.card.style.backgroundColor = 'var(--color-instructions)';
@@ -300,10 +169,44 @@
                         this.content.style.color = '#333';
                 }
             }
+
+            togglePause() {
+                if (this.state.isPaused) {
+                    console.log("Resuming game");
+                    this.pauseOverlay.style.display = 'none';
+                    this.state.isPaused = false;
+                    this.startTimer();
+                } else {
+                    console.log("Pausing game");
+                    this.pauseOverlay.style.display = 'flex';
+                    this.state.isPaused = true;
+                    clearInterval(this.state.timerInterval);
+                }
+            }
+        }
+
+        class GameData {
+            constructor() {
+                this.instructions = [
+                    [
+                        "Welcome, Storytellers",
+                        "Set a timer for how long you want to play.",
+                        "Listen carefully, pick up on developments, and keep the story going.",
+                        "What happens next? Take turns to tell each other, or type in the chat. You have 20 seconds."
+                    ],
+                    [
+                        "Press:",
+                        "'W' for a Wildcard, if you're stuck.",
+                        "'Space Bar' to Pause-and-tell.",
+                        "'N' for a new game, 'X' to exit.",
+                        "Click the card to flip, get inspired, and start telling!"
+                    ]
+                ];
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const gameData = {}; // Placeholder for game data object
+            const gameData = new GameData();
             new StoryFlipGame(gameData);
         });
     </script>
