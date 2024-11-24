@@ -6,9 +6,9 @@
     <title>Writing Prompts</title>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden;}
-        body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer;}
-        #prompt { font-size: 24px; color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word;}
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        #prompt { font-size: 24px; color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word; max-height: 90%; max-width: 90%; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -61,32 +61,49 @@
 
             setTimeout(() => {
                 let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-
-                // Add line break before the dash and attribution
-                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); 
+                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Line break
 
                 promptElement.innerHTML = randomPrompt;
-                promptElement.style.opacity = 1;
-                isTransitioning = false;
+                adjustFontSize(); // Adjust font size after setting content
 
-                // Slight delay to ensure content is rendered before adjusting font size
-                setTimeout(adjustFontSize, 50); // 50ms delay
+                // Fade in the new prompt
+                promptElement.style.opacity = 1;
+
+                // Set isTransitioning back to false after fade in completes
+                promptElement.addEventListener('transitionend', function handleFadeIn() {
+                    promptElement.removeEventListener('transitionend', handleFadeIn);
+                    isTransitioning = false;
+                });
             }, 1000);
         }
 
         function adjustFontSize() {
-            let fontSize = 24;
+            let fontSize = 150; // Start with a larger font size to make the prompt as visible as possible
             promptElement.style.fontSize = fontSize + "px";
 
-            while (promptElement.scrollHeight > promptElement.clientHeight && fontSize > 14) { // Increased minimum font size
-                fontSize -= 0.5; // Smaller decrement
+            // Decrease font size until the prompt fits within the container
+            while (promptElement.scrollHeight > window.innerHeight - 40 || promptElement.scrollWidth > window.innerWidth - 40) {
+                fontSize--;
                 promptElement.style.fontSize = fontSize + "px";
             }
         }
 
+        // Show the initial prompt
         showPrompt();
-        document.body.addEventListener('click', showPrompt);
-        promptElement.addEventListener('transitionend', () => isTransitioning = false);
+
+        // Debounce function to limit how often the click event can trigger
+        function debounce(func, delay) {
+            let timer;
+            return function () {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.apply(this, arguments);
+                }, delay);
+            };
+        }
+
+        // Set up event listeners
+        document.body.addEventListener('click', debounce(showPrompt, 300));
         window.addEventListener('resize', adjustFontSize);
     </script>
 </body>
