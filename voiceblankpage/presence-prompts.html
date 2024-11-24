@@ -2,39 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Writing Prompts</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
 
-        body {
+        body, html {
             margin: 0;
             padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
             background-color: #ffffff;
             font-family: 'Jost', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
             cursor: pointer;
         }
 
         #prompt {
-            font-size: 2em;
+            font-size: 1.5em;
             color: #000;
             text-align: center;
-            margin: 20px;
+            padding: 20px;
             opacity: 0;
             transition: opacity 1s;
-            max-width: 80%;
+            max-width: 100%;
             word-wrap: break-word;
+        }
+
+        @media (max-width: 600px) {
+            #prompt {
+                font-size: 1.2em;
+            }
         }
     </style>
 </head>
 <body>
     <div id="prompt"></div>
 
-    <script>
+ <script>
         const prompts = [
             "Pause for a moment. What sounds surround you right now?",
             "Write about the first object you see. Why is it meaningful?",
@@ -81,8 +91,12 @@
             promptElement.style.opacity = 0;
 
             setTimeout(() => {
-                const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-                promptElement.textContent = randomPrompt;
+                let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+                
+                // Add line break before dash in quotes
+                randomPrompt = randomPrompt.replace('" - ', '"\n- ');
+                
+                promptElement.innerHTML = randomPrompt;
                 promptElement.style.opacity = 1;
                 isTransitioning = false;
             }, 1000);
@@ -96,6 +110,24 @@
         promptElement.addEventListener('transitionend', () => {
             isTransitioning = false;
         });
+
+        // Function to adjust font size
+        function adjustFontSize() {
+            const promptHeight = promptElement.offsetHeight;
+            const bodyHeight = document.body.offsetHeight;
+            
+            if (promptHeight > bodyHeight) {
+                const currentSize = parseFloat(window.getComputedStyle(promptElement).fontSize);
+                promptElement.style.fontSize = (currentSize - 0.1) + 'px';
+                adjustFontSize(); // Recursive call until it fits
+            }
+        }
+
+        // Call adjustFontSize after setting new prompt
+        promptElement.addEventListener('transitionend', adjustFontSize);
     </script>
 </body>
 </html>
+
+
+   
