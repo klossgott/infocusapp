@@ -8,7 +8,7 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
         body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        #prompt { color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word; }
+        #prompt { color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word; max-height: 90%; max-width: 90%; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -122,7 +122,7 @@
                 let midFontSize = Math.floor((minFontSize + maxFontSize) / 2);
                 promptElement.style.fontSize = midFontSize + "px";
 
-                if (promptElement.scrollHeight <= window.innerHeight - 60 && promptElement.scrollWidth <= window.innerWidth - 60) {
+                if (promptElement.scrollHeight <= window.innerHeight - 40 && promptElement.scrollWidth <= window.innerWidth - 40) {
                     optimalFontSize = midFontSize;
                     minFontSize = midFontSize + 1;
                 } else {
