@@ -8,7 +8,7 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
         body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        #prompt { font-size: 24px; color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word; max-height: 90%; max-width: 90%; overflow: hidden; }
+        #prompt { font-size: 24px; color: #000; text-align: center; padding: 20px; opacity: 1; transition: opacity 0.5s ease-in-out; width: 90%; word-wrap: break-word; max-height: 90%; max-width: 90%; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -54,21 +54,17 @@
         const promptElement = document.getElementById('prompt');
 
         function showPrompt() {
-            // Fade out the current prompt
+            // Get a random prompt
+            let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Line break for quotes
+
+            // Set the new prompt text
             promptElement.style.opacity = 0;
-
             setTimeout(() => {
-                // Get a random prompt
-                let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Line break for quotes
-
-                // Set the new prompt text
                 promptElement.innerHTML = randomPrompt;
                 adjustFontSize(); // Adjust font size after setting content
-
-                // Fade in the new prompt
                 promptElement.style.opacity = 1;
-            }, 1000); // Match fade-out duration
+            }, 500); // Allow fade-out before updating content
         }
 
         function adjustFontSize() {
@@ -84,26 +80,11 @@
 
         // Show the initial prompt after the document is ready
         window.addEventListener('load', () => {
-            let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            initialPrompt = initialPrompt.replace(/" - /g, '"<br/>- ');
-            promptElement.innerHTML = initialPrompt;
-            adjustFontSize();
-            promptElement.style.opacity = 1; // Fade in the initial prompt
+            showPrompt();
         });
 
-        // Debounce function to limit how often the click event can trigger
-        function debounce(func, delay) {
-            let timer;
-            return function () {
-                clearTimeout(timer);
-                timer = setTimeout(() => {
-                    func.apply(this, arguments);
-                }, delay);
-            };
-        }
-
         // Set up event listeners
-        document.body.addEventListener('click', debounce(showPrompt, 300));
+        document.body.addEventListener('click', showPrompt);
         window.addEventListener('resize', adjustFontSize);
     </script>
 </body>
