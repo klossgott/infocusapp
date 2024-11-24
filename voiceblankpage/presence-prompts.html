@@ -6,9 +6,9 @@
     <title>Writing Prompts</title>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden;}
-        body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer;}
-        #prompt { font-size: 24px; color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word;}
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        #prompt { color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word; }
     </style>
 </head>
 <body>
@@ -57,6 +57,8 @@
         function showPrompt() {
             if (isTransitioning) return;
             isTransitioning = true;
+
+            // Fade out the current prompt
             promptElement.style.opacity = 0;
 
             setTimeout(() => {
@@ -65,28 +67,42 @@
                 // Add line break before the dash and attribution
                 randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); 
 
+                // Set the new prompt text
                 promptElement.innerHTML = randomPrompt;
-                promptElement.style.opacity = 1;
-                isTransitioning = false;
-                adjustFontSize();
+
+                // Use requestAnimationFrame to ensure rendering happens before adjusting
+                requestAnimationFrame(() => {
+                    // Adjust the font size to fit the container
+                    adjustFontSize();
+
+                    // Fade in the new prompt
+                    promptElement.style.opacity = 1;
+
+                    // Reset the transition flag after the transition ends
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 1000);
+                });
             }, 1000);
         }
 
         function adjustFontSize() {
-            let fontSize = 24;
+            let fontSize = 100; // Start with a large font size
             promptElement.style.fontSize = fontSize + "px";
 
-            while (promptElement.scrollHeight > promptElement.clientHeight && fontSize > 10) {
+            // Continuously reduce the font size until the text fits within the container
+            while ((promptElement.scrollHeight > window.innerHeight - 40 || promptElement.scrollWidth > window.innerWidth - 40) && fontSize > 10) {
                 fontSize--;
                 promptElement.style.fontSize = fontSize + "px";
             }
         }
 
+        // Show the initial prompt
         showPrompt();
+
+        // Set up event listeners
         document.body.addEventListener('click', showPrompt);
-        promptElement.addEventListener('transitionend', () => isTransitioning = false);
         window.addEventListener('resize', adjustFontSize);
     </script>
 </body>
 </html>
-
