@@ -67,6 +67,7 @@
             shuffledPrompts = [...prompts];
             shuffleArray(shuffledPrompts);
             currentIndex = 0;
+            console.log("Shuffled prompts initialized: ", shuffledPrompts);
         }
 
         initializeShuffledPrompts();
@@ -84,10 +85,12 @@
             setTimeout(() => {
                 // Get the next prompt from the shuffled array
                 if (currentIndex >= shuffledPrompts.length) {
+                    console.log("All prompts used. Re-shuffling prompts...");
                     initializeShuffledPrompts(); // Reshuffle when all prompts have been used
                 }
 
                 let randomPrompt = shuffledPrompts[currentIndex];
+                console.log("Displaying prompt: ", randomPrompt);
                 currentIndex++;
 
                 // Add line break before the dash and attribution
