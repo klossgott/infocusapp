@@ -114,23 +114,14 @@
         }
 
         function adjustFontSize() {
-            let minFontSize = 10;
-            let maxFontSize = 200;
-            let optimalFontSize = minFontSize;
+            let fontSize = 150; // Start with a larger font size to make the prompt as visible as possible
+            promptElement.style.fontSize = fontSize + "px";
 
-            while (minFontSize <= maxFontSize) {
-                let midFontSize = Math.floor((minFontSize + maxFontSize) / 2);
-                promptElement.style.fontSize = midFontSize + "px";
-
-                if (promptElement.scrollHeight <= window.innerHeight - 40 && promptElement.scrollWidth <= window.innerWidth - 40) {
-                    optimalFontSize = midFontSize;
-                    minFontSize = midFontSize + 1;
-                } else {
-                    maxFontSize = midFontSize - 1;
-                }
+            // Decrease font size until the prompt fits within the container
+            while (promptElement.scrollHeight > window.innerHeight - 40 || promptElement.scrollWidth > window.innerWidth - 40) {
+                fontSize--;
+                promptElement.style.fontSize = fontSize + "px";
             }
-
-            promptElement.style.fontSize = optimalFontSize + "px";
         }
 
         // Show the initial prompt
