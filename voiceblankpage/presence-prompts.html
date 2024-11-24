@@ -81,8 +81,8 @@
             // Fade out the current prompt
             promptElement.style.opacity = 0;
 
-            promptElement.addEventListener('transitionend', function handleFadeOut() {
-                promptElement.removeEventListener('transitionend', handleFadeOut);
+            // Wait for the fade out transition to complete before updating the prompt
+            setTimeout(() => {
                 // Get the next prompt from the shuffled array
                 if (currentIndex >= shuffledPrompts.length) {
                     initializeShuffledPrompts(); // Reshuffle when all prompts have been used
@@ -104,13 +104,9 @@
 
                     // Fade in the new prompt
                     promptElement.style.opacity = 1;
-
-                    promptElement.addEventListener('transitionend', function handleFadeIn() {
-                        promptElement.removeEventListener('transitionend', handleFadeIn);
-                        isTransitioning = false;
-                    });
+                    isTransitioning = false;
                 });
-            });
+            }, 1000); // Match the transition duration for fade out (1s)
         }
 
         function adjustFontSize() {
