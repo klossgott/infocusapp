@@ -51,17 +51,25 @@
             "How can you simplify your environment to enhance focus?"
         ];
 
-        let unusedPrompts = [...prompts];
+        let shuffledPrompts = [];
+        let currentIndex = 0;
 
-        function getNewPrompt() {
-            if (unusedPrompts.length === 0) {
-                unusedPrompts = [...prompts]; // Reset unused prompts when all have been shown
+        // Fisher-Yates Shuffle
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
-            const randomIndex = Math.floor(Math.random() * unusedPrompts.length);
-            const selectedPrompt = unusedPrompts[randomIndex];
-            unusedPrompts.splice(randomIndex, 1); // Remove the used prompt from the list
-            return selectedPrompt;
         }
+
+        // Initialize shuffled prompts
+        function initializeShuffledPrompts() {
+            shuffledPrompts = [...prompts];
+            shuffleArray(shuffledPrompts);
+            currentIndex = 0;
+        }
+
+        initializeShuffledPrompts();
 
         const promptElement = document.getElementById('prompt');
         let isTransitioning = false;
@@ -74,7 +82,13 @@
             promptElement.style.opacity = 0;
 
             setTimeout(() => {
-                let randomPrompt = getNewPrompt();
+                // Get the next prompt from the shuffled array
+                if (currentIndex >= shuffledPrompts.length) {
+                    initializeShuffledPrompts(); // Reshuffle when all prompts have been used
+                }
+
+                let randomPrompt = shuffledPrompts[currentIndex];
+                currentIndex++;
 
                 // Add line break before the dash and attribution
                 randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); 
