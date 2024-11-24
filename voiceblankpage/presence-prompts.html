@@ -8,7 +8,7 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
         body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        #prompt { font-size: 10px; /* Initial small size */ color: #000; text-align: center; padding: 10px; opacity: 0; transition: opacity 0.5s ease-in-out; width: 95%; word-wrap: break-word; max-height: 90%; overflow: hidden; }
+        #prompt { font-size: 24px; color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word; max-height: 90%; max-width: 90%; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -52,34 +52,70 @@
         ];
 
         const promptElement = document.getElementById('prompt');
+        let isTransitioning = false;
 
         function showPrompt() {
-            let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- ');
+            if (isTransitioning) return;
+            isTransitioning = true;
 
+            // Fade out the current prompt
             promptElement.style.opacity = 0;
-            setTimeout(() => {
+
+            promptElement.addEventListener('transitionend', function handleFadeOut() {
+                promptElement.removeEventListener('transitionend', handleFadeOut);
+
+                // Get the next prompt from the shuffled array
+                let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Add line break
+
                 promptElement.innerHTML = randomPrompt;
-                adjustFontSize();
-                promptElement.style.opacity = 1;
-            }, 500);
+                adjustFontSize(); // Adjust the font size after updating the content
+
+                // Fade in the new prompt
+                requestAnimationFrame(() => {
+                    promptElement.style.opacity = 1;
+                });
+
+                promptElement.addEventListener('transitionend', function handleFadeIn() {
+                    promptElement.removeEventListener('transitionend', handleFadeIn);
+                    isTransitioning = false;
+                });
+            });
         }
 
         function adjustFontSize() {
-            let fontSize = 10;
+            let fontSize = 150; // Start large for better visibility
             promptElement.style.fontSize = fontSize + "px";
 
-             let contentWidth = promptElement.offsetWidth;
-            let contentHeight = promptElement.offsetHeight;
-            while (promptElement.scrollWidth <= contentWidth && promptElement.scrollHeight <= contentHeight && fontSize < 100) {
-                fontSize++;
+            // Decrease font size until the prompt fits within the container
+            while (promptElement.scrollHeight > window.innerHeight - 40 || promptElement.scrollWidth > window.innerWidth - 40) {
+                fontSize--;
                 promptElement.style.fontSize = fontSize + "px";
             }
-            promptElement.style.fontSize = (fontSize - 1) + "px"; // Ensure it fits
         }
 
-        window.addEventListener('load', showPrompt);
-        document.body.addEventListener('click', showPrompt);
+        // Show the initial prompt
+        document.addEventListener('DOMContentLoaded', () => {
+            let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            initialPrompt = initialPrompt.replace(/" - /g, '"<br/>- ');
+            promptElement.innerHTML = initialPrompt;
+            adjustFontSize();
+            promptElement.style.opacity = 1; // Fade in the initial prompt
+        });
+
+        // Debounce function to limit how often the click event can trigger
+        function debounce(func, delay) {
+            let timer;
+            return function () {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.apply(this, arguments);
+                }, delay);
+            };
+        }
+
+        // Set up event listeners
+        document.body.addEventListener('click', debounce(showPrompt, 300));
         window.addEventListener('resize', adjustFontSize);
     </script>
 </body>
