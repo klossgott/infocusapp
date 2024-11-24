@@ -84,7 +84,11 @@
 
         // Show the initial prompt after the document is ready
         window.addEventListener('load', () => {
-            showPrompt();
+            let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            initialPrompt = initialPrompt.replace(/" - /g, '"<br/>- ');
+            promptElement.innerHTML = initialPrompt;
+            adjustFontSize();
+            promptElement.style.opacity = 1; // Fade in the initial prompt
         });
 
         // Debounce function to limit how often the click event can trigger
