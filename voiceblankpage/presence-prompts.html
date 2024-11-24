@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>Writing Prompts</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Futura:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
 
         body {
             margin: 0;
             padding: 0;
             background-color: #ffffff;
-            font-family: 'Futura', sans-serif;
+            font-family: 'Jost', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -36,62 +36,14 @@
 
     <script>
         const prompts = [
-"Pause for a moment. What sounds surround you right now?",
-"Write about the first object you see. Why is it meaningful?",
-"Describe how you're feeling in this exact moment.",
-"List three things you're grateful for today.",
-"How can you create a cozy space for your journaling practice?",
-"Imagine your distractions fading away. What remains?",
-"Plan a 10-minute journaling session. When will you fit it in?",
-"What does 'being present' mean to you?",
-"Write about a recent moment when you felt truly yourself.",
-""Be happy in the moment, that's enough. Each moment is all we need, not more." - Mother Teresa",
-"Describe a moment today when you felt truly connected. What sensations, sounds, and details stood out to you?",
-"When do you find it easiest to stay present?",
-""The real voyage of discovery consists not in seeking new landscapes, but in having new eyes." - Marcel Proust",
-"Recall a recent moment that made you pause in wonder. What made it so impactful?",
-""You create a good future by creating a good present." - Eckhart Tolle",
-"Describe your current emotional state without judgment. What feelings are present in this moment?",
-"What small action can you take right now to enhance this moment?",
-""Now! It is the most important time because it is the only time when we have any power." - Leo Tolstoy",
-"What's preventing you from being fully present right now? How can you release these distractions?",
-""Forever is composed of nows." - Emily Dickinson",
-"What aspects of your current environment support your well-being? How can you fully appreciate them?",
-"Write about how your body feels right now. What tensions, comfort, or sensations are you aware of?",
-""Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment." - Buddha",
-"How does nature help you connect with the present moment?",
-"How does time feel different when you're fully present versus when your mind is elsewhere?",
-""Life gives you plenty of time to do whatever you want to do if you stay in the present moment." - Deepak Chopra",
-"Look around your familiar space as if seeing it for the first time. What details have you never noticed before?",
-"Write about your breath right now.",
-"How does presence affect your relationships?",
-"What daily activities could benefit from more mindful attention?",
-"How does technology impact your ability to stay present?",
-"What sensations do you notice when you're fully present?",
-            "How can you simplify your environment to enhance focus?"
-        ];
-
-        const promptElement = document.getElementById('prompt');
-
-        function showPrompt() {
-            // Fade out the current prompt
-            promptElement.style.opacity = 0;
-
-            setTimeout(() => {
-                // Select a random prompt
-                const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-                promptElement.textContent = randomPrompt;
-
-                // Fade in the new prompt
-                promptElement.style.opacity = 1;
-            }, 2000); // Match this to the CSS transition duration
-        }
-
-        // Initial prompt display
-        showPrompt();
-
-        // Change prompt on body click
-        document.body.addEventListener('click', showPrompt);
-    </script>
-</body>
-</html>
+            "Pause for a moment. What sounds surround you right now?",
+            "Write about the first object you see. Why is it meaningful?",
+            "Describe how you're feeling in this exact moment.",
+            "List three things you're grateful for today.",
+            "How can you create a cozy space for your journaling practice?",
+            "Imagine your distractions fading away. What remains?",
+            "Plan a 10-minute journaling session. When will you fit it in?",
+            "What does 'being present' mean to you?",
+            "Write about a recent moment when you felt truly yourself.",
+            "\"Be happy in the moment, that's enough. Each moment is all we need, not more.\" - Mother Teresa",
+            "Describe a moment today when you felt truly connected. What sensations, sounds, an
