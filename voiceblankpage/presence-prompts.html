@@ -57,28 +57,34 @@
         function showPrompt() {
             if (isTransitioning) return;
             isTransitioning = true;
+
+            // Fade out the current prompt
             promptElement.style.opacity = 0;
 
-            setTimeout(() => {
+            promptElement.addEventListener('transitionend', function handleFadeOut() {
+                promptElement.removeEventListener('transitionend', handleFadeOut);
+
+                // Get the next prompt from the shuffled array
                 let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Line break
+                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Add line break
 
                 promptElement.innerHTML = randomPrompt;
-                adjustFontSize(); // Adjust font size after setting content
+                adjustFontSize(); // Adjust the font size after updating the content
 
                 // Fade in the new prompt
-                promptElement.style.opacity = 1;
+                requestAnimationFrame(() => {
+                    promptElement.style.opacity = 1;
+                });
 
-                // Set isTransitioning back to false after fade in completes
                 promptElement.addEventListener('transitionend', function handleFadeIn() {
                     promptElement.removeEventListener('transitionend', handleFadeIn);
                     isTransitioning = false;
                 });
-            }, 1000);
+            });
         }
 
         function adjustFontSize() {
-            let fontSize = 150; // Start with a larger font size to make the prompt as visible as possible
+            let fontSize = 150; // Start large for better visibility
             promptElement.style.fontSize = fontSize + "px";
 
             // Decrease font size until the prompt fits within the container
@@ -89,7 +95,13 @@
         }
 
         // Show the initial prompt
-        showPrompt();
+        document.addEventListener('DOMContentLoaded', () => {
+            let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            initialPrompt = initialPrompt.replace(/" - /g, '"<br/>- ');
+            promptElement.innerHTML = initialPrompt;
+            adjustFontSize();
+            promptElement.style.opacity = 1; // Fade in the initial prompt
+        });
 
         // Debounce function to limit how often the click event can trigger
         function debounce(func, delay) {
