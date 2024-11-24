@@ -67,7 +67,6 @@
             shuffledPrompts = [...prompts];
             shuffleArray(shuffledPrompts);
             currentIndex = 0;
-            console.log("Shuffled prompts initialized: ", shuffledPrompts);
         }
 
         initializeShuffledPrompts();
@@ -82,15 +81,14 @@
             // Fade out the current prompt
             promptElement.style.opacity = 0;
 
-            setTimeout(() => {
+            promptElement.addEventListener('transitionend', function handleFadeOut() {
+                promptElement.removeEventListener('transitionend', handleFadeOut);
                 // Get the next prompt from the shuffled array
                 if (currentIndex >= shuffledPrompts.length) {
-                    console.log("All prompts used. Re-shuffling prompts...");
                     initializeShuffledPrompts(); // Reshuffle when all prompts have been used
                 }
 
                 let randomPrompt = shuffledPrompts[currentIndex];
-                console.log("Displaying prompt: ", randomPrompt);
                 currentIndex++;
 
                 // Add line break before the dash and attribution
@@ -107,33 +105,50 @@
                     // Fade in the new prompt
                     promptElement.style.opacity = 1;
 
-                    // Reset the transition flag after the transition ends
-                    setTimeout(() => {
+                    promptElement.addEventListener('transitionend', function handleFadeIn() {
+                        promptElement.removeEventListener('transitionend', handleFadeIn);
                         isTransitioning = false;
-                    }, 1000);
+                    });
                 });
-            }, 1000);
+            });
         }
 
         function adjustFontSize() {
-            let fontSize = 10;
-            promptElement.style.fontSize = fontSize + "px";
+            let minFontSize = 10;
+            let maxFontSize = 200;
+            let optimalFontSize = minFontSize;
 
-            // Increase font size until it exceeds the container
-            while ((promptElement.scrollHeight <= window.innerHeight - 60) && (promptElement.scrollWidth <= window.innerWidth - 60)) {
-                fontSize++;
-                promptElement.style.fontSize = fontSize + "px";
+            while (minFontSize <= maxFontSize) {
+                let midFontSize = Math.floor((minFontSize + maxFontSize) / 2);
+                promptElement.style.fontSize = midFontSize + "px";
+
+                if (promptElement.scrollHeight <= window.innerHeight - 60 && promptElement.scrollWidth <= window.innerWidth - 60) {
+                    optimalFontSize = midFontSize;
+                    minFontSize = midFontSize + 1;
+                } else {
+                    maxFontSize = midFontSize - 1;
+                }
             }
 
-            // Once it exceeds, reduce it by a small amount to fit comfortably
-            promptElement.style.fontSize = (fontSize - 1) + "px";
+            promptElement.style.fontSize = optimalFontSize + "px";
         }
 
         // Show the initial prompt
         showPrompt();
 
+        // Debounce function to limit how often the click event can trigger
+        function debounce(func, delay) {
+            let timer;
+            return function () {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.apply(this, arguments);
+                }, delay);
+            };
+        }
+
         // Set up event listeners
-        document.body.addEventListener('click', showPrompt);
+        document.body.addEventListener('click', debounce(showPrompt, 300));
         window.addEventListener('resize', adjustFontSize);
     </script>
 </body>
