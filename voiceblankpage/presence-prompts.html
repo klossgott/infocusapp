@@ -52,35 +52,23 @@
         ];
 
         const promptElement = document.getElementById('prompt');
-        let isTransitioning = false;
 
         function showPrompt() {
-            if (isTransitioning) return;
-            isTransitioning = true;
-
             // Fade out the current prompt
             promptElement.style.opacity = 0;
 
-            promptElement.addEventListener('transitionend', function handleFadeOut() {
-                promptElement.removeEventListener('transitionend', handleFadeOut);
-
-                // Get the next prompt from the shuffled array
+            setTimeout(() => {
+                // Get a random prompt
                 let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Add line break
+                randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); // Line break for quotes
 
+                // Set the new prompt text
                 promptElement.innerHTML = randomPrompt;
-                adjustFontSize(); // Adjust the font size after updating the content
+                adjustFontSize(); // Adjust font size after setting content
 
                 // Fade in the new prompt
-                requestAnimationFrame(() => {
-                    promptElement.style.opacity = 1;
-                });
-
-                promptElement.addEventListener('transitionend', function handleFadeIn() {
-                    promptElement.removeEventListener('transitionend', handleFadeIn);
-                    isTransitioning = false;
-                });
-            });
+                promptElement.style.opacity = 1;
+            }, 1000); // Match fade-out duration
         }
 
         function adjustFontSize() {
@@ -94,13 +82,9 @@
             }
         }
 
-        // Show the initial prompt
-        document.addEventListener('DOMContentLoaded', () => {
-            let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            initialPrompt = initialPrompt.replace(/" - /g, '"<br/>- ');
-            promptElement.innerHTML = initialPrompt;
-            adjustFontSize();
-            promptElement.style.opacity = 1; // Fade in the initial prompt
+        // Show the initial prompt after the document is ready
+        window.addEventListener('load', () => {
+            showPrompt();
         });
 
         // Debounce function to limit how often the click event can trigger
