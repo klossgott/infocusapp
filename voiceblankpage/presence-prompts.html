@@ -51,20 +51,17 @@
             "How can you simplify your environment to enhance focus?"
         ];
 
-        let shuffledPrompts = [];
-        let currentIndex = 0;
+        let unusedPrompts = [...prompts];
 
-        function shufflePrompts() {
-            shuffledPrompts = [...prompts];
-            for (let i = shuffledPrompts.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledPrompts[i], shuffledPrompts[j]] = [shuffledPrompts[j], shuffledPrompts[i]];
+        function getNewPrompt() {
+            if (unusedPrompts.length === 0) {
+                unusedPrompts = [...prompts]; // Reset unused prompts when all have been shown
             }
-            currentIndex = 0;
+            const randomIndex = Math.floor(Math.random() * unusedPrompts.length);
+            const selectedPrompt = unusedPrompts[randomIndex];
+            unusedPrompts.splice(randomIndex, 1); // Remove the used prompt from the list
+            return selectedPrompt;
         }
-
-        // Shuffle the prompts initially
-        shufflePrompts();
 
         const promptElement = document.getElementById('prompt');
         let isTransitioning = false;
@@ -77,13 +74,7 @@
             promptElement.style.opacity = 0;
 
             setTimeout(() => {
-                // Get the next prompt
-                if (currentIndex >= shuffledPrompts.length) {
-                    shufflePrompts(); // Reshuffle when all prompts have been used
-                }
-
-                let randomPrompt = shuffledPrompts[currentIndex];
-                currentIndex++;
+                let randomPrompt = getNewPrompt();
 
                 // Add line break before the dash and attribution
                 randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); 
@@ -108,14 +99,17 @@
         }
 
         function adjustFontSize() {
-            let fontSize = 150; // Start with an even larger font size
+            let fontSize = 10;
             promptElement.style.fontSize = fontSize + "px";
 
-            // Continuously adjust the font size until it fits within the container
-            while ((promptElement.scrollHeight > window.innerHeight - 60 || promptElement.scrollWidth > window.innerWidth - 60) && fontSize > 10) {
-                fontSize--;
+            // Increase the font size until it exceeds the container bounds
+            while ((promptElement.scrollHeight <= window.innerHeight - 60 && promptElement.scrollWidth <= window.innerWidth - 60) && fontSize < 200) {
+                fontSize++;
                 promptElement.style.fontSize = fontSize + "px";
             }
+
+            // If it exceeded, reduce by one to fit perfectly
+            promptElement.style.fontSize = (fontSize - 1) + "px";
         }
 
         // Show the initial prompt
