@@ -51,6 +51,21 @@
             "How can you simplify your environment to enhance focus?"
         ];
 
+        let shuffledPrompts = [];
+        let currentIndex = 0;
+
+        function shufflePrompts() {
+            shuffledPrompts = [...prompts];
+            for (let i = shuffledPrompts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledPrompts[i], shuffledPrompts[j]] = [shuffledPrompts[j], shuffledPrompts[i]];
+            }
+            currentIndex = 0;
+        }
+
+        // Shuffle the prompts initially
+        shufflePrompts();
+
         const promptElement = document.getElementById('prompt');
         let isTransitioning = false;
 
@@ -62,7 +77,13 @@
             promptElement.style.opacity = 0;
 
             setTimeout(() => {
-                let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+                // Get the next prompt
+                if (currentIndex >= shuffledPrompts.length) {
+                    shufflePrompts(); // Reshuffle when all prompts have been used
+                }
+
+                let randomPrompt = shuffledPrompts[currentIndex];
+                currentIndex++;
 
                 // Add line break before the dash and attribution
                 randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); 
@@ -87,11 +108,11 @@
         }
 
         function adjustFontSize() {
-            let fontSize = 100; // Start with a large font size
+            let fontSize = 150; // Start with an even larger font size
             promptElement.style.fontSize = fontSize + "px";
 
-            // Continuously reduce the font size until the text fits within the container
-            while ((promptElement.scrollHeight > window.innerHeight - 40 || promptElement.scrollWidth > window.innerWidth - 40) && fontSize > 10) {
+            // Continuously adjust the font size until it fits within the container
+            while ((promptElement.scrollHeight > window.innerHeight - 60 || promptElement.scrollWidth > window.innerWidth - 60) && fontSize > 10) {
                 fontSize--;
                 promptElement.style.fontSize = fontSize + "px";
             }
