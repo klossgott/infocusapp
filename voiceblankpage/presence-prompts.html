@@ -6,9 +6,9 @@
     <title>Writing Prompts</title>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        #prompt { color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word; max-height: 90%; max-width: 90%; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden;}
+        body { background-color: #ffffff; font-family: 'Jost', sans-serif; display: flex; justify-content: center; align-items: center; cursor: pointer;}
+        #prompt { font-size: 24px; color: #000; text-align: center; padding: 20px; opacity: 0; transition: opacity 1s; width: 90%; word-wrap: break-word;}
     </style>
 </head>
 <body>
@@ -51,91 +51,42 @@
             "How can you simplify your environment to enhance focus?"
         ];
 
-        let shuffledPrompts = [];
-        let currentIndex = 0;
-
-        // Fisher-Yates Shuffle
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        // Initialize shuffled prompts
-        function initializeShuffledPrompts() {
-            shuffledPrompts = [...prompts];
-            shuffleArray(shuffledPrompts);
-            currentIndex = 0;
-        }
-
-        initializeShuffledPrompts();
-
         const promptElement = document.getElementById('prompt');
         let isTransitioning = false;
 
         function showPrompt() {
             if (isTransitioning) return;
             isTransitioning = true;
-
-            // Fade out the current prompt
             promptElement.style.opacity = 0;
 
-            // Wait for the fade out transition to complete before updating the prompt
             setTimeout(() => {
-                // Get the next prompt from the shuffled array
-                if (currentIndex >= shuffledPrompts.length) {
-                    initializeShuffledPrompts(); // Reshuffle when all prompts have been used
-                }
-
-                let randomPrompt = shuffledPrompts[currentIndex];
-                currentIndex++;
+                let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
 
                 // Add line break before the dash and attribution
                 randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); 
 
-                // Set the new prompt text
                 promptElement.innerHTML = randomPrompt;
+                promptElement.style.opacity = 1;
+                isTransitioning = false;
 
-                // Use requestAnimationFrame to ensure rendering happens before adjusting
-                requestAnimationFrame(() => {
-                    // Adjust the font size to fit the container
-                    adjustFontSize();
-
-                    // Fade in the new prompt
-                    promptElement.style.opacity = 1;
-                    isTransitioning = false;
-                });
-            }, 1000); // Match the transition duration for fade out (1s)
+                // Slight delay to ensure content is rendered before adjusting font size
+                setTimeout(adjustFontSize, 50); // 50ms delay
+            }, 1000);
         }
 
         function adjustFontSize() {
-            let fontSize = 150; // Start with a larger font size to make the prompt as visible as possible
+            let fontSize = 24;
             promptElement.style.fontSize = fontSize + "px";
 
-            // Decrease font size until the prompt fits within the container
-            while (promptElement.scrollHeight > window.innerHeight - 40 || promptElement.scrollWidth > window.innerWidth - 40) {
-                fontSize--;
+            while (promptElement.scrollHeight > promptElement.clientHeight && fontSize > 14) { // Increased minimum font size
+                fontSize -= 0.5; // Smaller decrement
                 promptElement.style.fontSize = fontSize + "px";
             }
         }
 
-        // Show the initial prompt
         showPrompt();
-
-        // Debounce function to limit how often the click event can trigger
-        function debounce(func, delay) {
-            let timer;
-            return function () {
-                clearTimeout(timer);
-                timer = setTimeout(() => {
-                    func.apply(this, arguments);
-                }, delay);
-            };
-        }
-
-        // Set up event listeners
-        document.body.addEventListener('click', debounce(showPrompt, 300));
+        document.body.addEventListener('click', showPrompt);
+        promptElement.addEventListener('transitionend', () => isTransitioning = false);
         window.addEventListener('resize', adjustFontSize);
     </script>
 </body>
