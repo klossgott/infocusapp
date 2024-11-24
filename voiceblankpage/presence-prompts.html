@@ -97,44 +97,4 @@
                 randomPrompt = randomPrompt.replace(/" - /g, '"<br/>- '); 
 
                 // Set the new prompt text
-                promptElement.innerHTML = randomPrompt;
-
-                // Use requestAnimationFrame to ensure rendering happens before adjusting
-                requestAnimationFrame(() => {
-                    // Adjust the font size to fit the container
-                    adjustFontSize();
-
-                    // Fade in the new prompt
-                    promptElement.style.opacity = 1;
-
-                    // Reset the transition flag after the transition ends
-                    setTimeout(() => {
-                        isTransitioning = false;
-                    }, 1000);
-                });
-            }, 1000);
-        }
-
-        function adjustFontSize() {
-            let fontSize = 10;
-            promptElement.style.fontSize = fontSize + "px";
-
-            // Increase the font size until it exceeds the container bounds
-            while ((promptElement.scrollHeight <= window.innerHeight - 60 && promptElement.scrollWidth <= window.innerWidth - 60) && fontSize < 200) {
-                fontSize++;
-                promptElement.style.fontSize = fontSize + "px";
-            }
-
-            // If it exceeded, reduce by one to fit perfectly
-            promptElement.style.fontSize = (fontSize - 1) + "px";
-        }
-
-        // Show the initial prompt
-        showPrompt();
-
-        // Set up event listeners
-        document.body.addEventListener('click', showPrompt);
-        window.addEventListener('resize', adjustFontSize);
-    </script>
-</body>
-</html>
+          
