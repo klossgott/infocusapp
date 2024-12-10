@@ -1,233 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
 <title>Typography Personality Test</title>
-
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- We'll load fonts used for the archetype samples -->
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Inconsolata&family=Lobster&family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
   body {
-    font-family: Arial, sans-serif;
+    font-family: sans-serif;
     padding: 20px;
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
   }
-  h1, h2, h3 {
-    margin-top: 1em;
+  .question {
+    margin: 20px 0;
   }
-  .hidden {
-    display: none;
+  .question p {
+    margin-bottom: 5px;
+    font-weight: bold;
   }
-  .archetype-sample {
-    margin: 15px 0;
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: center;
+  button {
+    margin-top: 20px;
+    padding: 10px 15px;
+  }
+  #confirm {
+    margin-top: 20px;
+    color: green;
   }
 </style>
-
 </head>
 <body>
-
 <div id="app">
-  <div id="intro" class="hidden">
-    <h1>Welcome to the Typography Personality Test</h1>
-    <p>No direct input here—please set a session parameter.</p>
+
+  <!-- Intro if no session param -->
+  <div id="intro" style="display:none;">
+    <h2>Welcome to the Typography Personality Test</h2>
+    <p>Please specify a session parameter in the URL: ?session=2 for Structural Precision, etc.</p>
   </div>
 
   <!-- Session 2: Structural Precision -->
-  <div id="session2" class="hidden">
+  <div id="session2" style="display:none;">
     <h2>Structural Precision</h2>
-    <p>Reflect on your journaling exercise from this session. Did you enjoy using guides and neat spacing? Rate how much you value structure and order in your lettering (0-100):</p>
-    <input type="range" id="spRange" min="0" max="100" value="50" />
-    <span id="spValue">50</span>
-    <br><br>
-    <button id="saveSP">Save Score</button>
-    <p id="spConfirm" class="hidden">Score saved! In the next sessions, you'll add emotional and spontaneous dimensions.</p>
+    <p>Think about how you approach writing in your journal. Answer these questions based on your usual habits:</p>
+
+    <div class="question">
+      <p>1. When you start a new page in your journal, what do you usually do?</p>
+      <label><input type="radio" name="q1" value="90">Sketch a rough outline or table of contents before writing anything.</label><br>
+      <label><input type="radio" name="q1" value="60">Quickly decide on a heading and general placement, but don’t measure too carefully.</label><br>
+      <label><input type="radio" name="q1" value="20">Just start writing and let the layout evolve naturally.</label>
+    </div>
+
+    <div class="question">
+      <p>2. How do you feel about having consistent headings or section titles in your journal?</p>
+      <label><input type="radio" name="q2" value="90">I love having consistent styles for headings and subheadings on every page.</label><br>
+      <label><input type="radio" name="q2" value="50">I sometimes create headings if I feel like it, but I’m not strict about it.</label><br>
+      <label><input type="radio" name="q2" value="10">I rarely think about headings; I just write freely.</label>
+    </div>
+
+    <button id="submitSP">Submit</button>
+    <p id="spConfirm" style="display:none;">Score saved! Your structured approach is an asset. Whether you love neat order or embrace spontaneity, every style can lead to beautiful results once you learn a few lettering basics. Next, we’ll explore how emotions shape your page and life.</p>
   </div>
 
   <!-- Session 3: Emotional Expressiveness -->
-  <div id="session3" class="hidden">
+  <div id="session3" style="display:none;">
     <h2>Emotional Expressiveness</h2>
-    <p>Think about how easily you expressed feelings through letterforms. Rate your Emotional Expressiveness (0-100):</p>
-    <input type="range" id="eeRange" min="0" max="100" value="50" />
-    <span id="eeValue">50</span>
-    <br><br>
-    <button id="saveEE">Save Score</button>
-    <p id="eeConfirm" class="hidden">Score saved! Just one more dimension to go.</p>
+    <p>Consider how you express feelings when writing journal entries or notes:</p>
+
+    <div class="question">
+      <p>1. When writing about a meaningful personal memory, how do you reflect that emotion on the page?</p>
+      <label><input type="radio" name="q1" value="30">I keep my handwriting neat and steady, letting words carry the meaning.</label><br>
+      <label><input type="radio" name="q1" value="60">I add variations—maybe underline phrases or add small doodles to hint at emotion.</label><br>
+      <label><input type="radio" name="q1" value="90">I let my writing flow and change; larger letters for excitement, wavy lines for sadness.</label>
+    </div>
+
+    <div class="question">
+      <p>2. How likely are you to try different pen colors, writing angles, or small illustrations to capture a feeling?</p>
+      <label><input type="radio" name="q2" value="20">I usually stick to one style; my words themselves hold the emotion.</label><br>
+      <label><input type="radio" name="q2" value="50">Sometimes I switch colors or add small marks if it feels right.</label><br>
+      <label><input type="radio" name="q2" value="80">I enjoy visually expressing mood: bold marks, varied pen colors, playful accents.</label>
+    </div>
+
+    <button id="submitEE">Submit</button>
+    <p id="eeConfirm" style="display:none;">Score saved! Your emotional imprint is taking shape. With structure known and emotion measured, you’re closer to discovering a style that feels genuinely yours. Next, we’ll see how spontaneity fits into your creative journaling.</p>
   </div>
 
   <!-- Session 4: Creative Spontaneity -->
-  <div id="session4" class="hidden">
+  <div id="session4" style="display:none;">
     <h2>Creative Spontaneity</h2>
-    <p>How comfortable were you with improvisation, patterns, and breaking the rules? Rate your Creative Spontaneity (0-100):</p>
-    <input type="range" id="csRange" min="0" max="100" value="50" />
-    <span id="csValue">50</span>
-    <br><br>
-    <button id="saveCS">Save Score</button>
-    <p id="csConfirm" class="hidden">Score saved! In the next session, you'll discover your archetype.</p>
+    <p>Think about how open you are to changes, experiments, or unexpected ideas while journaling:</p>
+
+    <div class="question">
+      <p>1. If you come up with a new idea mid-page—like adding a small sketch or changing pen style—what do you do?</p>
+      <label><input type="radio" name="q1" value="20">I stick to the original plan; I don’t want to disrupt consistency.</label><br>
+      <label><input type="radio" name="q1" value="50">I might try it if it’s easy to incorporate.</label><br>
+      <label><input type="radio" name="q1" value="90">I jump right in, enjoying whatever emerges from the impulse.</label>
+    </div>
+
+    <div class="question">
+      <p>2. How do you feel when you see blank space on your page?</p>
+      <label><input type="radio" name="q2" value="30">I prefer to fill it with something planned, like a neat label or a simple image.</label><br>
+      <label><input type="radio" name="q2" value="60">Occasionally I add a quick note or doodle if inspired.</label><br>
+      <label><input type="radio" name="q2" value="85">I love spontaneously filling it with patterns, shapes, or unexpected words.</label>
+    </div>
+
+    <button id="submitCS">Submit</button>
+    <p id="csConfirm" style="display:none;">Score saved! Your willingness to embrace new ideas is recorded. With structure, emotion, and spontaneity measured, you’re ready to see your unique Typographic Persona. Onward to the reveal!</p>
   </div>
 
   <!-- Session 5: Archetype Reveal -->
-  <div id="session5" class="hidden">
-    <h2>Your Typographic Archetype</h2>
+  <div id="session5" style="display:none;">
+    <h2>Your Typographic Persona</h2>
     <div id="resultArea"></div>
   </div>
+
 </div>
 
 <script>
-  // Utility: Get URL parameter
-  function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  }
+// Utility: get session param
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
-  const sessionParam = getQueryParam('session');
+const sessionParam = getQueryParam('session');
 
-  // Hide all sections first
-  document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
+// Hide all initially
+document.querySelectorAll('#app > div').forEach(d=>d.style.display='none');
 
-  // If no session param, show intro
-  if(!sessionParam) {
-    document.getElementById('intro').classList.remove('hidden');
-  }
+if(!sessionParam) {
+  document.getElementById('intro').style.display='block';
+}
 
-  // FUNCTIONS TO CALCULATE ARCHETYPE
-  function determineArchetype(SP, EE, CS) {
-    // Convert to numbers
-    SP = Number(SP);
-    EE = Number(EE);
-    CS = Number(CS);
+// Save SP
+if(sessionParam==='2'){
+  document.getElementById('session2').style.display='block';
+  document.getElementById('submitSP').addEventListener('click', ()=>{
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    if(!q1||!q2){alert('Please answer all questions.');return;}
+    const SP = Math.round((parseInt(q1.value)+parseInt(q2.value))/2);
+    localStorage.setItem('SP', SP.toString());
+    document.getElementById('spConfirm').style.display='block';
+  });
+}
 
-    // Archetypes:
-    // Serious Serif: High SP, Mod EE, Low CS
-    //   Rough thresholds: SP>75, EE<60, CS<25
-    // Sassy Sans: Med-High SP, Mod EE, Med CS
-    //   Example: SP>60, EE around 40-70, CS 30-60
-    // Sweeping Script: Low SP, High EE, High CS
-    //   SP<40, EE>70, CS>70
-    // Mellow Mono: Med-High SP, Mod-High EE, Med CS
-    //   SP>60, EE>60, CS 30-60
-    // Zesty Zentangle: Low SP, High EE, High CS (more decorative)
-    //   SP<40, EE>70, CS>70 (But different from Sweeping Script?
-    //   Let's say Sweeping Script is more emotional line, Zesty is more patterns:
-    //   If EE and CS are high, and SP<40, we can differentiate by mid-range of EE and CS?
-    //   For simplicity, let's define a simple logic first:
-    // We'll pick the best match based on closeness to these patterns rather than strict conditions.
+// Save EE
+if(sessionParam==='3'){
+  document.getElementById('session3').style.display='block';
+  document.getElementById('submitEE').addEventListener('click', ()=>{
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    if(!q1||!q2){alert('Please answer all questions.');return;}
+    const EE = Math.round((parseInt(q1.value)+parseInt(q2.value))/2);
+    localStorage.setItem('EE', EE.toString());
+    document.getElementById('eeConfirm').style.display='block';
+  });
+}
 
-    // We'll do a simple heuristic:
-    // Let's define distances to each archetype profile:
-    // Archetype profiles (SP,EE,CS) center points:
-    const archetypes = [
-      {name: 'Serious Serif', sp:90, ee:50, cs:10, font:'Playfair Display', desc:'Structured, traditional, and organized. Prefers timeless forms and subtle elegance.'},
-      {name: 'Sassy Sans', sp:70, ee:50, cs:50, font:'Montserrat', desc:'Modern, confident, and straightforward. Embraces clarity and clean lines.'},
-      {name: 'Sweeping Script', sp:20, ee:90, cs:90, font:'Dancing Script', desc:'Emotional, fluid, and expressive. Lets feelings flow through every letterform.'},
-      {name: 'Mellow Mono', sp:70, ee:70, cs:50, font:'Inconsolata', desc:'Calm, warm, and steady. Enjoys gentle rhythms and subtle emotional cues.'},
-      {name: 'Zesty Zentangle', sp:20, ee:90, cs:90, font:'Lobster', desc:'Playful, decorative, and adventurous. Loves patterns, flourishes, and visual surprises.'}
-    ];
+// Save CS
+if(sessionParam==='4'){
+  document.getElementById('session4').style.display='block';
+  document.getElementById('submitCS').addEventListener('click', ()=>{
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    if(!q1||!q2){alert('Please answer all questions.');return;}
+    const CS = Math.round((parseInt(q1.value)+parseInt(q2.value))/2);
+    localStorage.setItem('CS', CS.toString());
+    document.getElementById('csConfirm').style.display='block';
+  });
+}
 
-    // Compute which archetype is closest by Euclidean distance
-    let bestMatch = null;
-    let bestDist = Infinity;
-    for (let arch of archetypes) {
-      const dist = Math.sqrt((SP-arch.sp)**2 + (EE-arch.ee)**2 + (CS-arch.cs)**2);
-      if(dist < bestDist) {
-        bestDist = dist;
-        bestMatch = arch;
-      }
-    }
+// Archetype Reveal
+if(sessionParam==='5'){
+  document.getElementById('session5').style.display='block';
+  const SP = localStorage.getItem('SP');
+  const EE = localStorage.getItem('EE');
+  const CS = localStorage.getItem('CS');
+  const resultArea = document.getElementById('resultArea');
 
-    return bestMatch;
-  }
-
-  // SESSION 2 LOGIC
-  if(sessionParam == '2') {
-    const sec = document.getElementById('session2');
-    sec.classList.remove('hidden');
-
-    const rangeSP = document.getElementById('spRange');
-    const spValue = document.getElementById('spValue');
-    rangeSP.addEventListener('input', ()=> {
-      spValue.textContent = rangeSP.value;
-    });
-
-    document.getElementById('saveSP').addEventListener('click', ()=> {
-      localStorage.setItem('SP', rangeSP.value);
-      document.getElementById('spConfirm').classList.remove('hidden');
-    });
-  }
-
-  // SESSION 3 LOGIC
-  if(sessionParam == '3') {
-    const sec = document.getElementById('session3');
-    sec.classList.remove('hidden');
-
-    const rangeEE = document.getElementById('eeRange');
-    const eeValue = document.getElementById('eeValue');
-    rangeEE.addEventListener('input', ()=> {
-      eeValue.textContent = rangeEE.value;
-    });
-
-    document.getElementById('saveEE').addEventListener('click', ()=> {
-      localStorage.setItem('EE', rangeEE.value);
-      document.getElementById('eeConfirm').classList.remove('hidden');
-    });
-  }
-
-  // SESSION 4 LOGIC
-  if(sessionParam == '4') {
-    const sec = document.getElementById('session4');
-    sec.classList.remove('hidden');
-
-    const rangeCS = document.getElementById('csRange');
-    const csValue = document.getElementById('csValue');
-    rangeCS.addEventListener('input', ()=> {
-      csValue.textContent = rangeCS.value;
-    });
-
-    document.getElementById('saveCS').addEventListener('click', ()=> {
-      localStorage.setItem('CS', rangeCS.value);
-      document.getElementById('csConfirm').classList.remove('hidden');
-    });
-  }
-
-  // SESSION 5 LOGIC (Reveal Archetype)
-  if(sessionParam == '5') {
-    const sec = document.getElementById('session5');
-    sec.classList.remove('hidden');
-
-    const SP = localStorage.getItem('SP');
-    const EE = localStorage.getItem('EE');
-    const CS = localStorage.getItem('CS');
-    const resultArea = document.getElementById('resultArea');
-
-    if(SP && EE && CS) {
-      const archetype = determineArchetype(SP,EE,CS);
-      if(archetype) {
-        resultArea.innerHTML = `
-          <h3>Your Archetype: ${archetype.name}</h3>
-          <p>${archetype.desc}</p>
-          <div class="archetype-sample" style="font-family:'${archetype.font}', sans-serif;">
-            This is a sample in the style of ${archetype.name}.
-          </div>
-          <p>SP: ${SP}, EE: ${EE}, CS: ${CS}</p>
-          <p>Feel free to revisit your journal activities, using these insights to guide your lettering style!</p>
-        `;
-      } else {
-        resultArea.textContent = "Could not determine archetype. Please ensure all scores are set.";
-      }
+  if(SP && EE && CS){
+    const archetype = determineArchetype(parseInt(SP), parseInt(EE), parseInt(CS));
+    if(archetype) {
+      resultArea.innerHTML = `
+        <h3>${archetype.name}</h3>
+        <p>${archetype.desc}</p>
+        <div style="font-family:'${archetype.font}', sans-serif; padding:10px; border:1px solid #ccc; margin-top:15px; text-align:center;">
+          <em>Sample style for ${archetype.name}</em>
+        </div>
+        <p>SP: ${SP}, EE: ${EE}, CS: ${CS}</p>
+        <p>Your journaling instincts form the foundation of a unique visual voice. As you proceed, you can transform these tendencies into distinctive lettering choices that truly reflect who you are.</p>
+      `;
     } else {
-      resultArea.textContent = "You have not completed all dimensions yet. Please go back to sessions 2, 3, and 4.";
+      resultArea.textContent = "Unable to determine archetype. Ensure all dimensions are set.";
+    }
+  } else {
+    resultArea.textContent = "Please complete sessions 2, 3, and 4 first.";
+  }
+}
+
+// Archetype determination logic
+function determineArchetype(SP,EE,CS){
+  // Archetype reference profiles (SP,EE,CS):
+  const archetypes = [
+    {
+      name:'Serious Serif',
+      sp:90, ee:50, cs:10,
+      font:'Playfair Display',
+      desc:`You’re a ‘Serious Serif’—structured, traditional, and organized. Your preference for order naturally guides you to consistent forms and elegant shapes. As your understanding and practice develop, this approach can result in timeless, sophisticated lettering that speaks to your steady character.`
+    },
+    {
+      name:'Sassy Sans',
+      sp:70, ee:50, cs:50,
+      font:'Montserrat',
+      desc:`You’re a ‘Sassy Sans’—modern, confident, and straightforward. You appreciate clarity without fuss, and this balanced outlook can result in clean, contemporary styles that feel fresh and authentic to you.`
+    },
+    {
+      name:'Sweeping Script',
+      sp:20, ee:90, cs:90,
+      font:'Dancing Script',
+      desc:`You’re a ‘Sweeping Script’—emotional, fluid, and expressive. Your willingness to reflect feelings on the page can result in graceful, flowing lettering that truly resonates with your inner emotions, creating a heartfelt visual narrative.`
+    },
+    {
+      name:'Mellow Mono',
+      sp:70, ee:70, cs:50,
+      font:'Inconsolata',
+      desc:`You’re a ‘Mellow Mono’—calm, warm, and steady. Your inclination toward gentle consistency and meaningful subtlety can result in a comforting style where steady rhythms and thoughtful details convey genuine warmth and sincerity.`
+    },
+    {
+      name:'Zesty Zentangle',
+      sp:20, ee:90, cs:90,
+      font:'Lobster',
+      desc:`You’re a ‘Zesty Zentangle’—playful, decorative, and adventurous. Your love of visual surprises and patterns can result in imaginative, lively lettering that captures your dynamic spirit and sparks joy in every mark you make.`
+    }
+  ];
+
+  // Calculate distance to each archetype
+  let bestMatch = null;
+  let bestDist = Infinity;
+  for (let arch of archetypes) {
+    const dist = Math.sqrt((SP-arch.sp)**2 + (EE-arch.ee)**2 + (CS-arch.cs)**2);
+    if(dist<bestDist) {
+      bestDist=dist;
+      bestMatch=arch;
     }
   }
 
+  return bestMatch;
+}
 </script>
 </body>
 </html>
