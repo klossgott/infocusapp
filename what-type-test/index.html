@@ -34,7 +34,7 @@
   <!-- Intro if no session param -->
   <div id="intro" style="display:none;">
     <h2>Welcome to the Typography Personality Test</h2>
-    <p>Please specify a session parameter in the URL: ?session=2 for Structural Precision, etc.</p>
+    <p>It looks like you’ve arrived here outside of the normal course steps. This activity is divided into sessions and should be accessed through the course platform’s provided links. Please return to the course instructions and select the appropriate session to continue.</p>
   </div>
 
   <!-- Session 2: Structural Precision -->
@@ -115,7 +115,6 @@
 </div>
 
 <script>
-// Utility: get session param
 function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
@@ -123,14 +122,13 @@ function getQueryParam(param) {
 
 const sessionParam = getQueryParam('session');
 
-// Hide all initially
 document.querySelectorAll('#app > div').forEach(d=>d.style.display='none');
 
 if(!sessionParam) {
   document.getElementById('intro').style.display='block';
 }
 
-// Save SP
+// Session 2 Logic
 if(sessionParam==='2'){
   document.getElementById('session2').style.display='block';
   document.getElementById('submitSP').addEventListener('click', ()=>{
@@ -143,7 +141,7 @@ if(sessionParam==='2'){
   });
 }
 
-// Save EE
+// Session 3 Logic
 if(sessionParam==='3'){
   document.getElementById('session3').style.display='block';
   document.getElementById('submitEE').addEventListener('click', ()=>{
@@ -156,7 +154,7 @@ if(sessionParam==='3'){
   });
 }
 
-// Save CS
+// Session 4 Logic
 if(sessionParam==='4'){
   document.getElementById('session4').style.display='block';
   document.getElementById('submitCS').addEventListener('click', ()=>{
@@ -169,7 +167,7 @@ if(sessionParam==='4'){
   });
 }
 
-// Archetype Reveal
+// Session 5 Logic
 if(sessionParam==='5'){
   document.getElementById('session5').style.display='block';
   const SP = localStorage.getItem('SP');
@@ -193,13 +191,12 @@ if(sessionParam==='5'){
       resultArea.textContent = "Unable to determine archetype. Ensure all dimensions are set.";
     }
   } else {
-    resultArea.textContent = "Please complete sessions 2, 3, and 4 first.";
+    resultArea.textContent = "Please complete the previous sessions first.";
   }
 }
 
-// Archetype determination logic
+// Archetype logic
 function determineArchetype(SP,EE,CS){
-  // Archetype reference profiles (SP,EE,CS):
   const archetypes = [
     {
       name:'Serious Serif',
@@ -233,7 +230,6 @@ function determineArchetype(SP,EE,CS){
     }
   ];
 
-  // Calculate distance to each archetype
   let bestMatch = null;
   let bestDist = Infinity;
   for (let arch of archetypes) {
