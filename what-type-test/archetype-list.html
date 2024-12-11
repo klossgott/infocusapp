@@ -7,7 +7,10 @@
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Archetype title fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Inconsolata&family=Lobster&family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<!-- Inter font for subtitles -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
   body {
@@ -15,6 +18,7 @@
     padding: 20px;
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
+    overflow-wrap: break-word;
   }
   ul {
     list-style-type: none;
@@ -22,13 +26,19 @@
     margin: 0;
   }
   li {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
   .title {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
   }
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.4;
+  }
+
+  /* Archetype-specific fonts for titles */
   .serious-serif .title {
     font-family: 'Playfair Display', serif;
   }
@@ -55,23 +65,23 @@
 <ul>
   <li class="serious-serif">
     <span class="title">Serious Serif</span>
-    <span>The steady traditionalist who finds comfort in consistency and classic forms.</span>
+    <span class="subtitle">The steady traditionalist who finds comfort in consistency and classic forms.</span>
   </li>
   <li class="sassy-sans">
     <span class="title">Sassy Sans</span>
-    <span>The bold minimalist who embraces clarity and simplicity.</span>
+    <span class="subtitle">The bold minimalist who embraces clarity and simplicity.</span>
   </li>
   <li class="sweeping-script">
     <span class="title">Sweeping Script</span>
-    <span>The emotional storyteller who pours heart and feeling into every curve.</span>
+    <span class="subtitle">The emotional storyteller who pours heart and feeling into every curve.</span>
   </li>
   <li class="mellow-mono">
     <span class="title">Mellow Mono</span>
-    <span>The gentle nostalgic who values steady rhythms and subtle warmth.</span>
+    <span class="subtitle">The gentle nostalgic who values steady rhythms and subtle warmth.</span>
   </li>
   <li class="zesty-zentangle">
     <span class="title">Zesty Zentangle</span>
-    <span>The whimsical explorer who thrives on pattern, playfulness, and surprise.</span>
+    <span class="subtitle">The whimsical explorer who thrives on pattern, playfulness, and surprise.</span>
   </li>
 </ul>
 
