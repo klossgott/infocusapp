@@ -40,20 +40,10 @@
       color:var(--ink);opacity:.45;font-weight:700}
 
     .controls{position:absolute;left:0;bottom:0;color:var(--cream);
-      display:flex;flex-direction:column;gap:clamp(8px,1.4vw,12px);
       padding:clamp(14px,3vw,30px)}
+    .row{display:flex;align-items:center;gap:clamp(10px,1.6vw,18px);flex-wrap:wrap}
 
-    /* duration presets (timer modes only) */
-    .durations{display:flex;gap:6px;flex-wrap:wrap}
-    .dur{border:1px solid rgba(247,243,234,.38);background:rgba(30,26,22,.5);
-      color:var(--cream);font:inherit;font-weight:600;font-size:clamp(10px,1.3vw,12px);
-      padding:3px 10px;border-radius:999px;cursor:pointer;line-height:1.4;
-      transition:background .15s,border-color .15s,opacity .15s;opacity:.85}
-    .dur:hover{opacity:1;border-color:var(--scarlet)}
-    .dur.active{background:var(--scarlet);border-color:var(--scarlet);color:#fff;opacity:1}
-
-    .row{display:flex;align-items:center;gap:clamp(10px,1.6vw,18px)}
-
+    /* play button + ring */
     .dial{position:relative;width:clamp(56px,9vw,84px);aspect-ratio:1;flex:0 0 auto}
     .dial svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
     .ring-track{fill:none;stroke:var(--ring-track);stroke-width:6}
@@ -66,25 +56,34 @@
     .play:active{transform:scale(.95)}
     .play svg{width:42%;height:42%;display:block;fill:currentColor;transform:none;position:static}
 
-    .meta{display:flex;flex-direction:column;gap:2px;max-width:min(58vw,420px)}
-    .time{font-variant-numeric:tabular-nums;font-weight:700;
-      font-size:clamp(15px,2.4vw,20px);letter-spacing:.02em;line-height:1.1}
+    .meta{display:flex;flex-direction:column;gap:2px;max-width:min(42vw,340px)}
     .title{font-size:clamp(12px,1.7vw,15px);font-weight:600;line-height:1.25;
       text-shadow:0 1px 3px rgba(0,0,0,.45)}
     .credit{font-size:clamp(10px,1.4vw,12px);opacity:.82;line-height:1.2;
       text-shadow:0 1px 3px rgba(0,0,0,.45)}
 
-    .loop{align-self:flex-end;margin-bottom:2px;border:0;background:transparent;cursor:pointer;
+    .loop{flex:0 0 auto;border:0;background:transparent;cursor:pointer;
       color:var(--cream);opacity:.6;width:clamp(26px,4vw,34px);aspect-ratio:1;border-radius:8px;
       display:flex;align-items:center;justify-content:center;transition:opacity .15s,background .15s}
     .loop svg{width:70%;height:70%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .loop:hover{opacity:.9;background:rgba(247,243,234,.12)}
     .loop.on{opacity:1;color:var(--scarlet)}
 
-    /* Remember mode: no presets, no loop, no countdown — just play/pause + progress arc */
+    /* timings cluster — countdown + duration presets, to the right of the loop button */
+    .timings{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+    .time{font-variant-numeric:tabular-nums;font-weight:700;
+      font-size:clamp(15px,2.4vw,20px);letter-spacing:.02em;line-height:1.1}
+    .durations{display:flex;gap:6px;flex-wrap:wrap}
+    .dur{border:1px solid rgba(247,243,234,.38);background:rgba(30,26,22,.5);
+      color:var(--cream);font:inherit;font-weight:600;font-size:clamp(10px,1.3vw,12px);
+      padding:3px 10px;border-radius:999px;cursor:pointer;line-height:1.4;
+      transition:background .15s,border-color .15s,opacity .15s;opacity:.85}
+    .dur:hover{opacity:1;border-color:var(--scarlet)}
+    .dur.active{background:var(--scarlet);border-color:var(--scarlet);color:#fff;opacity:1}
+
+    /* Remember mode: keep the countdown, but no presets and no loop */
     body.remember .durations,
-    body.remember .loop,
-    body.remember .time{display:none}
+    body.remember .loop{display:none}
   </style>
 </head>
 <body>
@@ -94,7 +93,6 @@
     <div class="tag" id="tag"></div>
 
     <div class="controls">
-      <div class="durations" id="durations"></div>
       <div class="row">
         <div class="dial">
           <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -105,19 +103,25 @@
             <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
           </button>
         </div>
+
         <div class="meta">
-          <div class="time" id="time">00:00</div>
           <div class="title" id="title"></div>
           <div class="credit" id="credit"></div>
         </div>
+
         <button class="loop on" id="loop" aria-label="Loop music" title="Loop music">
           <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
         </button>
+
+        <div class="timings">
+          <div class="time" id="time">0:00</div>
+          <div class="durations" id="durations"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <audio id="audio"></audio>
+  <audio id="audio" preload="metadata"></audio>
 
   <script>
     // ---- Per-stage data (display title + credit = the "lost names" fix) ----
@@ -129,8 +133,8 @@
       steer:   {music:"steer.mp3",   title:"Cello Suite No. 1, Prelude (BWV 1007) — J.S. Bach",  credit:"Public domain · Musopen"}
     };
     const DURATION_OPTIONS = [1, 5, 10, 15, 20];
-    const MODE_DEFAULT = { write:10, move:1 };     // default minutes for the timer modes
-    const RING = 283;                              // 2πr for r=45
+    const MODE_DEFAULT = { write:10, move:1 };
+    const RING = 283;
     const FADE_SECONDS = 6;
 
     const VALID_MODES = ["write", "move", "remember"];
@@ -141,7 +145,6 @@
     const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
     const isRemember = (mode === "remember");
 
-    // ---- DOM ----
     const audio  = document.getElementById("audio");
     const ring   = document.getElementById("ring");
     const timeEl = document.getElementById("time");
@@ -153,15 +156,16 @@
     const ICON_PLAY  = "M8 5v14l11-7z";
     const ICON_PAUSE = "M6 5h4v14H6zM14 5h4v14h-4z";
     const setIcon = d => icon.querySelector("path").setAttribute("d", d);
+    const fmt = t => `${Math.floor(t/60)}:${String(Math.max(0,Math.round(t)%60)).padStart(2,"0")}`;
 
-    // ---- Wire up the slide, audio, title + credit per mode ----
+    // ---- Wire up slide, audio, title + credit per mode ----
     let slideFile, audioSrc, titleText, creditText;
     if (isRemember){
       document.body.classList.add("remember");
       slideFile  = stage + "-remember.png";
       audioSrc   = "assets/voice/" + stage + ".mp3";
       titleText  = "Guided practice — " + cap(stage);
-      creditText = "In Kai's voice";
+      creditText = "by Kai";
     } else {
       slideFile  = (mode === "move") ? (stage + "-move.png") : (stage + ".png");
       audioSrc   = "assets/music/" + data.music;
@@ -170,26 +174,31 @@
     }
     document.querySelector(".backdrop").src = "assets/slides/" + slideFile;
     audio.src = audioSrc;
-    audio.loop = !isRemember;                       // voice never loops
+    audio.loop = !isRemember;
     document.getElementById("title").textContent  = titleText;
     document.getElementById("credit").textContent = creditText;
     document.getElementById("tag").textContent = stage + " · " + mode;
     document.title = "FOCUS · " + cap(stage) + " — " + cap(mode);
 
     // =========================================================
-    // REMEMBER MODE — play/pause the guided voice; ring = progress arc
+    // REMEMBER — guided voice; ring = progress arc, time = countdown remaining
     // =========================================================
     if (isRemember){
-      ring.style.strokeDashoffset = RING;           // empty, fills as it plays
-      audio.addEventListener("timeupdate", () => {
-        const frac = audio.duration ? audio.currentTime / audio.duration : 0;
-        ring.style.strokeDashoffset = (RING * (1 - frac)).toFixed(1);
-      });
-      audio.addEventListener("ended", () => { setIcon(ICON_PLAY); ring.style.strokeDashoffset = RING; });
+      ring.style.strokeDashoffset = RING;
+      const paintVoice = () => {
+        const dur = audio.duration || 0;
+        const left = Math.max(0, dur - audio.currentTime);
+        timeEl.textContent = fmt(left);
+        ring.style.strokeDashoffset = (RING * (1 - (dur ? audio.currentTime/dur : 0))).toFixed(1);
+      };
+      audio.addEventListener("loadedmetadata", paintVoice);
+      audio.addEventListener("timeupdate", paintVoice);
+      audio.addEventListener("ended", () => { setIcon(ICON_PLAY); ring.style.strokeDashoffset = RING; paintVoice(); });
       playBtn.addEventListener("click", () => {
         if (audio.paused){ audio.play().catch(()=>{}); setIcon(ICON_PAUSE); playBtn.setAttribute("aria-label","Pause"); }
         else { audio.pause(); setIcon(ICON_PLAY); playBtn.setAttribute("aria-label","Play"); }
       });
+      timeEl.textContent = "0:00";
 
     // =========================================================
     // TIMER MODES (write / move) — countdown + looping music + fade-out
@@ -197,13 +206,11 @@
     } else {
       let TIME_LIMIT = MODE_DEFAULT[mode] * 60;
       let timeLeft = TIME_LIMIT, interval = null, fadeTimer = null, running = false;
-      const fmt = t => `${Math.floor(t/60)}:${String(Math.max(0,t%60)).padStart(2,"0")}`;
       const paint = () => {
         timeEl.textContent = fmt(timeLeft);
         ring.style.strokeDashoffset = (RING * (1 - timeLeft / TIME_LIMIT)).toFixed(1);
       };
 
-      // duration presets
       DURATION_OPTIONS.forEach(min => {
         const b = document.createElement("button");
         b.className = "dur"; b.dataset.min = min; b.textContent = min + "m";

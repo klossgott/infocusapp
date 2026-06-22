@@ -16,7 +16,8 @@ One hosted page serves all stages/modes — see [EMBED-URLS.md](EMBED-URLS.md) f
 - Tap the play button → the stage's looping track starts and the ring counts down. Tap again to pause; tap the loop toggle to stop looping.
 - **Duration presets** (`1 · 5 · 10 · 15 · 20 m`) sit above the player; `?mode` sets the default highlight. Tapping a length resets and starts at that time. The red ring mirrors the chosen length — so no need to pre-cut the tracks into blocks.
 - The music **fades out over the final 6 seconds** before the timer stops.
-- **Remember mode** (`?mode=remember`) plays the stage's **guided voice** once (no loop): just play/pause + the red ring as a progress arc — no duration presets, no loop toggle, no countdown. Title "Guided practice — {Stage}", credit "In Kai's voice".
+- The countdown and the duration presets sit **to the right of the loop button** (not above the play button).
+- **Remember mode** (`?mode=remember`) plays the stage's **guided voice** once (no loop): play/pause + the red ring as a progress arc, with a **countdown** of the time remaining. No duration presets, no loop toggle. Title "Guided practice — {Stage}", credit "by Kai".
 - Autoplay is never forced — the learner taps play (browser policy + good manners).
 
 ## Embedding in Heartbeat
