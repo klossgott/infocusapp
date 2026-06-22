@@ -1,11 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>infocusapp — creative journalling widgets</title>
+  <style>
+    :root { --ink:#1E1A16; --cream:#F7F3EA; --scarlet:#C81E00; --line:#d9d2c4; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 2.5rem 1.25rem 4rem;
+      background: var(--cream); color: var(--ink);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; }
+    header { margin-bottom: 2rem; }
+    h1 { font-size: 1.7rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
+    header p { margin: 0; color: #5b5346; max-width: 60ch; }
+    h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em;
+         color: var(--scarlet); margin: 2.2rem 0 .8rem; }
+    .grid { display: grid; gap: .6rem; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    a.card {
+      display: block; text-decoration: none; color: inherit;
+      background: #fff; border: 1px solid var(--line); border-radius: 10px;
+      padding: .85rem 1rem; transition: border-color .15s, transform .15s;
+    }
+    a.card:hover { border-color: var(--scarlet); transform: translateY(-1px); }
+    a.card b { display: block; font-size: .98rem; }
+    a.card span { display: block; font-size: .82rem; color: #6b6357; margin-top: .15rem; }
+    footer { margin-top: 3rem; font-size: .82rem; color: #6b6357; }
+    footer a { color: var(--scarlet); }
+  </style>
+</head>
 <body>
-<h1>XYZ</h1>
-<p>An app to support Creative Journalling</p>
+  <div class="wrap">
+    <header>
+      <h1>infocusapp</h1>
+      <p>Self-contained widgets for creative journalling. Each opens on its own and embeds as a 16:9 iframe. Kai Lossgott, 2022– .</p>
+    </header>
 
-https://github.com/klossgott/infocusapp/wiki
+    <h2>Timers &amp; writing tools</h2>
+    <div class="grid">
+      <a class="card" href="widgets/timer/"><b>Timer</b><span>Write timer · SVG ring + looping music</span></a>
+      <a class="card" href="widgets/prompt-timer/"><b>Prompt timer</b><span>Timer + random writing-prompt image</span></a>
+      <a class="card" href="widgets/countdown-timer/"><b>Countdown timer</b><span>Type minutes · synth chime</span></a>
+      <a class="card" href="widgets/random/"><b>Random</b><span>Single random-image viewer</span></a>
+      <a class="card" href="widgets/random-images/"><b>Random images</b><span>Random images + piano audio</span></a>
+    </div>
 
+    <h2>Voice of the Blank Page</h2>
+    <div class="grid">
+      <a class="card" href="widgets/voiceblankpage/curiosity.html"><b>VOBP — timed writing</b><span>Timer + curiosity prompts</span></a>
+      <a class="card" href="widgets/voiceblankpage/courage-prompts.html"><b>VOBP — Courage</b><span>Prompt deck</span></a>
+      <a class="card" href="widgets/voiceblankpage/curiosity-prompts.html"><b>VOBP — Curiosity</b><span>Prompt deck</span></a>
+      <a class="card" href="widgets/voiceblankpage/presence-prompts.html"><b>VOBP — Presence</b><span>Prompt deck</span></a>
+    </div>
 
+    <h2>Prompt cards &amp; games</h2>
+    <div class="grid">
+      <a class="card" href="widgets/card-flip/"><b>Card flip</b><span>Prompt card, flip animation</span></a>
+      <a class="card" href="widgets/lifecoachcards/"><b>Life coach cards</b><span>Reflective question cards</span></a>
+      <a class="card" href="widgets/icebreaker/"><b>Icebreaker</b><span>Smash-the-ice-cube game</span></a>
+      <a class="card" href="widgets/icebreakers/"><b>Icebreakers</b><span>~170 conversation questions</span></a>
+      <a class="card" href="widgets/fortunecookie/"><b>Fortune cookie</b><span>Crack it open for a slip</span></a>
+      <a class="card" href="widgets/storyflip/"><b>Story flip</b><span>Story / word game</span></a>
+      <a class="card" href="widgets/wordblob/"><b>Word blob</b><span>Animated word card</span></a>
+    </div>
+
+    <h2>Tests &amp; pages</h2>
+    <div class="grid">
+      <a class="card" href="widgets/cube/"><b>The Cube</b><span>Personality test (+ FAQ)</span></a>
+      <a class="card" href="widgets/what-type-test/"><b>What-type test</b><span>Journalling-style archetype quiz</span></a>
+      <a class="card" href="widgets/pricing/"><b>Pricing</b><span>Membership pricing toggle</span></a>
+      <a class="card" href="widgets/doorbell/"><b>Doorbell</b><span>Visitor-ping webhook page</span></a>
+    </div>
+
+    <footer>
+      Full documentation in <a href="README.md">README.md</a> · source on
+      <a href="https://github.com/klossgott/infocusapp">GitHub</a>.
+    </footer>
+  </div>
 </body>
 </html>
