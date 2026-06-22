@@ -1,6 +1,6 @@
 # FOCUS Hero — per-lesson embed URLs
 
-Base: `https://infocus.institute/apps/focus-hero/`  (locked, branded — served from the main site; the github.io path still works but is unlocked)
+Base: `https://infocus.institute/widgets/focus-hero/`  (locked, branded — served from the main site; the github.io path still works but is unlocked)
 
 The FOCUS Practice has **5 stages × 3 lessons (Move · Remember · Write) + 2 intro lessons = 17 lessons.**
 This one widget now serves **all three lesson types** per stage via `?mode=`:
@@ -31,47 +31,47 @@ This one widget now serves **all three lesson types** per stage via `?mode=`:
 Heartbeat's embed field needs an **`<iframe>` tag**, not a bare URL, and frames it 16:9 itself. Template:
 
 ```html
-<iframe src="https://infocus.institute/apps/focus-hero/?stage=STAGE&mode=MODE" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<iframe src="https://infocus.institute/widgets/focus-hero/?stage=STAGE&mode=MODE" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
 ```
 
 Ready-to-paste, per lesson:
 
 ```html
-<!-- Find · Move -->     <iframe src="https://infocus.institute/apps/focus-hero/?stage=find&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Find · Remember --> <iframe src="https://infocus.institute/apps/focus-hero/?stage=find&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Find · Write -->    <iframe src="https://infocus.institute/apps/focus-hero/?stage=find&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Orient · Move -->     <iframe src="https://infocus.institute/apps/focus-hero/?stage=orient&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Orient · Remember --> <iframe src="https://infocus.institute/apps/focus-hero/?stage=orient&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Orient · Write -->    <iframe src="https://infocus.institute/apps/focus-hero/?stage=orient&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Clarify · Move -->     <iframe src="https://infocus.institute/apps/focus-hero/?stage=clarify&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Clarify · Remember --> <iframe src="https://infocus.institute/apps/focus-hero/?stage=clarify&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Clarify · Write -->    <iframe src="https://infocus.institute/apps/focus-hero/?stage=clarify&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Unfold · Move -->     <iframe src="https://infocus.institute/apps/focus-hero/?stage=unfold&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Unfold · Remember --> <iframe src="https://infocus.institute/apps/focus-hero/?stage=unfold&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Unfold · Write -->    <iframe src="https://infocus.institute/apps/focus-hero/?stage=unfold&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Steer · Move -->     <iframe src="https://infocus.institute/apps/focus-hero/?stage=steer&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Steer · Remember --> <iframe src="https://infocus.institute/apps/focus-hero/?stage=steer&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
-<!-- Steer · Write -->    <iframe src="https://infocus.institute/apps/focus-hero/?stage=steer&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Find · Move -->     <iframe src="https://infocus.institute/widgets/focus-hero/?stage=find&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Find · Remember --> <iframe src="https://infocus.institute/widgets/focus-hero/?stage=find&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Find · Write -->    <iframe src="https://infocus.institute/widgets/focus-hero/?stage=find&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Orient · Move -->     <iframe src="https://infocus.institute/widgets/focus-hero/?stage=orient&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Orient · Remember --> <iframe src="https://infocus.institute/widgets/focus-hero/?stage=orient&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Orient · Write -->    <iframe src="https://infocus.institute/widgets/focus-hero/?stage=orient&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Clarify · Move -->     <iframe src="https://infocus.institute/widgets/focus-hero/?stage=clarify&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Clarify · Remember --> <iframe src="https://infocus.institute/widgets/focus-hero/?stage=clarify&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Clarify · Write -->    <iframe src="https://infocus.institute/widgets/focus-hero/?stage=clarify&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Unfold · Move -->     <iframe src="https://infocus.institute/widgets/focus-hero/?stage=unfold&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Unfold · Remember --> <iframe src="https://infocus.institute/widgets/focus-hero/?stage=unfold&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Unfold · Write -->    <iframe src="https://infocus.institute/widgets/focus-hero/?stage=unfold&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Steer · Move -->     <iframe src="https://infocus.institute/widgets/focus-hero/?stage=steer&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Steer · Remember --> <iframe src="https://infocus.institute/widgets/focus-hero/?stage=steer&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Steer · Write -->    <iframe src="https://infocus.institute/widgets/focus-hero/?stage=steer&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
 ```
 
 ## Full URLs (15 stage lessons)
 
 ```
-https://infocus.institute/apps/focus-hero/?stage=find&mode=move
-https://infocus.institute/apps/focus-hero/?stage=find&mode=remember
-https://infocus.institute/apps/focus-hero/?stage=find&mode=write
-https://infocus.institute/apps/focus-hero/?stage=orient&mode=move
-https://infocus.institute/apps/focus-hero/?stage=orient&mode=remember
-https://infocus.institute/apps/focus-hero/?stage=orient&mode=write
-https://infocus.institute/apps/focus-hero/?stage=clarify&mode=move
-https://infocus.institute/apps/focus-hero/?stage=clarify&mode=remember
-https://infocus.institute/apps/focus-hero/?stage=clarify&mode=write
-https://infocus.institute/apps/focus-hero/?stage=unfold&mode=move
-https://infocus.institute/apps/focus-hero/?stage=unfold&mode=remember
-https://infocus.institute/apps/focus-hero/?stage=unfold&mode=write
-https://infocus.institute/apps/focus-hero/?stage=steer&mode=move
-https://infocus.institute/apps/focus-hero/?stage=steer&mode=remember
-https://infocus.institute/apps/focus-hero/?stage=steer&mode=write
+https://infocus.institute/widgets/focus-hero/?stage=find&mode=move
+https://infocus.institute/widgets/focus-hero/?stage=find&mode=remember
+https://infocus.institute/widgets/focus-hero/?stage=find&mode=write
+https://infocus.institute/widgets/focus-hero/?stage=orient&mode=move
+https://infocus.institute/widgets/focus-hero/?stage=orient&mode=remember
+https://infocus.institute/widgets/focus-hero/?stage=orient&mode=write
+https://infocus.institute/widgets/focus-hero/?stage=clarify&mode=move
+https://infocus.institute/widgets/focus-hero/?stage=clarify&mode=remember
+https://infocus.institute/widgets/focus-hero/?stage=clarify&mode=write
+https://infocus.institute/widgets/focus-hero/?stage=unfold&mode=move
+https://infocus.institute/widgets/focus-hero/?stage=unfold&mode=remember
+https://infocus.institute/widgets/focus-hero/?stage=unfold&mode=write
+https://infocus.institute/widgets/focus-hero/?stage=steer&mode=move
+https://infocus.institute/widgets/focus-hero/?stage=steer&mode=remember
+https://infocus.institute/widgets/focus-hero/?stage=steer&mode=write
 ```
 
 > The lesson count/labels follow the course's Move·Remember·Write beat; adjust rows if the live course numbering differs. URLs go live once the repo is deployed to GitHub Pages.
