@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Tracking</title>
+    <script>
+        window.onload = function() {
+            fetch('https://hooks.zapier.com/hooks/catch/2566484/2tp001h/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: 'A new visitor has visited the page!',
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(response => console.log('Notification sent successfully'))
+            .catch(error => console.error('Error:', error));
+        };
+    </script>
+</head>
+<body>
+    <h1>Welcome!</h1>
+</body>
+</html>

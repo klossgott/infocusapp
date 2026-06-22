@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Countdown Timer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Emoji&display=swap');
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+            background: transparent;
+            color: white; /* Set default text color to white */
+        }
+
+        .square-container {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #container {
+            text-align: center;
+            position: relative;
+            height: 120px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #displayArea {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #timeInput {
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+            font-size: 48px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            width: 200px;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            opacity: 0;
+            transition: opacity 1s;
+            color: white; /* Ensure input text is white */
+        }
+
+        #timeInput::placeholder {
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+            color: rgba(255, 255, 255, 0.5); /* Placeholder text in semi-transparent white */
+        }
+
+        #timer, #error {
+            position: absolute;
+            font-size: 48px;
+            width: 200px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
+            font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+            pointer-events: none;
+            color: white; /* Set text color to white */
+        }
+
+        #thumbsUp {
+            position: absolute;
+            font-size: 48px;
+            width: 200px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
+            font-family: 'Noto Emoji', sans-serif;
+            pointer-events: none;
+            /* The emoji will appear as it is, no need to change color */
+        }
+
+        #timer.flash {
+            animation: flash 1s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Add shake animation */
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-1px, 0); }
+            50% { transform: translate(1px, 0); }
+            75% { transform: translate(-1px, 0); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .shake {
+            animation: shake 0.2s;
+        }
+
+        /* Add zoom animation */
+        @keyframes zoomOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.2); opacity: 0; }
+        }
+
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button {
+            font-family: 'Noto Emoji', sans-serif;
+            background: none;
+            border: none;
+            font-size: 24px;
+            padding: 10px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+            color: white; /* Set button text color to white */
+        }
+
+        button:hover {
+            opacity: 0.75;
+        }
+
+        button.active {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        button:not(.active) {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        #error {
+            color: white; /* Set error message text color to white */
+            font-size: 14px;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 1s;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 600px) {
+            .square-container {
+                width: 90%;
+                height: auto;
+            }
+
+            #timeInput, #timer, #thumbsUp {
+                font-size: 10vw;
+                width: 100%;
+            }
+
+            button {
+                font-size: 8vw;
+            }
+
+            #error {
+                font-size: 4vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="square-container">
+        <div id="container">
+            <div id="displayArea">
+                <input type="text" id="timeInput" placeholder="?" />
+                <div id="timer">0:00</div>
+                <div id="thumbsUp">👍</div>
+                <div id="error">Please enter a valid<br>number of minutes</div>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="playBtn" class="active">▶</button>
+            <button id="pauseBtn">⏸</button>
+            <button id="stopBtn">■</button>
+        </div>
+    </div>
+
+    <script>
+        const displayArea = document.getElementById('displayArea');
+        const timeInput = document.getElementById('timeInput');
+        const timer = document.getElementById('timer');
+        const thumbsUp = document.getElementById('thumbsUp');
+        const error = document.getElementById('error');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+
+        let countdown;
+        let timeLeft;
+        let isPaused = false;
+
+        // Show input field on load
+        window.onload = () => {
+            setTimeout(() => {
+                timeInput.style.opacity = '1';
+                timeInput.focus();
+            }, 100);
+        };
+
+        // Audio context and sounds
+        let audioContext;
+
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playCuteQuirkySound() {
+            if (!audioContext) initAudio();
+
+            const baseFrequency = 600; // Adjusted for a cute sound
+            const harmonyRatios = [1, 1.2, 1.25, 1.5, 1.6]; // Harmonious intervals
+            const volumes = [0.2, 0.4, 0.15]; // Volumes for each note
+            const durations = [1.0, 0.5, 1.5]; // Durations for each note
+
+            for (let i = 0; i < 3; i++) {
+                const ratio = harmonyRatios[Math.floor(Math.random() * harmonyRatios.length)];
+                const frequency = baseFrequency * ratio;
+
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = frequency;
+
+                    const now = audioContext.currentTime;
+
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(volumes[i], now + 0.01);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + durations[i]);
+
+                    oscillator.start(now);
+                    oscillator.stop(now + durations[i]);
+
+                    // Trigger clock shake
+                    timer.classList.add('shake');
+                    setTimeout(() => {
+                        timer.classList.remove('shake');
+                    }, 200);
+
+                }, i * 400); // Adjusted interval for better rhythm
+            }
+        }
+
+        function showError() {
+            timeInput.style.opacity = '0';
+            timeInput.style.pointerEvents = 'none'; // Disable input interactions
+            setTimeout(() => {
+                error.style.opacity = '1';
+                error.style.pointerEvents = 'auto';
+                setTimeout(() => {
+                    error.style.opacity = '0';
+                    error.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        timeInput.value = '';
+                        timeInput.style.opacity = '1';
+                        timeInput.style.pointerEvents = 'auto';
+                        timeInput.focus();
+                    }, 1000);
+                }, 2000);
+            }, 1000);
+        }
+
+        function startTimer(minutes) {
+            if (!audioContext) initAudio();
+
+            clearInterval(countdown);
+            timeLeft = minutes * 60;
+
+            timeInput.style.opacity = '0';
+            timeInput.style.pointerEvents = 'none';
+            timeInput.blur();
+
+            setTimeout(() => {
+                timer.style.opacity = '1';
+                timer.style.pointerEvents = 'auto';
+                updateButtons(true);
+            }, 1000);
+
+            countdown = setInterval(() => {
+                if (!isPaused) {
+                    timeLeft--;
+                    updateDisplay();
+
+                    if (timeLeft <= 10) {
+                        timer.classList.add('flash');
+                    }
+
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        playCuteQuirkySound();
+                        animateTimerOut();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function animateTimerOut() {
+            // Add zoomOut animation
+            timer.style.animation = 'zoomOut 1s forwards';
+            timer.addEventListener('animationend', onTimerAnimationEnd);
+        }
+
+        function onTimerAnimationEnd(e) {
+            if (e.animationName === 'zoomOut') {
+                timer.style.opacity = '0';
+                timer.style.pointerEvents = 'none';
+                timer.style.animation = '';
+                timer.classList.remove('flash');
+                isPaused = false;
+                pauseBtn.textContent = '⏸';
+                timer.removeEventListener('animationend', onTimerAnimationEnd);
+
+                setTimeout(() => {
+                    thumbsUp.style.opacity = '1';
+                    thumbsUp.style.pointerEvents = 'auto';
+                    setTimeout(() => {
+                        thumbsUp.style.opacity = '0';
+                        thumbsUp.style.pointerEvents = 'none';
+                        setTimeout(() => {
+                            timeInput.value = '';
+                            timeInput.style.opacity = '1';
+                            timeInput.style.pointerEvents = 'auto';
+                            timeInput.focus();
+                            updateButtons(false);
+                        }, 1000);
+                    }, 2000);
+                }, 500);
+            }
+        }
+
+        function updateButtons(isRunning) {
+            playBtn.classList.toggle('active', !isRunning);
+            pauseBtn.classList.toggle('active', isRunning);
+            stopBtn.classList.toggle('active', isRunning);
+        }
+
+        function validateAndStart() {
+            const minutes = parseFloat(timeInput.value.replace(',', '.'));
+            if (minutes > 0) {
+                startTimer(minutes);
+            } else {
+                showError();
+            }
+        }
+
+        // Event Listeners
+        timeInput.addEventListener('keypress', (e) => {
+            const allowedChars = '0123456789.,';
+            if (allowedChars.indexOf(e.key) === -1 && e.key !== 'Enter') {
+                e.preventDefault();
+            } else if (e.key === 'Enter') {
+                validateAndStart();
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (playBtn.classList.contains('active')) {
+                validateAndStart();
+            }
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            if (pauseBtn.classList.contains('active')) {
+                isPaused = !isPaused;
+                pauseBtn.textContent = isPaused ? '▶' : '⏸';
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (stopBtn.classList.contains('active')) {
+                stopTimer();
+            }
+        });
+
+        function stopTimer() {
+            clearInterval(countdown);
+            timer.style.opacity = '0';
+            timer.style.pointerEvents = 'none';
+            timer.classList.remove('flash');
+            isPaused = false;
+            pauseBtn.textContent = '⏸';
+
+            setTimeout(() => {
+                thumbsUp.style.opacity = '1';
+                thumbsUp.style.pointerEvents = 'auto';
+                setTimeout(() => {
+                    thumbsUp.style.opacity = '0';
+                    thumbsUp.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        timeInput.value = '';
+                        timeInput.style.opacity = '1';
+                        timeInput.style.pointerEvents = 'auto';
+                        timeInput.focus();
+                        updateButtons(false);
+                    }, 1000);
+                }, 2000);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

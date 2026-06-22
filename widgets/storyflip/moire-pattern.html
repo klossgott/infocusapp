@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 80vmin;
+      height: 80vmin;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .mirror-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .quadrant {
+      position: absolute;
+      top: -0.5%;  /* Slight overlap to prevent lines */
+      left: -0.5%;  /* Slight overlap to prevent lines */
+      width: 50.5%; /* Slight overlap to ensure seamless edges */
+      height: 50.5%; /* Slight overlap to ensure seamless edges */
+      mix-blend-mode: screen;
+      overflow: hidden; /* Prevent accidental overflow */
+    }
+
+    .quadrant-pattern {
+      width: 200%; /* Ensures coverage during transformation */
+      height: 200%; /* Ensures coverage during transformation */
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="patternContainer">
+    <div class="mirror-container" id="mirrorContainer">
+      <!-- We'll create four quadrants with mirrored patterns -->
+    </div>
+  </div>
+
+  <script>
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function generatePattern() {
+      const mirrorContainer = document.getElementById('mirrorContainer');
+      mirrorContainer.innerHTML = '';
+
+      // Base pattern settings
+      const lineThickness = random(1, 3); // Thinner lines for sharper visuals
+      const spacing = random(20, 40); // Larger spacing to reduce visual noise
+      const angle1 = random(0, 180); // Random angle for primary lines
+      const angle2 = angle1 + 90; // Orthogonal angle for added complexity
+
+      // Base pattern CSS
+      const patternStyle = `
+        repeating-linear-gradient(
+          ${angle1}deg,
+          transparent,
+          transparent ${lineThickness}px,
+          rgba(255, 255, 255, 1) ${lineThickness}px,
+          rgba(255, 255, 255, 1) ${lineThickness + spacing}px
+        ),
+        repeating-linear-gradient(
+          ${angle2}deg,
+          transparent,
+          transparent ${lineThickness}px,
+          rgba(255, 255, 255, 0.8) ${lineThickness}px,
+          rgba(255, 255, 255, 0.8) ${lineThickness + spacing}px
+        )
+      `;
+
+      // Create four quadrants with proper mirroring
+      const positions = [
+        { transform: 'translate(0, 0)' },
+        { transform: 'translate(100%, 0) scaleX(-1)' },
+        { transform: 'translate(0, 100%) scaleY(-1)' },
+        { transform: 'translate(100%, 100%) scale(-1, -1)' }
+      ];
+
+      positions.forEach((pos) => {
+        const quadrant = document.createElement('div');
+        quadrant.className = 'quadrant';
+        quadrant.style.transform = pos.transform;
+
+        const pattern = document.createElement('div');
+        pattern.className = 'quadrant-pattern';
+        pattern.style.background = patternStyle;
+        pattern.style.backgroundSize = `${spacing * 2}px ${spacing * 2}px`; // Control the size for good coverage
+        pattern.style.backgroundRepeat = 'repeat';
+
+        quadrant.appendChild(pattern);
+        mirrorContainer.appendChild(quadrant);
+      });
+    }
+
+    // Generate pattern on load and click
+    generatePattern();
+    document.getElementById('patternContainer').addEventListener('click', generatePattern);
+  </script>
+</body>
+</html>

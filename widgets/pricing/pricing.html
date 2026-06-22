@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membership Pricing Toggle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Hammersmith+One&display=swap" rel="stylesheet">
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Didact Gothic', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    .pricing-container {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      font-family: 'Hammersmith One', sans-serif;
+    }
+
+    /* Toggle Switch with Outline */
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .toggle-container {
+      display: flex;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .toggle-button {
+      padding: 8px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      background-color: #fff;
+      color: #333;
+    }
+
+    .toggle-button.active {
+      background-color: #0E9594; /* Dark Teal for active state */
+      color: #fff;
+    }
+
+    .save-badge {
+      color: #FFA07A; /* Pale Orange text */
+      border: 1px solid #FFA07A; /* Orange outline */
+      padding: 3px 10px;
+      font-size: 0.8em;
+      border-radius: 5px;
+      font-weight: bold;
+      margin-left: 10px;
+      line-height: 1.8;
+      display: inline-block;
+      vertical-align: middle;
+      background-color: #fff;
+    }
+
+    /* Price Display */
+    .price {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin: 15px 0;
+      text-align: left;
+      line-height: 1.2;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      color: #888;
+      font-size: 1em;
+      margin-right: 10px;
+    }
+
+    .note {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 5px; /* Reduced top margin for "That's just" line */
+      margin-bottom: 20px;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    /* Button Styling */
+    .join-button {
+      padding: 15px 20px;
+      font-size: 1.1em;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      background: #FFA07A; /* Pale Orange */
+      cursor: pointer;
+      transition: background 0.3s;
+      text-decoration: none;
+      font-family: 'Didact Gothic', sans-serif;
+      width: 100%; /* Full width to fit within container */
+      box-sizing: border-box; /* Ensures padding fits within the width */
+      text-align: center;
+      display: inline-block;
+    }
+
+    .join-button:hover {
+      background: #FF2400; /* Bright Red on hover */
+    }
+  </style>
+</head>
+<body>
+
+<div class="pricing-container">
+  <!-- Toggle Switch with Outline -->
+  <div class="toggle">
+    <div class="toggle-container">
+      <span class="toggle-button active" id="quarterly-toggle" onclick="setQuarterly()">Quarterly</span>
+      <span class="toggle-button" id="yearly-toggle" onclick="setYearly()">Yearly</span>
+    </div>
+    <span class="save-badge" id="save-badge" style="display: none;">Save 33%</span>
+  </div>
+
+  <!-- Price Display -->
+  <div class="price">
+    <span class="original-price" id="original-price" style="display: none;">$180</span>
+    <span id="price">$45</span><span id="price-period">/quarter</span>
+  </div>
+
+  <!-- Additional Note -->
+  <div class="note" id="note">
+    Pay quarterly, cancel anytime.
+  </div>
+
+  <!-- Join Button -->
+  <a href="#" id="join-button" class="join-button">Join Membership</a>
+</div>
+
+<script>
+  // Define URLs for each plan
+  const quarterlyUrl = "https://example.com/join-quarterly";
+  const yearlyUrl = "https://example.com/join-yearly";
+
+  // Function to set Quarterly pricing
+  function setQuarterly() {
+    // Update active toggle style
+    document.getElementById("quarterly-toggle").classList.add("active");
+    document.getElementById("yearly-toggle").classList.remove("active");
+
+    // Update price display
+    document.getElementById("price").innerText = "$45";
+    document.getElementById("price-period").innerText = "/quarter";
+    document.getElementById("original-price").style.display = "none"; // Hide original price for quarterly
+    document.getElementById("save-badge").style.display = "none"; // Hide save badge
+    document.getElementById("note").innerText = "Pay quarterly, cancel anytime.";
+
+    // Update join button link to the quarterly URL
+    document.getElementById("join-button").href = quarterlyUrl;
+  }
+
+  // Function to set Yearly pricing
+  function setYearly() {
+    // Update active toggle style
+    document.getElementById("yearly-toggle").classList.add("active");
+    document.getElementById("quarterly-toggle").classList.remove("active");
+
+    // Update price display for yearly with discount
+    document.getElementById("price").innerText = "$120";
+    document.getElementById("price-period").innerText = "/year";
+    document.getElementById("original-price").style.display = "inline"; // Show original price with strikethrough
+    document.getElementById("original-price").innerText = "$180";
+    document.getElementById("save-badge").style.display = "inline"; // Show save badge
+    document.getElementById("note").innerText = "That's just $10/month, billed annually, cancel anytime.";
+
+    // Update join button link to the yearly URL
+    document.getElementById("join-button").href = yearlyUrl;
+  }
+
+  // Initialize to Quarterly view by default
+  setQuarterly();
+</script>
+
+</body>
+</html>
