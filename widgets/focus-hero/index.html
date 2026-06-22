@@ -19,7 +19,7 @@
 
   <style>
     :root{
-      --ink:#1E1A16; --cream:#F7F3EA; --scarlet:#FF2400; --scarlet-aa:#C81E00;
+      --ink:#1E1A16; --cream:#F7F3EA; --scarlet:#FF2400;
       --ring-track:rgba(247,243,234,.28);
     }
     *{box-sizing:border-box;margin:0;padding:0}
@@ -30,63 +30,59 @@
       overflow:hidden;
     }
     .stage{position:fixed;inset:0;background:var(--cream)}
-    .backdrop{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;object-position:center;
-      user-select:none;-webkit-user-drag:none;
-    }
-    /* dark scrim, strongest in the bottom-left where the controls sit */
-    .scrim{
-      position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(120% 90% at 0% 100%, rgba(30,26,22,.62) 0%, rgba(30,26,22,.30) 28%, rgba(30,26,22,0) 55%);
-    }
-
-    .player{
-      position:absolute; left:0; bottom:0;
-      display:flex; align-items:center; gap:clamp(10px,1.6vw,18px);
-      padding:clamp(14px,3vw,30px);
-      color:var(--cream);
-    }
-
-    /* play button + countdown ring */
-    .dial{position:relative; width:clamp(56px,9vw,84px); aspect-ratio:1; flex:0 0 auto}
-    .dial svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-    .ring-track{fill:none;stroke:var(--ring-track);stroke-width:6}
-    .ring{fill:none;stroke:var(--scarlet);stroke-width:6;stroke-linecap:round;
-          stroke-dasharray:283;stroke-dashoffset:0;transition:stroke-dashoffset .35s linear}
-    .play{
-      position:absolute;inset:9%;border:0;border-radius:50%;cursor:pointer;
-      background:rgba(30,26,22,.78);color:var(--cream);
-      display:flex;align-items:center;justify-content:center;
-      transition:background .15s, transform .1s;
-    }
-    .play:hover{background:rgba(30,26,22,.92)}
-    .play:active{transform:scale(.95)}
-    .play svg{width:42%;height:42%;transform:none;position:static;display:block;fill:currentColor}
-
-    .meta{display:flex;flex-direction:column;gap:2px;max-width:min(58vw,420px)}
-    .time{font-variant-numeric:tabular-nums;font-weight:700;
-          font-size:clamp(15px,2.4vw,20px);letter-spacing:.02em;line-height:1.1}
-    .title{font-size:clamp(12px,1.7vw,15px);font-weight:600;line-height:1.25;
-           text-shadow:0 1px 3px rgba(0,0,0,.45)}
-    .credit{font-size:clamp(10px,1.4vw,12px);opacity:.82;line-height:1.2;
-            text-shadow:0 1px 3px rgba(0,0,0,.45)}
-
-    .loop{
-      align-self:flex-end;margin-bottom:2px;
-      border:0;background:transparent;cursor:pointer;color:var(--cream);opacity:.6;
-      width:clamp(26px,4vw,34px);aspect-ratio:1;border-radius:8px;
-      display:flex;align-items:center;justify-content:center;transition:opacity .15s,background .15s;
-    }
-    .loop svg{width:70%;height:70%;fill:none;stroke:currentColor;stroke-width:2;
-              stroke-linecap:round;stroke-linejoin:round}
-    .loop:hover{opacity:.9;background:rgba(247,243,234,.12)}
-    .loop.on{opacity:1;color:var(--scarlet)}
+    .backdrop{position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center;user-select:none;-webkit-user-drag:none}
+    /* dark scrim, strongest bottom-left where the controls sit */
+    .scrim{position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(135% 100% at 0% 100%, rgba(30,26,22,.64) 0%, rgba(30,26,22,.32) 30%, rgba(30,26,22,0) 58%)}
 
     /* faint stage tag, top-left, for orientation when opened standalone */
     .tag{position:absolute;top:0;left:0;padding:clamp(10px,2.2vw,22px);
-         font-size:clamp(10px,1.4vw,12px);letter-spacing:.18em;text-transform:uppercase;
-         color:var(--ink);opacity:.45;font-weight:700}
+      font-size:clamp(10px,1.4vw,12px);letter-spacing:.18em;text-transform:uppercase;
+      color:var(--ink);opacity:.45;font-weight:700}
+
+    .controls{position:absolute;left:0;bottom:0;color:var(--cream);
+      display:flex;flex-direction:column;gap:clamp(8px,1.4vw,12px);
+      padding:clamp(14px,3vw,30px)}
+
+    /* duration presets */
+    .durations{display:flex;gap:6px;flex-wrap:wrap}
+    .dur{border:1px solid rgba(247,243,234,.38);background:rgba(30,26,22,.5);
+      color:var(--cream);font:inherit;font-weight:600;font-size:clamp(10px,1.3vw,12px);
+      padding:3px 10px;border-radius:999px;cursor:pointer;line-height:1.4;
+      transition:background .15s,border-color .15s,opacity .15s;opacity:.85}
+    .dur:hover{opacity:1;border-color:var(--scarlet)}
+    .dur.active{background:var(--scarlet);border-color:var(--scarlet);color:#fff;opacity:1}
+
+    .row{display:flex;align-items:center;gap:clamp(10px,1.6vw,18px)}
+
+    /* play button + countdown ring */
+    .dial{position:relative;width:clamp(56px,9vw,84px);aspect-ratio:1;flex:0 0 auto}
+    .dial svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+    .ring-track{fill:none;stroke:var(--ring-track);stroke-width:6}
+    .ring{fill:none;stroke:var(--scarlet);stroke-width:6;stroke-linecap:round;
+      stroke-dasharray:283;stroke-dashoffset:0;transition:stroke-dashoffset .35s linear}
+    .play{position:absolute;inset:9%;border:0;border-radius:50%;cursor:pointer;
+      background:rgba(30,26,22,.78);color:var(--cream);
+      display:flex;align-items:center;justify-content:center;transition:background .15s,transform .1s}
+    .play:hover{background:rgba(30,26,22,.92)}
+    .play:active{transform:scale(.95)}
+    .play svg{width:42%;height:42%;display:block;fill:currentColor;transform:none;position:static}
+
+    .meta{display:flex;flex-direction:column;gap:2px;max-width:min(58vw,420px)}
+    .time{font-variant-numeric:tabular-nums;font-weight:700;
+      font-size:clamp(15px,2.4vw,20px);letter-spacing:.02em;line-height:1.1}
+    .title{font-size:clamp(12px,1.7vw,15px);font-weight:600;line-height:1.25;
+      text-shadow:0 1px 3px rgba(0,0,0,.45)}
+    .credit{font-size:clamp(10px,1.4vw,12px);opacity:.82;line-height:1.2;
+      text-shadow:0 1px 3px rgba(0,0,0,.45)}
+
+    .loop{align-self:flex-end;margin-bottom:2px;border:0;background:transparent;cursor:pointer;
+      color:var(--cream);opacity:.6;width:clamp(26px,4vw,34px);aspect-ratio:1;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;transition:opacity .15s,background .15s}
+    .loop svg{width:70%;height:70%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .loop:hover{opacity:.9;background:rgba(247,243,234,.12)}
+    .loop.on{opacity:1;color:var(--scarlet)}
   </style>
 </head>
 <body>
@@ -95,26 +91,27 @@
     <div class="scrim"></div>
     <div class="tag" id="tag"></div>
 
-    <div class="player">
-      <div class="dial">
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <circle class="ring-track" cx="50" cy="50" r="45"></circle>
-          <circle class="ring" id="ring" cx="50" cy="50" r="45"></circle>
-        </svg>
-        <button class="play" id="play" aria-label="Play">
-          <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+    <div class="controls">
+      <div class="durations" id="durations"></div>
+      <div class="row">
+        <div class="dial">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="ring-track" cx="50" cy="50" r="45"></circle>
+            <circle class="ring" id="ring" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <button class="play" id="play" aria-label="Play">
+            <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+          </button>
+        </div>
+        <div class="meta">
+          <div class="time" id="time">00:00</div>
+          <div class="title" id="title"></div>
+          <div class="credit" id="credit"></div>
+        </div>
+        <button class="loop on" id="loop" aria-label="Loop music" title="Loop music">
+          <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
         </button>
       </div>
-
-      <div class="meta">
-        <div class="time" id="time">00:00</div>
-        <div class="title" id="title"></div>
-        <div class="credit" id="credit"></div>
-      </div>
-
-      <button class="loop on" id="loop" aria-label="Loop music" title="Loop music">
-        <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-      </button>
     </div>
   </div>
 
@@ -129,14 +126,16 @@
       unfold:  {music:"unfold.mp3",  slide:"unfold.png",  title:"Happy Journey",                                      credit:"Royalty-free · Pixabay"},
       steer:   {music:"steer.mp3",   slide:"steer.png",   title:"Cello Suite No. 1, Prelude (BWV 1007) — J.S. Bach",  credit:"Public domain · Musopen"}
     };
-    const DURATIONS = { write:600, move:60 };   // write = 10 min (2×5), move ≈ 1 min cue
+    // Selectable write lengths (minutes), as on the earlier timer. mode just sets the default.
+    const DURATION_OPTIONS = [1, 5, 10, 15, 20];
+    const MODE_DEFAULT = { write:10, move:1 };
+    const RING = 283;                 // 2πr for r=45
+    const FADE_SECONDS = 6;           // gentle fade-out over the final seconds
 
     const params = new URLSearchParams(location.search);
     const stage = STAGES[(params.get("stage")||"find").toLowerCase()] ? (params.get("stage")||"find").toLowerCase() : "find";
-    const mode  = DURATIONS[(params.get("mode")||"write").toLowerCase()] ? (params.get("mode")||"write").toLowerCase() : "write";
-    const data = STAGES[stage];
-    const TIME_LIMIT = DURATIONS[mode];
-    const RING = 283;          // 2πr for r=45
+    const mode  = MODE_DEFAULT[(params.get("mode")||"write").toLowerCase()] ? (params.get("mode")||"write").toLowerCase() : "write";
+    const data  = STAGES[stage];
 
     // ---- DOM ----
     const audio  = document.getElementById("audio");
@@ -145,6 +144,7 @@
     const playBtn= document.getElementById("play");
     const icon   = document.getElementById("icon");
     const loopBtn= document.getElementById("loop");
+    const durBox = document.getElementById("durations");
 
     // ---- Wire up stage content ----
     document.querySelector(".backdrop").src = "assets/slides/" + data.slide;
@@ -157,50 +157,79 @@
     const ICON_PLAY  = "M8 5v14l11-7z";
     const ICON_PAUSE = "M6 5h4v14H6zM14 5h4v14h-4z";
 
-    let timeLeft = TIME_LIMIT, interval = null, running = false, fadeTimer = null;
+    let TIME_LIMIT = MODE_DEFAULT[mode] * 60;
+    let timeLeft = TIME_LIMIT, interval = null, fadeTimer = null, running = false;
 
-    const fmt = t => `${Math.floor(t/60)}:${String(t%60).padStart(2,"0")}`;
+    // ---- Duration preset buttons ----
+    DURATION_OPTIONS.forEach(min => {
+      const b = document.createElement("button");
+      b.className = "dur";
+      b.dataset.min = min;
+      b.textContent = min + "m";
+      if (min === MODE_DEFAULT[mode]) b.classList.add("active");
+      b.addEventListener("click", () => selectDuration(min));
+      durBox.appendChild(b);
+    });
+    function markActive(min){
+      durBox.querySelectorAll(".dur").forEach(b => b.classList.toggle("active", +b.dataset.min === min));
+    }
+
+    const fmt = t => `${Math.floor(t/60)}:${String(Math.max(0,t%60)).padStart(2,"0")}`;
     function paint(){
       timeEl.textContent = fmt(timeLeft);
       ring.style.strokeDashoffset = (RING * (1 - timeLeft / TIME_LIMIT)).toFixed(1);
     }
-    paint();
+    function setIcon(d){ icon.querySelector("path").setAttribute("d", d); }
+
+    // Pick a length and begin (mirrors the earlier timer's preset buttons)
+    function selectDuration(min){
+      TIME_LIMIT = min * 60;
+      markActive(min);
+      hardStop();
+      timeLeft = TIME_LIMIT;
+      paint();
+      start();
+    }
 
     function start(){
       running = true;
-      icon.querySelector("path").setAttribute("d", ICON_PAUSE);
+      setIcon(ICON_PAUSE);
       playBtn.setAttribute("aria-label","Pause");
+      clearInterval(fadeTimer);
       audio.volume = 1;
-      audio.play().catch(()=>{});           // user gesture → allowed
+      audio.play().catch(()=>{});          // user gesture → allowed
       interval = setInterval(tick, 1000);
-      scheduleFade();
     }
     function pause(){
       running = false;
-      icon.querySelector("path").setAttribute("d", ICON_PLAY);
+      setIcon(ICON_PLAY);
       playBtn.setAttribute("aria-label","Play");
       audio.pause();
       clearInterval(interval); clearInterval(fadeTimer);
+    }
+    function hardStop(){
+      running = false;
+      setIcon(ICON_PLAY);
+      clearInterval(interval); clearInterval(fadeTimer);
+      audio.pause(); audio.volume = 1;
+    }
+    function tick(){
+      timeLeft -= 1;
+      paint();
+      // fade the music out over the final seconds, then stop
+      if (timeLeft <= FADE_SECONDS && audio.volume > 0.05){
+        audio.volume = Math.max(0, audio.volume - (1 / (FADE_SECONDS + 1)));
+      }
+      if (timeLeft <= 0) finish();
     }
     function finish(){
       clearInterval(interval); clearInterval(fadeTimer);
       audio.pause();
       running = false;
-      icon.querySelector("path").setAttribute("d", ICON_PLAY);
-      timeLeft = TIME_LIMIT; paint();       // reset for another round
-    }
-    function tick(){
-      timeLeft -= 1;
-      paint();
-      if (timeLeft <= 0) finish();
-    }
-    // 5-second fade-out at the end (carried over from the timer engine)
-    function scheduleFade(){
-      const fadeAt = 5;
-      fadeTimer = setInterval(()=>{
-        if (timeLeft <= fadeAt && audio.volume > 0.05) audio.volume = Math.max(0, audio.volume - 0.1);
-        if (audio.paused) clearInterval(fadeTimer);
-      }, 200);
+      setIcon(ICON_PLAY);
+      timeLeft = TIME_LIMIT;
+      audio.volume = 1;
+      paint();                              // reset for another round
     }
 
     playBtn.addEventListener("click", () => running ? pause() : start());
@@ -208,6 +237,8 @@
       audio.loop = !audio.loop;
       loopBtn.classList.toggle("on", audio.loop);
     });
+
+    paint();
   </script>
 </body>
 </html>

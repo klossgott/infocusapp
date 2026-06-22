@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redirecting…</title>
+  <script>
+    /*
+     * Backward-compatibility redirect map.
+     * GitHub Pages serves this 404.html for any path it can't find. The June 2026
+     * reorg moved widgets into widgets/<name>/ and assets into assets/, which changes
+     * the URLs that were previously embedded in Heartbeat docs, posts and lesson heroes.
+     * This maps each OLD path to its NEW home so existing embeds keep working.
+     * Add a line here if you ever rename another widget.
+     */
+    (function () {
+      var base = "/infocusapp/";
+      // old path (without leading /infocusapp/) -> new path
+      var MAP = {
+        "timer/timer.html": "widgets/timer/",
+        "timer-random-image.html": "widgets/prompt-timer/",
+        "countdown-timer/countdown-timer.html": "widgets/countdown-timer/",
+        "countdown-timer/countdown-timer-white.html": "widgets/countdown-timer/white.html",
+        "voiceblankpage/curiosity.html": "widgets/voiceblankpage/curiosity.html",
+        "voiceblankpage/curiosity-prompts.html": "widgets/voiceblankpage/curiosity-prompts.html",
+        "voiceblankpage/courage-prompts.html": "widgets/voiceblankpage/courage-prompts.html",
+        "voiceblankpage/presence-prompts.html": "widgets/voiceblankpage/presence-prompts.html",
+        "icebreakers.html": "widgets/icebreakers/",
+        "doorbell.html": "widgets/doorbell/",
+        "random-images.html": "widgets/random-images/",
+        "random.html": "widgets/random/",
+        "card-flip/card-flip.html": "widgets/card-flip/card-flip.html",
+        "lifecoachcards/lifecoachcards.html": "widgets/lifecoachcards/lifecoachcards.html",
+        "fortunecookie/fortunecookie.html": "widgets/fortunecookie/fortunecookie.html",
+        "icebreaker/icebreaker.html": "widgets/icebreaker/icebreaker.html",
+        "pricing/pricing.html": "widgets/pricing/pricing.html",
+        "wordblob/wordblob.html": "widgets/wordblob/wordblob.html"
+      };
+      // also map bare folder roots (e.g. /infocusapp/cube/ -> /infocusapp/widgets/cube/)
+      var FOLDERS = ["card-flip","cube","fortunecookie","icebreaker","lifecoachcards","pricing","storyflip","what-type-test","wordblob","voiceblankpage","timer","countdown-timer"];
+
+      var path = location.pathname;
+      var rest = path.indexOf(base) === 0 ? path.slice(base.length) : path.replace(/^\//, "");
+
+      if (MAP[rest]) { location.replace(base + MAP[rest] + location.search + location.hash); return; }
+
+      for (var i = 0; i < FOLDERS.length; i++) {
+        var f = FOLDERS[i] + "/";
+        if (rest === f || rest === FOLDERS[i]) { location.replace(base + "widgets/" + f + location.search + location.hash); return; }
+      }
+    })();
+  </script>
+  <style>
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+         background:#F7F3EA;color:#1E1A16;
+         font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .box{text-align:center;max-width:34ch;padding:2rem}
+    a{color:#C81E00}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <p>That page has moved.</p>
+    <p>The widgets now live under <a href="/infocusapp/">/infocusapp/</a> → see the <a href="/infocusapp/">index</a>.</p>
+  </div>
+</body>
+</html>
