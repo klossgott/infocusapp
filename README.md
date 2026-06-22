@@ -7,7 +7,7 @@ A collection of small, **self-contained HTML/CSS/JS widgets for creative journal
 ```
 widgets/<name>/index.html   one self-contained widget per folder
 assets/audio/               shared piano tracks (pianomusic1–7.mp3)
-assets/prompts/             writing-prompt + inspiration images (used by the random-image widgets)
+assets/prompts/             writing-prompt image libraries (3 distinct sets — see assets/prompts/README.md)
 assets/images/              decorative images (unsplash backgrounds, gifs)
 _archive/                   retired files, kept for reference — never hard-deleted
 ```
@@ -60,7 +60,7 @@ Everything else (games, tests, pricing, doorbell, the plain timers) is general-p
 ## Asset & consolidation notes
 
 - **Timers:** five historical variants were consolidated. `timer/timer.html` won as the canonical engine (it has the SVG ring + looping audio + presets + fade-out). The random-image variant became `prompt-timer`; the input-minutes/synth variant stayed as `countdown-timer`. `timer-hardcode.html` (same engine, hard-coded URLs) and the dead directory-listing `random-image.html` were moved to `_archive/timer-variants/`.
-- **Prompt images:** the loose `prompt (N).*` files turned out to be **distinct images** (same number ≠ same picture — e.g. `prompt (1).jpeg/.jpg/.png` are three different photos), so all were kept. Only **byte-identical** duplicates were collapsed: the `IMG_*.JPEG` copies that recurred under `timer/random-prompts/` and `timer/images/`, and the `timer/audios/` copy of the piano tracks.
+- **Prompt images — three separate libraries, kept distinct** (see [`assets/prompts/README.md`](assets/prompts/README.md)): `writing-prompts/` (the varied `prompt (N)` set, 2022-10-20), `curated-20/` (the curated `prompt_img01–20` set, 2022-10-19), and `photos/` (the `IMG_*` iPhone photos). These are genuinely different sets from different dates, not duplicates. The `prompt (N).*` files are distinct images even when they share a number (e.g. `prompt (1).jpeg/.jpg/.png` are three different photos), so every format is kept. The only things collapsed were **byte-identical** copies — the same photos that earlier lived in two/three locations at once because successive widget generations read different folders — plus the `timer/audios/` copy of the piano tracks.
 - **`_archive/`** holds retired files (`svg_test.html`, the two dead timer variants, the old `readme`). Nothing was hard-deleted.
 
 ---

@@ -524,8 +524,10 @@
 
         // LOAD IMAGES FROM GITHUB REPO
         (async () => {
+          // Image library for this widget. Swap the last path segment to change it:
+          //   writing-prompts | curated-20 | photos   (see assets/prompts/README.md)
           const response = await fetch(
-            "https://api.github.com/repos/klossgott/infocusapp/contents/assets/prompts"
+            "https://api.github.com/repos/klossgott/infocusapp/contents/assets/prompts/writing-prompts"
           );
           const data = await response.json();
 
