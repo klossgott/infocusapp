@@ -1,0 +1,22 @@
+# ============================================================================
+# Netlify / Cloudflare Pages headers — STAGED FOR MIGRATION.
+# GitHub Pages ignores this file; it only takes effect on Netlify or Cloudflare.
+#
+# What it does:
+#   1. Tells crawlers not to index anything (defence-in-depth with robots.txt).
+#   2. Locks the embeddable widgets so ONLY your Heartbeat community can iframe them
+#      — embed the widget from any other site and it renders blank.
+#
+# >>> BEFORE GOING LIVE: set frame-ancestors to the EXACT origin Heartbeat embeds
+#     from, then test in a real lesson. If the embed goes blank, the parent origin
+#     differs (e.g. Heartbeat proxies through its own domain) — add it to the list.
+#
+# >>> IF DEPLOYED IN A SUBFOLDER (e.g. /infocusapp/widgets/...), prefix the paths
+#     below accordingly, or merge these rules into the parent site's _headers.
+# ============================================================================
+
+/*
+  X-Robots-Tag: noindex, nofollow
+
+/widgets/*
+  Content-Security-Policy: frame-ancestors 'self' https://community.infocus.institute https://*.heartbeat.chat
