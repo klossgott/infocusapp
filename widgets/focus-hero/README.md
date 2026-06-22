@@ -13,7 +13,9 @@ One hosted page serves all stages/modes — see [EMBED-URLS.md](EMBED-URLS.md) f
 
 ## How it behaves
 
-- Tap the play button → the stage's looping track starts and the ring counts down (10:00 for write, 1:00 for move). Tap again to pause; tap the loop toggle to stop looping. A 5-second fade-out runs at the end (carried over from the `timer` engine).
+- Tap the play button → the stage's looping track starts and the ring counts down. Tap again to pause; tap the loop toggle to stop looping.
+- **Duration presets** (`1 · 5 · 10 · 15 · 20 m`) sit above the player; `?mode` sets the default highlight. Tapping a length resets and starts at that time. The red ring mirrors the chosen length — so no need to pre-cut the tracks into blocks.
+- The music **fades out over the final 6 seconds** before the timer stops.
 - Autoplay is never forced — the learner taps play (browser policy + good manners).
 
 ## Embedding in Heartbeat
@@ -26,10 +28,11 @@ Heartbeat lesson **bodies don't accept custom HTML**, so this widget is delivere
 ## Assets
 
 - `assets/music/<stage>.mp3` — the five FOCUS stage tracks (from the course's `hearthis-upload-kit`).
-- `assets/slides/<stage>.png` — the stage archetype slides (the `*-3-write-hero.png` "letter + name" slides from `pulse-build`).
+- `assets/slides/<stage>.png` — the **archetype** slide (letter + name, `*-3-write-hero.png`), used as the **write** backdrop.
+- `assets/slides/<stage>-move.png` — the lighter doodle slide (`*-1-move-hero.png`), used as the **move** backdrop.
 
-## Notes / not-yet
+## Notes
 
-- `write` is a single 10-minute countdown; the course's "2×5" (two five-minute blocks) is not yet segmented — a future enhancement.
-- `move` reuses the stage's music track as a short 1-minute cue.
+- No track-splitting: the duration presets (mirrored in the red ring) control how long playback runs, so the "2×5" blocks don't need separate files.
+- `move` reuses the stage's music track as a short cue over the lighter doodle slide; `write` uses the archetype slide.
 - Remember-lesson guided-voice variant (title "Guided practice — {Stage}", credit "In Kai's voice") is not built here — Remember lessons use the voice audio, not this music widget.

@@ -147,7 +147,9 @@
     const durBox = document.getElementById("durations");
 
     // ---- Wire up stage content ----
-    document.querySelector(".backdrop").src = "assets/slides/" + data.slide;
+    // Move uses the lighter doodle slide; Write uses the archetype (letter + name) slide.
+    const slideFile = (mode === "move") ? (stage + "-move.png") : data.slide;
+    document.querySelector(".backdrop").src = "assets/slides/" + slideFile;
     audio.src = "assets/music/" + data.music;
     document.getElementById("title").textContent  = data.title;
     document.getElementById("credit").textContent = data.credit;
