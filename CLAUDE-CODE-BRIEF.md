@@ -71,7 +71,7 @@ For the Remember lessons (if they reuse this widget for the guided voice): title
 
 Voice → stage map for `mode=remember`: find→find-voice, orient→orient-voice, clarify→clarify-voice, unfold→unfold-voice, steer→steer-voice.
 
-**Hosting & embedding.** Deploy via **GitHub Pages**. The per-lesson embed is then `https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=find&mode=write` etc. Set each lesson's **Hero → Video → "use an embed"** to that URL (16:9). Produce a short `widgets/focus-hero/EMBED-URLS.md` listing the exact URL for all 17 lessons.
+**Hosting & embedding.** Host on **Netlify** — the other `infocusapp` widgets are already deployed there and **confirmed embedding successfully in Heartbeat** (16:9 Hero embeds, like Wordle). Deploy `focus-hero` to the **same Netlify site** and use its path. The per-lesson embed is then `https://<kai-netlify-site>/widgets/focus-hero/?stage=find&mode=write` etc. Set each lesson's **Hero → Video → "use an embed"** to that URL (16:9). Produce a short `widgets/focus-hero/EMBED-URLS.md` listing the exact URL for all 17 lessons. (Ignore any earlier GitHub Pages reference — Netlify is the live host.)
 
 **Constraints:** responsive (Heartbeat is responsive; it began as a mobile timer — keep it working on phones); no external build step (plain HTML/CSS/JS like the other widgets); fonts/icons may load from CDN as the timer already does; respect autoplay rules (user taps play).
 
