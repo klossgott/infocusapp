@@ -30,6 +30,7 @@ _archive/                   retired files, kept for reference — never hard-del
 
 | Widget | What it is |
 |---|---|
+| [focus-hero](widgets/focus-hero/) | **The FOCUS Practice hero.** Per-stage archetype backdrop + compact music player + write timer, parameterised by `?stage=` / `?mode=`. Built on the timer engine. See its [README](widgets/focus-hero/README.md) + [EMBED-URLS](widgets/focus-hero/EMBED-URLS.md). |
 | [timer](widgets/timer/) | **Canonical write timer.** Circular SVG countdown ring, looping piano tracks, preset durations, click-to-pause, 5-sec fade-out. Base engine for the others. |
 | [prompt-timer](widgets/prompt-timer/) | The write timer + a random **writing-prompt image** revealed on tap (writing-inspiration tool). |
 | [countdown-timer](widgets/countdown-timer/) | A simpler, distinct timer: type a number of minutes, Web-Audio synth chime, celebration animation. `index.html` (dark) + `white.html` (light theme). |

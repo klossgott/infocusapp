@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>FOCUS Practice</title>
+
+  <!-- Opportunistic rich-embed metadata (so Heartbeat's resolver may render this in a lesson hero) -->
+  <meta property="og:type" content="video.other" />
+  <meta property="og:title" content="The FOCUS Practice — write timer" />
+  <meta property="og:description" content="A looping music + write-timer panel for the FOCUS Practice." />
+  <meta property="og:image" content="https://klossgott.github.io/infocusapp/widgets/focus-hero/assets/slides/find.png" />
+  <meta name="twitter:card" content="player" />
+  <meta name="twitter:title" content="The FOCUS Practice — write timer" />
+  <meta name="twitter:player" content="https://klossgott.github.io/infocusapp/widgets/focus-hero/" />
+  <meta name="twitter:player:width" content="1280" />
+  <meta name="twitter:player:height" content="720" />
+  <meta name="twitter:image" content="https://klossgott.github.io/infocusapp/widgets/focus-hero/assets/slides/find.png" />
+
+  <style>
+    :root{
+      --ink:#1E1A16; --cream:#F7F3EA; --scarlet:#FF2400; --scarlet-aa:#C81E00;
+      --ring-track:rgba(247,243,234,.28);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      background:var(--cream); color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+      overflow:hidden;
+    }
+    .stage{position:fixed;inset:0;background:var(--cream)}
+    .backdrop{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center;
+      user-select:none;-webkit-user-drag:none;
+    }
+    /* dark scrim, strongest in the bottom-left where the controls sit */
+    .scrim{
+      position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(120% 90% at 0% 100%, rgba(30,26,22,.62) 0%, rgba(30,26,22,.30) 28%, rgba(30,26,22,0) 55%);
+    }
+
+    .player{
+      position:absolute; left:0; bottom:0;
+      display:flex; align-items:center; gap:clamp(10px,1.6vw,18px);
+      padding:clamp(14px,3vw,30px);
+      color:var(--cream);
+    }
+
+    /* play button + countdown ring */
+    .dial{position:relative; width:clamp(56px,9vw,84px); aspect-ratio:1; flex:0 0 auto}
+    .dial svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+    .ring-track{fill:none;stroke:var(--ring-track);stroke-width:6}
+    .ring{fill:none;stroke:var(--scarlet);stroke-width:6;stroke-linecap:round;
+          stroke-dasharray:283;stroke-dashoffset:0;transition:stroke-dashoffset .35s linear}
+    .play{
+      position:absolute;inset:9%;border:0;border-radius:50%;cursor:pointer;
+      background:rgba(30,26,22,.78);color:var(--cream);
+      display:flex;align-items:center;justify-content:center;
+      transition:background .15s, transform .1s;
+    }
+    .play:hover{background:rgba(30,26,22,.92)}
+    .play:active{transform:scale(.95)}
+    .play svg{width:42%;height:42%;transform:none;position:static;display:block;fill:currentColor}
+
+    .meta{display:flex;flex-direction:column;gap:2px;max-width:min(58vw,420px)}
+    .time{font-variant-numeric:tabular-nums;font-weight:700;
+          font-size:clamp(15px,2.4vw,20px);letter-spacing:.02em;line-height:1.1}
+    .title{font-size:clamp(12px,1.7vw,15px);font-weight:600;line-height:1.25;
+           text-shadow:0 1px 3px rgba(0,0,0,.45)}
+    .credit{font-size:clamp(10px,1.4vw,12px);opacity:.82;line-height:1.2;
+            text-shadow:0 1px 3px rgba(0,0,0,.45)}
+
+    .loop{
+      align-self:flex-end;margin-bottom:2px;
+      border:0;background:transparent;cursor:pointer;color:var(--cream);opacity:.6;
+      width:clamp(26px,4vw,34px);aspect-ratio:1;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;transition:opacity .15s,background .15s;
+    }
+    .loop svg{width:70%;height:70%;fill:none;stroke:currentColor;stroke-width:2;
+              stroke-linecap:round;stroke-linejoin:round}
+    .loop:hover{opacity:.9;background:rgba(247,243,234,.12)}
+    .loop.on{opacity:1;color:var(--scarlet)}
+
+    /* faint stage tag, top-left, for orientation when opened standalone */
+    .tag{position:absolute;top:0;left:0;padding:clamp(10px,2.2vw,22px);
+         font-size:clamp(10px,1.4vw,12px);letter-spacing:.18em;text-transform:uppercase;
+         color:var(--ink);opacity:.45;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <img class="backdrop" alt="" />
+    <div class="scrim"></div>
+    <div class="tag" id="tag"></div>
+
+    <div class="player">
+      <div class="dial">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="ring-track" cx="50" cy="50" r="45"></circle>
+          <circle class="ring" id="ring" cx="50" cy="50" r="45"></circle>
+        </svg>
+        <button class="play" id="play" aria-label="Play">
+          <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+        </button>
+      </div>
+
+      <div class="meta">
+        <div class="time" id="time">00:00</div>
+        <div class="title" id="title"></div>
+        <div class="credit" id="credit"></div>
+      </div>
+
+      <button class="loop on" id="loop" aria-label="Loop music" title="Loop music">
+        <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <audio id="audio" loop></audio>
+
+  <script>
+    // ---- Per-stage data (display title + credit = the "lost names" fix) ----
+    const STAGES = {
+      find:    {music:"find.mp3",    slide:"find.png",    title:"Gymnopédie No. 1 — Erik Satie (arr. harp)",          credit:"Public domain · Musopen"},
+      orient:  {music:"orient.mp3",  slide:"orient.png",  title:"Cumbia Colombiana",                                  credit:"Royalty-free · Pixabay"},
+      clarify: {music:"clarify.mp3", slide:"clarify.png", title:"Rio at Night",                                       credit:"Royalty-free · Pixabay"},
+      unfold:  {music:"unfold.mp3",  slide:"unfold.png",  title:"Happy Journey",                                      credit:"Royalty-free · Pixabay"},
+      steer:   {music:"steer.mp3",   slide:"steer.png",   title:"Cello Suite No. 1, Prelude (BWV 1007) — J.S. Bach",  credit:"Public domain · Musopen"}
+    };
+    const DURATIONS = { write:600, move:60 };   // write = 10 min (2×5), move ≈ 1 min cue
+
+    const params = new URLSearchParams(location.search);
+    const stage = STAGES[(params.get("stage")||"find").toLowerCase()] ? (params.get("stage")||"find").toLowerCase() : "find";
+    const mode  = DURATIONS[(params.get("mode")||"write").toLowerCase()] ? (params.get("mode")||"write").toLowerCase() : "write";
+    const data = STAGES[stage];
+    const TIME_LIMIT = DURATIONS[mode];
+    const RING = 283;          // 2πr for r=45
+
+    // ---- DOM ----
+    const audio  = document.getElementById("audio");
+    const ring   = document.getElementById("ring");
+    const timeEl = document.getElementById("time");
+    const playBtn= document.getElementById("play");
+    const icon   = document.getElementById("icon");
+    const loopBtn= document.getElementById("loop");
+
+    // ---- Wire up stage content ----
+    document.querySelector(".backdrop").src = "assets/slides/" + data.slide;
+    audio.src = "assets/music/" + data.music;
+    document.getElementById("title").textContent  = data.title;
+    document.getElementById("credit").textContent = data.credit;
+    document.getElementById("tag").textContent = stage + " · " + mode;
+    document.title = "FOCUS · " + stage.charAt(0).toUpperCase()+stage.slice(1) + " — " + (mode==="write"?"Write":"Move");
+
+    const ICON_PLAY  = "M8 5v14l11-7z";
+    const ICON_PAUSE = "M6 5h4v14H6zM14 5h4v14h-4z";
+
+    let timeLeft = TIME_LIMIT, interval = null, running = false, fadeTimer = null;
+
+    const fmt = t => `${Math.floor(t/60)}:${String(t%60).padStart(2,"0")}`;
+    function paint(){
+      timeEl.textContent = fmt(timeLeft);
+      ring.style.strokeDashoffset = (RING * (1 - timeLeft / TIME_LIMIT)).toFixed(1);
+    }
+    paint();
+
+    function start(){
+      running = true;
+      icon.querySelector("path").setAttribute("d", ICON_PAUSE);
+      playBtn.setAttribute("aria-label","Pause");
+      audio.volume = 1;
+      audio.play().catch(()=>{});           // user gesture → allowed
+      interval = setInterval(tick, 1000);
+      scheduleFade();
+    }
+    function pause(){
+      running = false;
+      icon.querySelector("path").setAttribute("d", ICON_PLAY);
+      playBtn.setAttribute("aria-label","Play");
+      audio.pause();
+      clearInterval(interval); clearInterval(fadeTimer);
+    }
+    function finish(){
+      clearInterval(interval); clearInterval(fadeTimer);
+      audio.pause();
+      running = false;
+      icon.querySelector("path").setAttribute("d", ICON_PLAY);
+      timeLeft = TIME_LIMIT; paint();       // reset for another round
+    }
+    function tick(){
+      timeLeft -= 1;
+      paint();
+      if (timeLeft <= 0) finish();
+    }
+    // 5-second fade-out at the end (carried over from the timer engine)
+    function scheduleFade(){
+      const fadeAt = 5;
+      fadeTimer = setInterval(()=>{
+        if (timeLeft <= fadeAt && audio.volume > 0.05) audio.volume = Math.max(0, audio.volume - 0.1);
+        if (audio.paused) clearInterval(fadeTimer);
+      }, 200);
+    }
+
+    playBtn.addEventListener("click", () => running ? pause() : start());
+    loopBtn.addEventListener("click", () => {
+      audio.loop = !audio.loop;
+      loopBtn.classList.toggle("on", audio.loop);
+    });
+  </script>
+</body>
+</html>
