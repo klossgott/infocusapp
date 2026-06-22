@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Moved to infocus.institute</title>
+  <script>
+    /*
+     * The infocusapp widgets have moved to the locked main site.
+     * GitHub Pages now serves ONLY this /docs folder, so every old widget URL
+     * lands here (404) and is forwarded to its locked infocus.institute home.
+     * This keeps every existing Heartbeat embed working while the unlocked
+     * github.io mirror serves no real widget content.
+     */
+    (function () {
+      var LIVE = "https://infocus.institute/widgets/";
+      var base = "/infocusapp/";
+      var path = location.pathname;
+      var rest = path.indexOf(base) === 0 ? path.slice(base.length) : path.replace(/^\//, "");
+      var tail = location.search + location.hash;
+
+      // Already a new-style path (widgets/<name>/...) -> same path on the live host
+      if (rest.indexOf("widgets/") === 0) { location.replace("https://infocus.institute/" + rest + tail); return; }
+
+      // Old (pre-reorg) entry points -> their new widget homes
+      var MAP = {
+        "timer/timer.html": "timer/",
+        "timer-random-image.html": "prompt-timer/",
+        "countdown-timer/countdown-timer.html": "countdown-timer/",
+        "countdown-timer/countdown-timer-white.html": "countdown-timer/white.html",
+        "voiceblankpage/curiosity.html": "voiceblankpage/curiosity.html",
+        "voiceblankpage/curiosity-prompts.html": "voiceblankpage/curiosity-prompts.html",
+        "voiceblankpage/courage-prompts.html": "voiceblankpage/courage-prompts.html",
+        "voiceblankpage/presence-prompts.html": "voiceblankpage/presence-prompts.html",
+        "icebreakers.html": "icebreakers/",
+        "doorbell.html": "doorbell/",
+        "random-images.html": "random-images/",
+        "random.html": "random/"
+      };
+      if (MAP[rest]) { location.replace(LIVE + MAP[rest] + tail); return; }
+
+      // Bare widget folders (e.g. /infocusapp/cube/ or /infocusapp/cube/index.html)
+      var FOLDERS = ["card-flip","cube","fortunecookie","icebreaker","icebreakers","lifecoachcards",
+                     "pricing","storyflip","what-type-test","wordblob","voiceblankpage","timer",
+                     "countdown-timer","prompt-timer","random","random-images","focus-hero"];
+      for (var i = 0; i < FOLDERS.length; i++) {
+        var f = FOLDERS[i];
+        if (rest === f || rest === f + "/" || rest.indexOf(f + "/") === 0) {
+          location.replace(LIVE + f + "/" + tail); return;
+        }
+      }
+
+      location.replace("https://infocus.institute/");
+    })();
+  </script>
+  <style>body{font:16px/1.5 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;background:#F7F3EA;color:#1E1A16;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0}a{color:#C81E00}</style>
+</head>
+<body><p>Moved to <a href="https://infocus.institute/">infocus.institute</a> — redirecting…</p></body>
+</html>
