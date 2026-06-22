@@ -45,8 +45,11 @@ Do:
 | unfold | Unfold archetype slide | Happy Journey | 10 min |
 | steer | Steer archetype slide | Bach — Cello Suite No. 1, Prelude | 10 min |
 
-- Also accept a `?mode=move|write` param: **move** ≈ 1 min cue, **write** = 10 min (2×5) timer. Default write.
-- Music loops for the whole duration (the `<audio loop>` already does this — no pre-looped files needed).
+- Accept a `?mode=` param with **three** modes, so one widget serves all three lesson types per stage with the same slide-backdrop framing:
+  - `mode=move` — stage **music**, ≈1 min cue.
+  - `mode=write` — stage **music**, 10 min (2×5) timer. (Default.)
+  - `mode=remember` — the stage's **guided voice** track (in Kai's voice): play **once, no loop, no countdown ring** — just a play/pause button (a simple progress arc is fine), slide backdrop, title "Guided practice — {Stage}", credit "In Kai's voice". This is the Remember lesson's player.
+- Music modes loop for the whole duration (`<audio loop>` handles it); the voice mode must NOT loop.
 - **Display the proper track title + source credit** in the player (this is the "lost names" fix — the files are named `1-find-music` etc. but must SHOW the real names). Use these exact strings:
 
 | stage | display title | credit line |
@@ -61,9 +64,12 @@ For the Remember lessons (if they reuse this widget for the guided voice): title
 
 > Note: the same names/credits should be applied if the hearthis tracks are kept as a private backup — rename the 10 uploads from `1-find-music` etc. to these titles there too.
 
-**Assets to pull in** (copy into `widgets/focus-hero/assets/`):
-- Music: the five FOCUS stage tracks — source files in `…/_INFOCUS Projects/_COMMUNITY/_PRACTICES/FOCUS Method/FOCUS Method Course/_media/hearthis-upload-kit/` (`1-find-music.mp3` … `5-steer-music.mp3`).
-- Slides: the stage archetype/numbered slides — in that course's `_media/pulse-build/` (`*-1-move-hero.png`, etc.) — pick the cleanest per stage for the backdrop.
+**Assets to pull in** (copy into `widgets/focus-hero/assets/`). All under `…/_INFOCUS Projects/_COMMUNITY/_PRACTICES/FOCUS Method/FOCUS Method Course/_media/`:
+- **Music** (Move/Write): `hearthis-upload-kit/1-find-music.mp3` … `5-steer-music.mp3`.
+- **Voice** (Remember — the 5 archetype guided audios, Kai's voice): `hearthis-upload-kit/find-voice.mp3, orient-voice.mp3, clarify-voice.mp3, unfold-voice.mp3, steer-voice.mp3` (originals also in `pulse-build/{stage}-remember-voice.mp3` and `voice/{stage}-{archetype}.mp3`).
+- **Slides:** the stage archetype/numbered slides in `pulse-build/` (`{stage}-1-move-hero.png`, `-2-remember-hero.png`, `-3-write-hero.png`) — use the matching slide per mode (Move/Remember/Write each has its own numbered hero) as the backdrop.
+
+Voice → stage map for `mode=remember`: find→find-voice, orient→orient-voice, clarify→clarify-voice, unfold→unfold-voice, steer→steer-voice.
 
 **Hosting & embedding.** Deploy via **GitHub Pages**. The per-lesson embed is then `https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=find&mode=write` etc. Set each lesson's **Hero → Video → "use an embed"** to that URL (16:9). Produce a short `widgets/focus-hero/EMBED-URLS.md` listing the exact URL for all 17 lessons.
 

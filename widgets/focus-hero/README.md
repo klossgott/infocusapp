@@ -5,7 +5,7 @@ The Hero panel for **The FOCUS Practice** (Heartbeat course). One embeddable 16:
 ## URL parameters
 
 `?stage=` `find` · `orient` · `clarify` · `unfold` · `steer`  (default `find`)
-`?mode=`  `write` (10 min) · `move` (≈1 min cue)  (default `write`)
+`?mode=`  `write` (music + timer) · `move` (music, short cue) · `remember` (guided voice)  (default `write`)
 
 Example: `…/widgets/focus-hero/?stage=find&mode=write`
 
@@ -16,6 +16,7 @@ One hosted page serves all stages/modes — see [EMBED-URLS.md](EMBED-URLS.md) f
 - Tap the play button → the stage's looping track starts and the ring counts down. Tap again to pause; tap the loop toggle to stop looping.
 - **Duration presets** (`1 · 5 · 10 · 15 · 20 m`) sit above the player; `?mode` sets the default highlight. Tapping a length resets and starts at that time. The red ring mirrors the chosen length — so no need to pre-cut the tracks into blocks.
 - The music **fades out over the final 6 seconds** before the timer stops.
+- **Remember mode** (`?mode=remember`) plays the stage's **guided voice** once (no loop): just play/pause + the red ring as a progress arc — no duration presets, no loop toggle, no countdown. Title "Guided practice — {Stage}", credit "In Kai's voice".
 - Autoplay is never forced — the learner taps play (browser policy + good manners).
 
 ## Embedding in Heartbeat
@@ -27,12 +28,14 @@ Heartbeat lesson **bodies don't accept custom HTML**, so this widget is delivere
 
 ## Assets
 
-- `assets/music/<stage>.mp3` — the five FOCUS stage tracks (from the course's `hearthis-upload-kit`).
-- `assets/slides/<stage>.png` — the **archetype** slide (letter + name, `*-3-write-hero.png`), used as the **write** backdrop.
-- `assets/slides/<stage>-move.png` — the lighter doodle slide (`*-1-move-hero.png`), used as the **move** backdrop.
+- `assets/music/<stage>.mp3` — the five FOCUS stage music tracks (write + move modes).
+- `assets/voice/<stage>.mp3` — the five guided-voice tracks (remember mode; from `*-remember-voice.mp3`).
+- `assets/slides/<stage>.png` — the **archetype** slide (letter + name, `*-3-write-hero.png`) → **write** backdrop.
+- `assets/slides/<stage>-move.png` — the lighter doodle slide (`*-1-move-hero.png`) → **move** backdrop.
+- `assets/slides/<stage>-remember.png` — the remember slide (`*-2-remember-hero.png`) → **remember** backdrop.
 
 ## Notes
 
 - No track-splitting: the duration presets (mirrored in the red ring) control how long playback runs, so the "2×5" blocks don't need separate files.
-- `move` reuses the stage's music track as a short cue over the lighter doodle slide; `write` uses the archetype slide.
-- Remember-lesson guided-voice variant (title "Guided practice — {Stage}", credit "In Kai's voice") is not built here — Remember lessons use the voice audio, not this music widget.
+- `move` reuses the stage's music track as a short cue over the lighter doodle slide; `write` uses the archetype slide; `remember` plays the guided voice over the remember slide.
+- Keep one consolidated **Music & sources** credit in the course's *Before you begin* lesson (per the brief).
