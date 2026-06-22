@@ -52,7 +52,7 @@
     <div class="images-container">
       <img
         class="image visible first"
-        src="https://klossgott.github.io/tap_here.JPEG"
+        src="../../assets/prompts/tap_here.JPEG"
       />
     </div>
 
@@ -70,13 +70,13 @@
         // LOAD IMAGES FROM GITHUB REPO
         (async () => {
           const response = await fetch(
-            "https://api.github.com/repos/klossgott/infocusapp/contents/"
+            "https://api.github.com/repos/klossgott/infocusapp/contents/assets/prompts"
           );
           const data = await response.json();
 
           for (const file of Object.keys(data)) {
             if (data[file].name.match(/\.(jpe?g|png|gif|JPEG)$/)) {
-              image.push(data[file].name);
+              image.push(data[file].download_url);
             }
           }
 

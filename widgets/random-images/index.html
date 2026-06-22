@@ -228,50 +228,50 @@
   <div class="site-wrapper">
 
     <div class="images-container">
-      <img class="image visible first" src="https://klossgott.github.io/tap_here.JPEG" />
+      <img class="image visible first" src="../../assets/prompts/tap_here.JPEG" />
     </div>
 
     <!-- TIMER -->
     <div class="timer-container">
       <div class="all-audios">
         <audio data-audio="piano1" loop class="myAudio">
-          <source src="audios/pianomusic1.mp3" />
+          <source src="../../assets/audio/pianomusic1.mp3" />
           Unfortunately your browser doesn't support html5 audio streaming,
           please update your browser.
         </audio>
 
         <audio data-audio="piano2" loop class="myAudio">
-          <source src="audios/pianomusic2.mp3" />
+          <source src="../../assets/audio/pianomusic2.mp3" />
           Unfortunately your browser doesn't support html5 audio streaming,
           please update your browser.
         </audio>
 
         <audio data-audio="piano3" loop class="myAudio">
-          <source src="audios/pianomusic3.mp3" />
+          <source src="../../assets/audio/pianomusic3.mp3" />
           Unfortunately your browser doesn't support html5 audio streaming,
           please update your browser.
         </audio>
 
         <audio data-audio="piano4" loop class="myAudio">
-          <source src="audios/pianomusic4.mp3" />
+          <source src="../../assets/audio/pianomusic4.mp3" />
           Unfortunately your browser doesn't support html5 audio streaming,
           please update your browser.
         </audio>
 
         <audio data-audio="piano5" loop class="myAudio">
-          <source src="audios/pianomusic5.mp3" />
+          <source src="../../assets/audio/pianomusic5.mp3" />
           Unfortunately your browser doesn't support html5 audio streaming,
           please update your browser.
         </audio>
 
         <audio data-audio="piano6" loop class="myAudio">
-          <source src="audios/pianomusic6.mp3" />
+          <source src="../../assets/audio/pianomusic6.mp3" />
           Unfortunately your browser doesn't support html5 audio streaming,
           please update your browser.
         </audio>
 
         <audio data-audio="piano7" loop class="myAudio">
-          <source src="audios/pianomusic7.mp3" />
+          <source src="../../assets/audio/pianomusic7.mp3" />
           Unfortunately your browser doesn't support html5 audio streaming,
           please update your browser.
         </audio>
@@ -349,13 +349,13 @@
       // LOAD IMAGES FROM GITHUB REPO
       (async () => {
         const response = await fetch(
-          "https://api.github.com/repos/klossgott/infocusapp/contents/"
+          "https://api.github.com/repos/klossgott/infocusapp/contents/assets/prompts"
         );
         const data = await response.json();
 
         for (const file of Object.keys(data)) {
           if (data[file].name.match(/\.(jpe?g|png|gif|JPEG)$/)) {
-            image.push(data[file].name);
+            image.push(data[file].download_url);
           }
         }
 
