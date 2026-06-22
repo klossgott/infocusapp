@@ -3,6 +3,11 @@
 Everything learned wiring the **infocusapp** widgets (timers, decks, the FOCUS Hero) into the
 **Heartbeat** community at `community.infocus.institute`. Written June 2026.
 
+**Related documents (read together):** `_COWORK/HEARTBEAT-SOP.md` (the broader Heartbeat
+build/run SOP — this playbook is its hands-on embeds-and-widgets companion) ·
+`_COWORK/FOCUS-WORK-LOG.md` (build log) · `widgets/focus-hero/EMBED-URLS.md` (per-lesson iframes) ·
+memory `heartbeat-embedding-surfaces` + `infocusapp-reorg`.
+
 ---
 
 ## 1. The one rule that trips everyone up
