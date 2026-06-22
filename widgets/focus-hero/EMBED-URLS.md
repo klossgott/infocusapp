@@ -26,6 +26,34 @@ This one widget now serves **all three lesson types** per stage via `?mode=`:
 | 16 | Steer · Remember | `?stage=steer&mode=remember` |
 | 17 | Steer · Write | `?stage=steer&mode=write` |
 
+## Iframe embed code (paste into Heartbeat's "Embed Code" field)
+
+Heartbeat's embed field needs an **`<iframe>` tag**, not a bare URL, and frames it 16:9 itself. Template:
+
+```html
+<iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=STAGE&mode=MODE" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+```
+
+Ready-to-paste, per lesson:
+
+```html
+<!-- Find · Move -->     <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=find&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Find · Remember --> <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=find&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Find · Write -->    <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=find&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Orient · Move -->     <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=orient&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Orient · Remember --> <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=orient&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Orient · Write -->    <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=orient&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Clarify · Move -->     <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=clarify&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Clarify · Remember --> <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=clarify&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Clarify · Write -->    <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=clarify&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Unfold · Move -->     <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=unfold&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Unfold · Remember --> <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=unfold&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Unfold · Write -->    <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=unfold&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Steer · Move -->     <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=steer&mode=move" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Steer · Remember --> <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=steer&mode=remember" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+<!-- Steer · Write -->    <iframe src="https://klossgott.github.io/infocusapp/widgets/focus-hero/?stage=steer&mode=write" width="100%" height="100%" style="border:0" allow="autoplay; fullscreen"></iframe>
+```
+
 ## Full URLs (15 stage lessons)
 
 ```
