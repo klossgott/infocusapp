@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>infocusapp widgets — test index</title>
+  <style>
+    :root{ --ink:#1E1A16; --cream:#F7F3EA; --accent:#C81E00; --line:#d9d2c4; }
+    *{box-sizing:border-box}
+    body{margin:0;padding:2.5rem 1.25rem 4rem;background:var(--cream);color:var(--ink);
+      font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .wrap{max-width:920px;margin:0 auto}
+    h1{font-size:1.6rem;margin:0 0 .3rem;letter-spacing:-.01em}
+    .sub{margin:0 0 .4rem;color:#5b5346;max-width:64ch}
+    .host{font-size:.8rem;color:#8a8273}
+    h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);margin:2.1rem 0 .7rem}
+    .grid{display:grid;gap:.55rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+    a.card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);
+      border-radius:10px;padding:.8rem .95rem;transition:border-color .15s,transform .12s}
+    a.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+    a.card b{display:block;font-size:.97rem}
+    a.card span{display:block;font-size:.8rem;color:#6b6357;margin-top:.12rem}
+    .note{font-size:.8rem;color:#8a8273;margin:.5rem 0 0}
+    footer{margin-top:3rem;font-size:.8rem;color:#8a8273}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>infocusapp widgets — test index</h1>
+    <p class="sub">Click any widget to open it. Everything here is served from the locked main site and only embeds inside the community; opening directly for testing is fine.</p>
+    <p class="host">host: <code>infocus.institute/widgets/</code></p>
+
+    <h2>FOCUS Hero <span style="text-transform:none;color:#8a8273;letter-spacing:0">— swap ?stage= find · orient · clarify · unfold · steer</span></h2>
+    <div class="grid">
+      <a class="card" href="./focus-hero/?stage=find&amp;mode=write"><b>FOCUS Hero — Write</b><span>music + write timer + presets</span></a>
+      <a class="card" href="./focus-hero/?stage=find&amp;mode=move"><b>FOCUS Hero — Move</b><span>music cue + lighter slide</span></a>
+      <a class="card" href="./focus-hero/?stage=find&amp;mode=remember"><b>FOCUS Hero — Remember</b><span>guided voice + progress ring</span></a>
+    </div>
+
+    <h2>Timers &amp; writing tools</h2>
+    <div class="grid">
+      <a class="card" href="./timer/"><b>Timer</b><span>SVG ring + looping piano</span></a>
+      <a class="card" href="./countdown-timer/"><b>Countdown timer</b><span>type minutes · synth chime</span></a>
+      <a class="card" href="./countdown-timer/white.html"><b>Countdown timer — white</b><span>light theme variant</span></a>
+      <a class="card" href="./prompt-timer/"><b>Prompt timer</b><span>timer + random writing-prompt image</span></a>
+      <a class="card" href="./random-images/"><b>Random images</b><span>timer + random photo + audio</span></a>
+      <a class="card" href="./random/"><b>Random</b><span>clickable random image</span></a>
+    </div>
+
+    <h2>Voice of the Blank Page</h2>
+    <div class="grid">
+      <a class="card" href="./voiceblankpage/curiosity.html"><b>VBL — timed writing</b><span>timer + curiosity prompts</span></a>
+      <a class="card" href="./voiceblankpage/courage-prompts.html"><b>VBL — Courage</b><span>prompt deck</span></a>
+      <a class="card" href="./voiceblankpage/curiosity-prompts.html"><b>VBL — Curiosity</b><span>prompt deck</span></a>
+      <a class="card" href="./voiceblankpage/presence-prompts.html"><b>VBL — Presence</b><span>prompt deck</span></a>
+    </div>
+
+    <h2>Cards &amp; games</h2>
+    <div class="grid">
+      <a class="card" href="./card-flip/card-flip.html"><b>Card flip</b><span>prompt card, flip animation</span></a>
+      <a class="card" href="./lifecoachcards/lifecoachcards.html"><b>Life coach cards</b><span>coaching question cards</span></a>
+      <a class="card" href="./icebreaker/icebreaker.html"><b>Icebreaker</b><span>expandable question card</span></a>
+      <a class="card" href="./icebreakers/"><b>Icebreakers</b><span>~170 conversation questions</span></a>
+      <a class="card" href="./fortunecookie/fortunecookie.html"><b>Fortune cookie</b><span>crack it open for a slip</span></a>
+      <a class="card" href="./storyflip/"><b>Story flip</b><span>story / word game</span></a>
+      <a class="card" href="./wordblob/wordblob.html"><b>Word blob</b><span>animated word card</span></a>
+    </div>
+
+    <h2>Tests &amp; pages</h2>
+    <div class="grid">
+      <a class="card" href="./cube/"><b>The Cube</b><span>personality test (+ FAQ)</span></a>
+      <a class="card" href="./what-type-test/"><b>What-type test</b><span>typography archetype quiz (landing)</span></a>
+      <a class="card" href="./pricing/pricing.html"><b>Pricing</b><span>membership pricing toggle</span></a>
+      <a class="card" href="./doorbell/"><b>Doorbell</b><span>⚠ fires a visitor-ping webhook on open</span></a>
+    </div>
+
+    <footer>Self-contained widgets for creative journalling · Kai Lossgott. Shared media at <code>./shared/</code>; random-image libraries fetched from the GitHub API.</footer>
+  </div>
+</body>
+</html>
