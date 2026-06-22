@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing practice — timer + prompts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&family=Noto+Emoji&display=swap" rel="stylesheet" />
+  <style>
+    *{margin:0;padding:0;border:0;box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:Futura,'Trebuchet MS',Arial,sans-serif;background:#fff;color:#1E1A16}
+    /* one borderless page — timer on the left, prompts on the right; stacks on narrow screens */
+    .practice{display:flex;align-items:stretch;min-height:100vh}
+    .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;min-height:240px}
+    @media (max-width:620px){ .practice{flex-direction:column} }
+
+    /* ---- timer ---- */
+    #displayArea{position:relative;width:220px;height:64px;display:flex;align-items:center;justify-content:center}
+    #timeInput{font-family:inherit;font-size:48px;border:none;background:transparent;text-align:center;width:220px;outline:none;opacity:0;transition:opacity 1s}
+    #timeInput::placeholder{color:rgba(30,26,22,.45)}
+    #timer,#thumbsUp,#error{position:absolute;font-size:48px;width:220px;text-align:center;opacity:0;transition:opacity 1s;pointer-events:none}
+    #thumbsUp{font-family:'Noto Emoji',sans-serif}
+    #error{font-size:14px;white-space:nowrap}
+    #timer.flash{animation:flash 1s infinite}
+    @keyframes flash{0%,100%{opacity:1}50%{opacity:.5}}
+    @keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(-1px,0)}50%{transform:translate(1px,0)}75%{transform:translate(-1px,0)}100%{transform:translate(0,0)}}
+    .shake{animation:shake .2s}
+    @keyframes zoomOut{from{transform:scale(1);opacity:1}to{transform:scale(1.2);opacity:0}}
+    #controls{margin-top:18px;display:flex;justify-content:center;gap:10px}
+    #controls button{font-family:'Noto Emoji',sans-serif;background:none;border:none;font-size:24px;padding:10px;cursor:pointer;opacity:.5;transition:opacity .3s;color:inherit}
+    #controls button:hover{opacity:.75}
+    #controls button.active{opacity:1}
+    #controls button:not(.active){opacity:.5;cursor:default}
+    .hint{margin-top:6px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.04em;color:rgba(30,26,22,.5)}
+
+    /* ---- prompts ---- */
+    .prompt-col{cursor:pointer;font-family:'Jost',sans-serif}
+    #prompt{font-size:24px;text-align:center;width:90%;max-width:420px;word-wrap:break-word;opacity:0;transition:opacity 1s;line-height:1.35}
+  </style>
+</head>
+<body>
+  <div class="practice">
+    <!-- Timer: type minutes, press play -->
+    <div class="col timer-col">
+      <div id="displayArea">
+        <input type="text" id="timeInput" placeholder="?" />
+        <div id="timer">0:00</div>
+        <div id="thumbsUp">👍</div>
+        <div id="error">Please enter a valid<br>number of minutes</div>
+      </div>
+      <div id="controls">
+        <button id="playBtn" class="active">▶</button>
+        <button id="pauseBtn">⏸</button>
+        <button id="stopBtn">■</button>
+      </div>
+      <div class="hint">type minutes · press play</div>
+    </div>
+
+    <!-- Prompts: tap for a fresh writing prompt -->
+    <div class="col prompt-col" id="promptCol">
+      <div id="prompt"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===================== prompt sets (per week) =====================
+    const WEEKS = {
+      presence: ["Pause for a moment. What sounds surround you right now?","Write about the first object you see. Why is it meaningful?","Describe how you're feeling in this exact moment.","List three things you're grateful for today.","How can you create a cozy space for your journaling practice?","Imagine your distractions fading away. What remains?","Plan a 10-minute journaling session. When will you fit it in?","What does 'being present' mean to you?","Write about a recent moment when you felt truly yourself.","\"Be happy in the moment, that's enough. Each moment is all we need, not more.\" - Mother Teresa","Describe a moment today when you felt truly connected. What sensations, sounds, and details stood out to you?","When do you find it easiest to stay present?","\"The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.\" - Marcel Proust","Recall a recent moment that made you pause in wonder. What made it so impactful?","\"You create a good future by creating a good present.\" - Eckhart Tolle","Describe your current emotional state without judgment. What feelings are present in this moment?","What small action can you take right now to enhance this moment?","\"Now! It is the most important time because it is the only time when we have any power.\" - Leo Tolstoy","What's preventing you from being fully present right now? How can you release these distractions?","\"Forever is composed of nows.\" - Emily Dickinson","What aspects of your current environment support your well-being? How can you fully appreciate them?","Write about how your body feels right now. What tensions, comfort, or sensations are you aware of?","\"Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.\" - Buddha","How does nature help you connect with the present moment?","How does time feel different when you're fully present versus when your mind is elsewhere?","\"Life gives you plenty of time to do whatever you want to do if you stay in the present moment.\" - Deepak Chopra","Look around your familiar space as if seeing it for the first time. What details have you never noticed before?","Write about your breath right now.","How does presence affect your relationships?","What daily activities could benefit from more mindful attention?","How does technology impact your ability to stay present?","What sensations do you notice when you're fully present?","How can you simplify your environment to enhance focus?"],
+      courage: ["What creative risk are you most afraid to take right now?","Write about a time when your boldness surprised you. What inner fire drove you?","Find and describe the fierce creative energy moving through you in this moment.","List three audacious dreams you've never dared to share.","How can you make your writing space feel like a sanctuary for wild ideas?","Imagine your fears dissolving. What creative truth emerges?","Choose one creative risk to take this week. How will you support yourself through it?","What does 'creative courage' mean to your life?","Write about a recent moment when you felt creatively unstoppable.","\"It takes courage to grow up and become who you really are.\" - e.e. cummings","Describe a moment when your creative desire felt bigger than your fear. What sensations and emotions rose up?","When do you feel most creatively fearless?","\"I have learned over the years that when one's mind is made up, this diminishes fear.\" - Rosa Parks","Recall a creative breakthrough that changed everything. What made it possible?","\"Whatever you do, you need courage. Whatever course you decide upon, there is always someone to tell you that you are wrong.\" - Ralph Waldo Emerson","Write about the creative desire you're most afraid to admit to yourself.","What bold action could you take right now to honor your artistic vision?","\"You can't be brave if you've only had wonderful things happen to you.\" - Mary Tyler Moore","What creative blocks are holding you back? How can you face them with compassion?","\"It takes courage to love, but pain through love is the purifying fire which those who love generously know.\" - Eleanor Roosevelt","What aspects of your creative practice make you feel most alive and powerful?","Write about where you feel creative resistance in your body. What is it trying to tell you?","\"Life shrinks or expands in proportion to one's courage.\" - Anaïs Nin","How does nature inspire you to be more creatively courageous?","How does time feel different when you're creating fearlessly versus when you're held back by doubt?","\"Courage is like a muscle. We strengthen it with use.\" - Ruth Gordon","Look at your creative work as if through the eyes of your bravest self. What possibilities open up?","Write about the creative fire burning inside you right now.","How does courage affect your relationships and collaborations?","What creative practices could benefit from more boldness?","How does fear of judgment impact your creative expression?","What sensations arise when you're creating from a place of courage?","How can you create more space for creative risk-taking in your life?"],
+      curiosity: ["What question has been quietly persistent in your creative life lately?","Write about an object that baffles you. What untold stories does it hold?","What surprising patterns do you notice in your creative work?","List three creative mysteries you'd love to explore.","How might your favourite artist or writer have expressed their creativity? What echoes do you hear?","Imagine connecting with your deepest creative wisdom. What questions arise?","What creative ritual would help you listen more deeply to yourself?","What does 'creative lineage' mean to you?","Write about a moment when your inner voice surprised you.","\"The important thing is not to stop questioning. Curiosity has its own reason for existence.\" - Albert Einstein","Describe a creative connection that opened new possibilities. What questions led you there?","When do your creative questions flow most freely?","\"The cure for boredom is curiosity. There is no cure for curiosity.\" - Dorothy Parker","Recall a creative discovery that changed your perspective. What made you look deeper?","\"Question everything. Learn something. Answer nothing.\" - Euripides","What recurring themes in your work are asking to be explored more deeply?","What creative question could you sit with today?","\"The scientist is not a person who gives the right answers, they're the one who asks the right questions.\" - Claude Lévi-Strauss","What assumptions about your creativity deserve questioning?","\"Judge a person by their questions rather than their answers.\" - Voltaire","What aspects of your creative heritage inspire the most wonder?","Write about a mystery that lives in your body. What is it asking?","\"I have no special talents. I am only passionately curious.\" - Albert Einstein","How does nature spark your creative questions?","How does time feel different when you're exploring versus when you're certain?","\"Around here, we don't look backwards for very long... we keep moving forward, opening up new doors and doing new things, because we're curious and curiosity keeps leading us down new paths.\" - Walt Disney","Look at your creative practice through the eyes of a researcher. What patterns emerge?","Write about the questions stirring in you right now.","How do creative conversations deepen your self-inquiry?","What creative traditions would you like to explore more deeply?","How does your cultural heritage influence your creative questions?","What insights arise when you listen to your creative intuition?","How can you create more space for wonder in your practice?"]
+    };
+    const week = (new URLSearchParams(location.search).get("week") || "presence").toLowerCase();
+    const prompts = WEEKS[week] || WEEKS.presence;
+
+    // ===================== prompts =====================
+    const promptCol = document.getElementById('promptCol');
+    const promptElement = document.getElementById('prompt');
+    let isTransitioning = false;
+    function showPrompt(){
+      if (isTransitioning) return;
+      isTransitioning = true;
+      promptElement.style.opacity = 0;
+      setTimeout(() => {
+        let p = prompts[Math.floor(Math.random() * prompts.length)].replace(/" - /g, '"<br/>- ');
+        promptElement.innerHTML = p;
+        promptElement.style.opacity = 1;
+        isTransitioning = false;
+        adjustFontSize();
+      }, 1000);
+    }
+    function adjustFontSize(){
+      let fs = 24; promptElement.style.fontSize = fs + "px";
+      while (promptElement.scrollHeight > promptElement.clientHeight && fs > 14){ fs -= 0.5; promptElement.style.fontSize = fs + "px"; }
+    }
+    showPrompt();
+    promptCol.addEventListener('click', showPrompt);   // tapping the prompt side only (not the timer)
+    window.addEventListener('resize', adjustFontSize);
+
+    // ===================== timer (type minutes → countdown + chime) =====================
+    const timeInput = document.getElementById('timeInput');
+    const timer = document.getElementById('timer');
+    const thumbsUp = document.getElementById('thumbsUp');
+    const error = document.getElementById('error');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    let countdown, timeLeft, isPaused = false, audioContext;
+    window.addEventListener('load', () => setTimeout(() => { timeInput.style.opacity = '1'; }, 100));
+    function initAudio(){ audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+    function playChime(){
+      if (!audioContext) initAudio();
+      const base = 600, ratios = [1,1.2,1.25,1.5,1.6], vols = [0.2,0.4,0.15], durs = [1.0,0.5,1.5];
+      for (let i = 0; i < 3; i++){
+        const f = base * ratios[Math.floor(Math.random()*ratios.length)];
+        setTimeout(() => {
+          const o = audioContext.createOscillator(), g = audioContext.createGain();
+          o.connect(g); g.connect(audioContext.destination); o.type = 'sine'; o.frequency.value = f;
+          const now = audioContext.currentTime;
+          g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(vols[i], now + 0.01); g.gain.exponentialRampToValueAtTime(0.001, now + durs[i]);
+          o.start(now); o.stop(now + durs[i]);
+          timer.classList.add('shake'); setTimeout(() => timer.classList.remove('shake'), 200);
+        }, i * 400);
+      }
+    }
+    function showError(){
+      timeInput.style.opacity = '0'; timeInput.style.pointerEvents = 'none';
+      setTimeout(() => { error.style.opacity = '1';
+        setTimeout(() => { error.style.opacity = '0';
+          setTimeout(() => { timeInput.value=''; timeInput.style.opacity='1'; timeInput.style.pointerEvents='auto'; timeInput.focus(); }, 1000);
+        }, 2000);
+      }, 1000);
+    }
+    function startTimer(minutes){
+      if (!audioContext) initAudio();
+      clearInterval(countdown); timeLeft = Math.round(minutes * 60);
+      timeInput.style.opacity = '0'; timeInput.style.pointerEvents = 'none'; timeInput.blur();
+      setTimeout(() => { timer.style.opacity='1'; updateButtons(true); }, 1000);
+      countdown = setInterval(() => {
+        if (!isPaused){
+          timeLeft--; updateDisplay();
+          if (timeLeft <= 10) timer.classList.add('flash');
+          if (timeLeft <= 0){ clearInterval(countdown); playChime(); animateOut(); }
+        }
+      }, 1000);
+    }
+    function updateDisplay(){ const m = Math.floor(timeLeft/60), s = timeLeft%60; timer.textContent = `${m}:${s.toString().padStart(2,'0')}`; }
+    function animateOut(){ timer.style.animation = 'zoomOut 1s forwards'; timer.addEventListener('animationend', onOut); }
+    function onOut(e){
+      if (e.animationName !== 'zoomOut') return;
+      timer.style.opacity='0'; timer.style.animation=''; timer.classList.remove('flash'); isPaused=false; pauseBtn.textContent='⏸';
+      timer.removeEventListener('animationend', onOut);
+      setTimeout(() => { thumbsUp.style.opacity='1';
+        setTimeout(() => { thumbsUp.style.opacity='0';
+          setTimeout(() => { timeInput.value=''; timeInput.style.opacity='1'; timeInput.style.pointerEvents='auto'; updateButtons(false); }, 1000);
+        }, 2000);
+      }, 500);
+    }
+    function updateButtons(running){ playBtn.classList.toggle('active', !running); pauseBtn.classList.toggle('active', running); stopBtn.classList.toggle('active', running); }
+    function validateAndStart(){ const m = parseFloat((timeInput.value||'').replace(',', '.')); if (m > 0) startTimer(m); else showError(); }
+    timeInput.addEventListener('keypress', (e) => {
+      if ('0123456789.,'.indexOf(e.key) === -1 && e.key !== 'Enter') e.preventDefault();
+      else if (e.key === 'Enter') validateAndStart();
+    });
+    playBtn.addEventListener('click', () => { if (playBtn.classList.contains('active')){ timeInput.style.opacity='1'; timeInput.focus(); if((timeInput.value||'').trim()) validateAndStart(); } });
+    pauseBtn.addEventListener('click', () => { if (pauseBtn.classList.contains('active')){ isPaused = !isPaused; pauseBtn.textContent = isPaused ? '▶' : '⏸'; } });
+    stopBtn.addEventListener('click', () => { if (stopBtn.classList.contains('active')) stopTimer(); });
+    function stopTimer(){
+      clearInterval(countdown); timer.style.opacity='0'; timer.classList.remove('flash'); isPaused=false; pauseBtn.textContent='⏸';
+      setTimeout(() => { thumbsUp.style.opacity='1';
+        setTimeout(() => { thumbsUp.style.opacity='0';
+          setTimeout(() => { timeInput.value=''; timeInput.style.opacity='1'; timeInput.style.pointerEvents='auto'; updateButtons(false); }, 1000);
+        }, 2000);
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
