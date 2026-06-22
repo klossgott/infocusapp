@@ -213,7 +213,7 @@
 
       DURATION_OPTIONS.forEach(min => {
         const b = document.createElement("button");
-        b.className = "dur"; b.dataset.min = min; b.textContent = min + "m";
+        b.className = "dur"; b.dataset.min = min; b.textContent = String(min);
         if (min === MODE_DEFAULT[mode]) b.classList.add("active");
         b.addEventListener("click", () => {
           TIME_LIMIT = min * 60;
